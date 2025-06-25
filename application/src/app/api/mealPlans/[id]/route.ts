@@ -26,7 +26,7 @@ export async function GET(
     await connectToDatabase();
     const mealPlan = await MealPlan.findById(id).populate({
       path: 'meals.recipe',
-      select: 'name prepTime cookTime imageUrl'
+      select: 'name prepTime cookTime imageUrl ingredients instructions'
     });
     
     if (!mealPlan) {

@@ -15,7 +15,7 @@ export async function GET() {
       .sort({ startDate: -1 })
       .populate({
         path: 'meals.recipe',
-        select: 'name prepTime cookTime imageUrl'
+        select: 'name prepTime cookTime imageUrl ingredients instructions'
       });
     
     return createSuccessResponse({ mealPlans });
