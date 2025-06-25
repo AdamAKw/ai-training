@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { RecipeCard } from "@/components/recipes/RecipeCard";
 
 interface Recipe {
    _id: string;
@@ -48,12 +51,22 @@ export default function RecipesPage() {
             </Link>
          </div>
 
-         {isLoading && <p>Loading recipes...</p>}
+         {isLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="space-y-4">
+                     <Skeleton className="h-8 w-3/4" />
+                     <Skeleton className="h-20 w-full" />
+                     <Skeleton className="h-6 w-1/2" />
+                  </div>
+               ))}
+            </div>
+         )}
 
          {error && (
-            <div className="bg-red-50 border border-red-200 p-4 rounded">
-               <p className="text-red-700">{error}</p>
-            </div>
+            <Alert variant="destructive">
+               <AlertDescription>{error}</AlertDescription>
+            </Alert>
          )}
 
          {!isLoading && !error && recipes.length === 0 && (
@@ -68,17 +81,14 @@ export default function RecipesPage() {
          {recipes.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                {recipes.map((recipe) => (
-                  <Link
-                     href={`/recipes/${recipe._id}`}
+                  <RecipeCard
                      key={recipe._id}
-                     className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
-                     <h2 className="text-xl font-semibold">{recipe.name}</h2>
-                     <p className="text-gray-600 mt-2 line-clamp-2">{recipe.description}</p>
-                     <p className="text-sm text-gray-500 mt-2">
-                        Prep: {recipe.prepTime}min | Cook: {recipe.cookTime}min
-                     </p>
-                  </Link>
+                     id={recipe._id}
+                     name={recipe.name}
+                     description={recipe.description}
+                     prepTime={recipe.prepTime}
+                     cookTime={recipe.cookTime}
+                  />
                ))}
             </div>
          )}

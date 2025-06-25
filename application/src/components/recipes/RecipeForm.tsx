@@ -7,15 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-   Form,
-   FormControl,
-   FormDescription,
-   FormField,
-   FormItem,
-   FormLabel,
-   FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -39,6 +31,33 @@ export interface RecipeFormValues {
 }
 
 // Define the schema for form validation
+// Define a form-specific schema that matches our form structure
+const formValidationSchema = z.object({
+   name: z.string().min(2, "Recipe name must be at least 2 characters"),
+   description: z.string().optional(),
+   ingredients: z
+      .array(
+         z.object({
+            name: z.string().min(1, "Ingredient name is required"),
+            quantity: z.coerce.number().positive("Quantity must be positive"),
+            unit: z.string().min(1, "Unit is required"),
+         })
+      )
+      .min(1, "At least one ingredient is required"),
+   instructions: z
+      .array(
+         z.object({
+            value: z.string().min(1, "Instruction cannot be empty"),
+         })
+      )
+      .min(1, "At least one instruction is required"),
+   prepTime: z.coerce.number().min(0, "Prep time cannot be negative"),
+   cookTime: z.coerce.number().min(0, "Cook time cannot be negative"),
+   servings: z.coerce.number().positive("Servings must be positive"),
+   imageUrl: z.string().url("Image URL must be valid").optional().or(z.literal("")),
+   tags: z.array(z.string()).default([]),
+});
+
 export const recipeValidationSchema = z.object({
    name: z.string().min(2, "Recipe name must be at least 2 characters"),
    description: z.string().optional(),
@@ -66,32 +85,13 @@ interface RecipeFormProps {
    isLoading?: boolean;
 }
 
-// Define a type for our form setup to help with TypeScript issues
-type RecipeFormType = {
-   name: string;
-   description: string;
-   ingredients: {
-      name: string;
-      quantity: number;
-      unit: string;
-      id?: string;
-   }[];
-   instructions: {
-      value: string;
-      id?: string;
-   }[];
-   prepTime: number;
-   cookTime: number;
-   servings: number;
-   imageUrl: string;
-   tags: string[];
-};
+// We don't need a separate type since we're using zod schema directly
 
 export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeFormProps) => {
    const [instructionInput, setInstructionInput] = useState("");
 
    // Initialize the form with safe defaults
-   const defaultValues: RecipeFormType = {
+   const defaultValues = {
       name: initialData?.name || "",
       description: initialData?.description || "",
       ingredients: initialData?.ingredients || [{ name: "", quantity: 1, unit: "" }],
@@ -103,15 +103,18 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
       tags: initialData?.tags || [],
    };
 
-   // Initialize the form
-   const {
-      register,
-      handleSubmit,
-      control,
-      formState: { errors },
-   } = useForm<RecipeFormType>({
+   // Initialize the form with zod validation
+   const form = useForm({
+      resolver: zodResolver(formValidationSchema),
       defaultValues,
    });
+
+   // Get what we need from form
+   const {
+      control,
+      register,
+      formState: { errors },
+   } = form;
 
    // Set up field arrays for ingredients and instructions
    const {
@@ -142,7 +145,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
    };
 
    // Convert the form data to the expected RecipeFormValues type
-   const handleFormSubmit = handleSubmit((data: RecipeFormType) => {
+   const onFormSubmit = (data: z.infer<typeof formValidationSchema>) => {
       const formattedData: RecipeFormValues = {
          ...data,
          // Ensure numeric fields are actually numbers
@@ -160,250 +163,279 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
          imageUrl: data.imageUrl?.trim() === "" ? undefined : data.imageUrl,
       };
       onSubmit(formattedData);
-   });
+   };
 
    return (
-      <form onSubmit={handleFormSubmit} className="space-y-8">
-         {/* Basic Information */}
-         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Basic Information</h2>
+      <Form {...form}>
+         <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-8">
+            {/* Basic Information */}
+            <div className="space-y-4">
+               <h2 className="text-xl font-semibold">Basic Information</h2>
+               <Separator className="my-4" />
 
-            <div>
-               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Recipe Name *
-               </label>
-               <input
-                  id="name"
-                  type="text"
-                  {...register("name")}
-                  className="w-full p-2 border rounded-md"
-                  disabled={isLoading}
+               <FormField
+                  control={control}
+                  name="name"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel>Recipe Name *</FormLabel>
+                        <FormControl>
+                           <Input {...field} disabled={isLoading} />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
                />
-               {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
-            </div>
 
-            <div>
-               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-               </label>
-               <textarea
-                  id="description"
-                  rows={3}
-                  {...register("description")}
-                  className="w-full p-2 border rounded-md"
-                  disabled={isLoading}
+               <FormField
+                  control={control}
+                  name="description"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                           <Textarea rows={3} {...field} disabled={isLoading} />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
                />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-               <div>
-                  <label htmlFor="prepTime" className="block text-sm font-medium text-gray-700 mb-1">
-                     Prep Time (minutes) *
-                  </label>
-                  <input
-                     id="prepTime"
-                     type="number"
-                     {...register("prepTime")}
-                     className="w-full p-2 border rounded-md"
-                     disabled={isLoading}
-                  />
-                  {errors.prepTime && <p className="mt-1 text-sm text-red-600">{errors.prepTime.message}</p>}
-               </div>
-
-               <div>
-                  <label htmlFor="cookTime" className="block text-sm font-medium text-gray-700 mb-1">
-                     Cook Time (minutes) *
-                  </label>
-                  <input
-                     id="cookTime"
-                     type="number"
-                     {...register("cookTime")}
-                     className="w-full p-2 border rounded-md"
-                     disabled={isLoading}
-                  />
-                  {errors.cookTime && <p className="mt-1 text-sm text-red-600">{errors.cookTime.message}</p>}
-               </div>
-
-               <div>
-                  <label htmlFor="servings" className="block text-sm font-medium text-gray-700 mb-1">
-                     Servings *
-                  </label>
-                  <input
-                     id="servings"
-                     type="number"
-                     {...register("servings")}
-                     className="w-full p-2 border rounded-md"
-                     disabled={isLoading}
-                  />
-                  {errors.servings && <p className="mt-1 text-sm text-red-600">{errors.servings.message}</p>}
-               </div>
-            </div>
-         </div>
-
-         {/* Ingredients */}
-         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Ingredients</h2>
-
-            {ingredientFields.map((field, index) => (
-               <div key={field.id} className="flex items-end gap-2">
-                  <div className="flex-grow">
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Ingredient Name *</label>
-                     <input
-                        {...register(`ingredients.${index}.name`)}
-                        className="w-full p-2 border rounded-md"
-                        disabled={isLoading}
-                     />
-                     {errors.ingredients?.[index]?.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.ingredients[index]?.name?.message}</p>
-                     )}
-                  </div>
-
-                  <div className="w-24">
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
-                     <input
-                        type="number"
-                        step="0.01"
-                        {...register(`ingredients.${index}.quantity`)}
-                        className="w-full p-2 border rounded-md"
-                        disabled={isLoading}
-                     />
-                     {errors.ingredients?.[index]?.quantity && (
-                        <p className="mt-1 text-sm text-red-600">{errors.ingredients[index]?.quantity?.message}</p>
-                     )}
-                  </div>
-
-                  <div className="w-32">
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
-                     <input
-                        {...register(`ingredients.${index}.unit`)}
-                        className="w-full p-2 border rounded-md"
-                        disabled={isLoading}
-                     />
-                     {errors.ingredients?.[index]?.unit && (
-                        <p className="mt-1 text-sm text-red-600">{errors.ingredients[index]?.unit?.message}</p>
-                     )}
-                  </div>
-
-                  <Button
-                     type="button"
-                     variant="ghost"
-                     className="text-red-500 h-10 mb-[1px]"
-                     onClick={() => removeIngredient(index)}
-                     disabled={isLoading || ingredientFields.length <= 1}
-                  >
-                     Remove
-                  </Button>
-               </div>
-            ))}
-
-            <Button
-               type="button"
-               variant="outline"
-               onClick={() => appendIngredient({ name: "", quantity: 1, unit: "" })}
-               disabled={isLoading}
-            >
-               Add Ingredient
-            </Button>
-
-            {errors.ingredients?.root && <p className="mt-1 text-sm text-red-600">{errors.ingredients.root.message}</p>}
-         </div>
-
-         {/* Instructions */}
-         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Instructions</h2>
-
-            <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Add instruction steps one by one</label>
-               <div className="flex gap-2">
-                  <input
-                     type="text"
-                     value={instructionInput}
-                     onChange={(e) => setInstructionInput(e.target.value)}
-                     className="flex-grow p-2 border rounded-md"
-                     placeholder="Enter an instruction step"
-                     disabled={isLoading}
-                  />
-                  <Button type="button" onClick={handleAddInstruction} disabled={isLoading || !instructionInput.trim()}>
-                     Add
-                  </Button>
-               </div>
-            </div>
-
-            {instructionFields.length > 0 && (
-               <div className="space-y-2">
-                  <h3 className="text-md font-medium">Steps:</h3>
-                  <ul className="space-y-2">
-                     {instructionFields.map((field, index) => (
-                        <li key={field.id} className="flex items-center gap-2">
-                           <span className="font-medium">{index + 1}.</span>
-                           <input
-                              {...register(`instructions.${index}.value`)}
-                              className="flex-grow p-2 border rounded-md"
-                              disabled={isLoading}
-                           />
-                           <div className="flex gap-1">
-                              <Button
-                                 type="button"
-                                 variant="ghost"
-                                 className="h-8 w-8 p-0"
-                                 onClick={() => index > 0 && swapInstructions(index, index - 1)}
-                                 disabled={isLoading || index === 0}
-                              >
-                                 ↑
-                              </Button>
-                              <Button
-                                 type="button"
-                                 variant="ghost"
-                                 className="h-8 w-8 p-0"
-                                 onClick={() =>
-                                    index < instructionFields.length - 1 && swapInstructions(index, index + 1)
-                                 }
-                                 disabled={isLoading || index === instructionFields.length - 1}
-                              >
-                                 ↓
-                              </Button>
-                              <Button
-                                 type="button"
-                                 variant="ghost"
-                                 className="text-red-500 h-8 w-8 p-0"
-                                 onClick={() => removeInstruction(index)}
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                     control={control}
+                     name="prepTime"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Prep Time (minutes) *</FormLabel>
+                           <FormControl>
+                              <Input
+                                 type="number"
+                                 {...field}
+                                 onChange={(e) => field.onChange(Number(e.target.value))}
                                  disabled={isLoading}
-                              >
-                                 ×
-                              </Button>
-                           </div>
-                        </li>
-                     ))}
-                  </ul>
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={control}
+                     name="cookTime"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Cook Time (minutes) *</FormLabel>
+                           <FormControl>
+                              <Input
+                                 type="number"
+                                 {...field}
+                                 onChange={(e) => field.onChange(Number(e.target.value))}
+                                 disabled={isLoading}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+
+                  <FormField
+                     control={control}
+                     name="servings"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Servings *</FormLabel>
+                           <FormControl>
+                              <Input
+                                 type="number"
+                                 {...field}
+                                 onChange={(e) => field.onChange(Number(e.target.value))}
+                                 disabled={isLoading}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
                </div>
-            )}
+            </div>
 
-            {errors.instructions?.root && (
-               <p className="mt-1 text-sm text-red-600">{errors.instructions.root.message}</p>
-            )}
-         </div>
+            {/* Ingredients */}
+            <div className="space-y-4">
+               <h2 className="text-xl font-semibold">Ingredients</h2>
+               <Separator className="my-4" />
 
-         {/* Image URL */}
-         <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
-               Image URL (optional)
-            </label>
-            <input
-               id="imageUrl"
-               type="url"
-               {...register("imageUrl")}
-               className="w-full p-2 border rounded-md"
-               disabled={isLoading}
-            />
-            {errors.imageUrl && <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>}
-         </div>
+               {ingredientFields.map((field, index) => (
+                  <div key={field.id} className="flex items-end gap-2">
+                     <div className="flex-grow">
+                        <Label className="mb-1">Ingredient Name *</Label>
+                        <Input {...register(`ingredients.${index}.name`)} className="w-full" disabled={isLoading} />
+                        {errors.ingredients?.[index]?.name && (
+                           <p className="mt-1 text-sm text-red-600">
+                              {errors.ingredients?.[index]?.name?.message as string}
+                           </p>
+                        )}
+                     </div>
 
-         {/* Submit Button */}
-         <div>
-            <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
-               {isLoading ? "Saving..." : "Save Recipe"}
-            </Button>
-         </div>
-      </form>
+                     <div className="w-24">
+                        <Label className="mb-1">Quantity *</Label>
+                        <Input
+                           type="number"
+                           step="0.01"
+                           {...register(`ingredients.${index}.quantity`)}
+                           className="w-full"
+                           disabled={isLoading}
+                        />
+                        {errors.ingredients?.[index]?.quantity && (
+                           <p className="mt-1 text-sm text-red-600">
+                              {errors.ingredients?.[index]?.quantity?.message as string}
+                           </p>
+                        )}
+                     </div>
+
+                     <div className="w-32">
+                        <Label className="mb-1">Unit *</Label>
+                        <Input {...register(`ingredients.${index}.unit`)} className="w-full" disabled={isLoading} />
+                        {errors.ingredients?.[index]?.unit && (
+                           <p className="mt-1 text-sm text-red-600">
+                              {errors.ingredients?.[index]?.unit?.message as string}
+                           </p>
+                        )}
+                     </div>
+
+                     <Button
+                        type="button"
+                        variant="ghost"
+                        className="text-red-500 h-10 mb-[1px]"
+                        onClick={() => removeIngredient(index)}
+                        disabled={isLoading || ingredientFields.length <= 1}
+                     >
+                        Remove
+                     </Button>
+                  </div>
+               ))}
+
+               <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => appendIngredient({ name: "", quantity: 1, unit: "" })}
+                  disabled={isLoading}
+               >
+                  Add Ingredient
+               </Button>
+
+               {errors.ingredients?.root && (
+                  <p className="mt-1 text-sm text-red-600">{errors.ingredients.root.message}</p>
+               )}
+            </div>
+
+            {/* Instructions */}
+            <div className="space-y-4">
+               <h2 className="text-xl font-semibold">Instructions</h2>
+               <Separator className="my-4" />
+
+               <div>
+                  <Label className="mb-1">Add instruction steps one by one</Label>
+                  <div className="flex gap-2">
+                     <Input
+                        value={instructionInput}
+                        onChange={(e) => setInstructionInput(e.target.value)}
+                        className="flex-grow"
+                        placeholder="Enter an instruction step"
+                        disabled={isLoading}
+                     />
+                     <Button
+                        type="button"
+                        onClick={handleAddInstruction}
+                        disabled={isLoading || !instructionInput.trim()}
+                     >
+                        Add
+                     </Button>
+                  </div>
+               </div>
+
+               {instructionFields.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                     <h3 className="text-md font-medium">Steps:</h3>
+                     <ul className="space-y-2">
+                        {instructionFields.map((field, index) => (
+                           <li key={field.id} className="flex items-center gap-2">
+                              <span className="font-medium">{index + 1}.</span>
+                              <Input
+                                 {...register(`instructions.${index}.value`)}
+                                 className="flex-grow"
+                                 disabled={isLoading}
+                              />
+                              <div className="flex gap-1">
+                                 <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => index > 0 && swapInstructions(index, index - 1)}
+                                    disabled={isLoading || index === 0}
+                                 >
+                                    ↑
+                                 </Button>
+                                 <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() =>
+                                       index < instructionFields.length - 1 && swapInstructions(index, index + 1)
+                                    }
+                                    disabled={isLoading || index === instructionFields.length - 1}
+                                 >
+                                    ↓
+                                 </Button>
+                                 <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="text-red-500 h-8 w-8 p-0"
+                                    onClick={() => removeInstruction(index)}
+                                    disabled={isLoading}
+                                 >
+                                    ×
+                                 </Button>
+                              </div>
+                           </li>
+                        ))}
+                     </ul>
+                  </div>
+               )}
+
+               {errors.instructions?.root && (
+                  <p className="mt-1 text-sm text-red-600">{errors.instructions.root.message}</p>
+               )}
+            </div>
+
+            {/* Image URL */}
+            <div className="space-y-4">
+               <h2 className="text-xl font-semibold">Additional Information</h2>
+               <Separator className="my-4" />
+
+               <FormField
+                  control={control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                     <FormItem>
+                        <FormLabel>Image URL (optional)</FormLabel>
+                        <FormControl>
+                           <Input type="url" {...field} disabled={isLoading} />
+                        </FormControl>
+                        <FormMessage />
+                     </FormItem>
+                  )}
+               />
+            </div>
+
+            {/* Submit Button */}
+            <div>
+               <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
+                  {isLoading ? "Saving..." : "Save Recipe"}
+               </Button>
+            </div>
+         </form>
+      </Form>
    );
 };
