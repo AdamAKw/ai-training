@@ -20,7 +20,7 @@ export default function Home() {
                </Button>
             </Link>
 
-            <Link href="/meal-plans" className="w-full">
+            <Link href="/mealPlans" className="w-full">
                <Button className="w-full h-32 text-lg" variant="outline">
                   <div className="flex flex-col items-center">
                      <span className="text-xl mb-2">🗓️</span>
