@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
+import { getBaseUrl } from "@/lib/utils/url-helpers";
 
 async function getMealPlan(id: string) {
    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/mealPlans/${id}`, {
+      const res = await fetch(`${getBaseUrl()}/api/mealPlans/${id}`, {
          cache: "no-store",
       });
 
@@ -21,7 +22,7 @@ async function getMealPlan(id: string) {
 
 async function getRecipes() {
    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/recipes`, {
+      const res = await fetch(`${getBaseUrl()}/api/recipes`, {
          cache: "no-store",
       });
 

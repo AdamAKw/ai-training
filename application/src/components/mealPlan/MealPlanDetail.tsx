@@ -1,17 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { IMealPlan } from "@/models/mealPlan";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface MealPlanDetailProps {
    mealPlan: IMealPlan;
 }
 
 export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
+   const router = useRouter();
+   const [isCreatingList, setIsCreatingList] = useState(false);
+
    // Grupowanie posiłków według dat
    const mealsByDate = React.useMemo(() => {
       const grouped: Record<string, typeof mealPlan.meals> = {};
@@ -54,6 +59,41 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
    // Create a map to store image error states for each recipe
    const [imgErrorMap, setImgErrorMap] = React.useState<Record<string, boolean>>({});
 
+   // Function to create a shopping list from the meal plan
+   const createShoppingList = async () => {
+      try {
+         setIsCreatingList(true);
+
+         // Call the API to create a shopping list based on the meal plan
+         const response = await fetch(`/api/shoppingList`, {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               name: `${mealPlan.name} - Shopping List`,
+               mealPlan: mealPlan._id,
+               items: [], // The server will populate items from the meal plan recipes
+            }),
+         });
+
+         if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to create shopping list");
+         }
+
+         const newList = await response.json();
+
+         toast.success("Shopping list created successfully");
+         router.push(`/shoppingList?listId=${newList._id}`);
+      } catch (err) {
+         const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+         toast.error(`Failed to create shopping list: ${errorMessage}`);
+      } finally {
+         setIsCreatingList(false);
+      }
+   };
+
    // Function to handle image loading errors
    const handleImageError = (recipeId: string) => {
       setImgErrorMap((prev) => ({
@@ -74,6 +114,9 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
             <div className="space-x-2">
                <Button variant="outline" asChild>
                   <Link href={`/mealPlans/${mealPlan._id}/edit`}>Edytuj plan</Link>
+               </Button>
+               <Button variant="default" onClick={createShoppingList} disabled={isCreatingList}>
+                  {isCreatingList ? "Tworzenie listy..." : "Utwórz listę zakupów"}
                </Button>
             </div>
          </div>

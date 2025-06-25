@@ -1,6 +1,9 @@
+import { getBaseUrl } from "@/lib/utils/url-helpers";
+import ClientPage from "./page.client";
+
 async function getRecipes() {
    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/recipes`, {
+      const res = await fetch(`${getBaseUrl()}/api/recipes`, {
          cache: "no-store",
       });
 
@@ -25,5 +28,3 @@ export default async function NewMealPlanPage() {
       </div>
    );
 }
-
-import ClientPage from "./page.client";

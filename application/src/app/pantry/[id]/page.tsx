@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { IPantryItem } from "@/models/pantryItem";
+import { getBaseUrl } from "@/lib/utils/url-helpers";
 
 // Fetch pantry item from database
 async function getPantryItem(id: string): Promise<IPantryItem | null> {
    try {
       await connectToDatabase();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/pantry/${id}`, {
+      const response = await fetch(`${getBaseUrl()}/api/pantry/${id}`, {
          cache: "no-store",
       });
 
@@ -23,8 +24,9 @@ async function getPantryItem(id: string): Promise<IPantryItem | null> {
    }
 }
 
-export default async function PantryItemPage({ params }: { params: { id: string } }) {
-   const pantryItem = await getPantryItem(params.id);
+export default async function PantryItemPage({ params }: { params: Promise<{ id: string }> }) {
+   const { id } = await params;
+   const pantryItem = await getPantryItem(id);
 
    if (!pantryItem) {
       notFound();

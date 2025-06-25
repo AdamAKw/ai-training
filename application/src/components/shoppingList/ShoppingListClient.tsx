@@ -179,8 +179,13 @@ export function ShoppingList() {
       return (
          <div className="text-center p-6 bg-gray-50 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">No Shopping Lists Yet</h2>
-            <p className="text-gray-600 mb-6">Create a meal plan first to generate a shopping list.</p>
-            <Button onClick={() => router.push("/mealPlans/new")}>Create Meal Plan</Button>
+            <p className="text-gray-600 mb-6">You have several options to create a shopping list:</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+               <Button onClick={() => router.push("/mealPlans")}>From Meal Plan</Button>
+               <Button onClick={() => router.push("/shoppingList/new")} variant="outline">
+                  Create Empty List
+               </Button>
+            </div>
          </div>
       );
    }

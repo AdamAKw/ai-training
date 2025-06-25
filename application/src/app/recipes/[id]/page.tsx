@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { RecipeDetail } from "@/components/recipes/RecipeDetail";
+import { getBaseUrl } from "@/lib/utils/url-helpers";
 
 async function getRecipe(id: string) {
    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/recipes/${id}`, {
+      const response = await fetch(`${getBaseUrl()}/api/recipes/${id}`, {
          cache: "no-store",
       });
 
@@ -21,7 +22,7 @@ async function getRecipe(id: string) {
    }
 }
 
-export default async function RecipeDetailPage({ params }: { params: { id: string } }) {
+export default async function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
    const { id } = await params;
 
    // Fetch recipe data with error handling

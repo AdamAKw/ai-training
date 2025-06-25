@@ -13,4 +13,5 @@ export type ShoppingListItemDocument = IShoppingListItem & {
 export type ShoppingListPatchOperation = 
   | { operation: 'toggle-purchased'; itemId: string; purchased: boolean; autoAddToPantry?: boolean }
   | { operation: 'remove-item'; itemId: string }
-  | { operation: 'transfer-to-pantry'; itemIds?: string[] };
+  | { operation: 'transfer-to-pantry'; itemIds?: string[] }
+  | { operation: 'add-item'; item: Omit<IShoppingListItem, '_id'> };

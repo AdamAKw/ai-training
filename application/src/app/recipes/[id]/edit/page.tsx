@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { RecipeForm, type RecipeFormValues } from "@/components/recipes/RecipeForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -16,18 +16,21 @@ interface ValidationIssue {
    message: string;
 }
 
-export default function EditRecipePage({ params }: { params: { id: string } }) {
+export default function EditRecipePage() {
    const [isLoading, setIsLoading] = useState(true);
    const [isSaving, setIsSaving] = useState(false);
    const [recipe, setRecipe] = useState<RecipeFormValues | null>(null);
    const [error, setError] = useState<string | null>(null);
    const router = useRouter();
+   const params = useParams();
+   const id = params?.id as string;
 
    useEffect(() => {
       const fetchRecipe = async () => {
          try {
+            if (!id) return;
             setIsLoading(true);
-            const response = await fetch(`/api/recipes/${params.id}`);
+            const response = await fetch(`/api/recipes/${id}`);
 
             if (!response.ok) {
                if (response.status === 404) {
@@ -46,14 +49,14 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
       };
 
       fetchRecipe();
-   }, [params.id]);
+   }, [id]);
 
    const handleSubmit = async (data: RecipeFormValues) => {
       try {
          setIsSaving(true);
          setError(null);
 
-         const response = await fetch(`/api/recipes/${params.id}`, {
+         const response = await fetch(`/api/recipes/${id}`, {
             method: "PUT",
             headers: {
                "Content-Type": "application/json",
@@ -74,7 +77,7 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
          }
 
          // Navigate back to recipe details page
-         router.push(`/recipes/${params.id}`);
+         router.push(`/recipes/${id}`);
          router.refresh();
       } catch (err) {
          setError(err instanceof Error ? err.message : "An error occurred");
@@ -120,7 +123,7 @@ export default function EditRecipePage({ params }: { params: { id: string } }) {
          <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Edit Recipe</h1>
             <Button variant="outline" asChild>
-               <Link href={`/recipes/${params.id}`}>Cancel</Link>
+               <Link href={`/recipes/${id}`}>Cancel</Link>
             </Button>
          </div>
 

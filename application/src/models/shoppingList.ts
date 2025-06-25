@@ -9,11 +9,12 @@ export interface IShoppingListItem {
   purchased: boolean;
   inPantry?: boolean; // Flag to indicate if item is already in the pantry
   recipe?: mongoose.Types.ObjectId; // Reference to recipe that requires this ingredient
+  itemType?: 'meal-plan' | 'pantry-restock'; // Type of shopping item
 }
 
 export interface IShoppingList extends Document {
   name: string;
-  mealPlan: mongoose.Types.ObjectId; // Reference to the meal plan this list is for
+  mealPlan?: mongoose.Types.ObjectId; // Reference to the meal plan this list is for (optional)
   items: IShoppingListItem[];
   createdAt: Date;
   updatedAt: Date;
@@ -27,11 +28,12 @@ export const ShoppingListItemValidation = z.object({
   purchased: z.boolean().default(false),
   inPantry: z.boolean().optional(),
   recipe: z.string().optional(),
+  itemType: z.enum(['meal-plan', 'pantry-restock']).optional().default('meal-plan'),
 });
 
 export const ShoppingListValidation = z.object({
   name: z.string().min(2, "Shopping list name must be at least 2 characters"),
-  mealPlan: z.string().min(1, "Meal plan reference is required"),
+  mealPlan: z.string().optional(), // Made optional
   items: z.array(ShoppingListItemValidation),
 });
 
@@ -42,13 +44,14 @@ const ShoppingListItemSchemaMongoose = new Schema<IShoppingListItem>({
   unit: { type: String, required: true },
   purchased: { type: Boolean, default: false },
   inPantry: { type: Boolean, default: false },
-  recipe: { type: Schema.Types.ObjectId, ref: 'Recipe' }
+  recipe: { type: Schema.Types.ObjectId, ref: 'Recipe' },
+  itemType: { type: String, enum: ['meal-plan', 'pantry-restock'], default: 'meal-plan' }
 });
 
 const ShoppingListSchemaMongoose = new Schema<IShoppingList>(
   {
     name: { type: String, required: true },
-    mealPlan: { type: Schema.Types.ObjectId, ref: 'MealPlan', required: true },
+    mealPlan: { type: Schema.Types.ObjectId, ref: 'MealPlan', required: false },
     items: { type: [ShoppingListItemSchemaMongoose], required: true }
   }, 
   { timestamps: true }

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingListType } from "./ShoppingListClient";
 import { ShoppingListItem } from "./ShoppingListItem";
+import { AddShoppingItem } from "./AddShoppingItem";
 
 interface ShoppingListDetailProps {
    list: ShoppingListType;
@@ -21,6 +22,7 @@ export function ShoppingListDetail({
 }: ShoppingListDetailProps) {
    const [activeFilter, setActiveFilter] = useState<"all" | "remaining" | "purchased" | "in-pantry">("all");
    const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+   const [showAddItem, setShowAddItem] = useState(false);
 
    // Get unique categories from items (using recipe names)
    const categories = Array.from(
@@ -52,11 +54,14 @@ export function ShoppingListDetail({
          <div className="flex justify-between items-start mb-6">
             <div>
                <h2 className="text-2xl font-bold">{list.name}</h2>
-               <p className="text-gray-600">{typeof list.mealPlan === "object" ? list.mealPlan.name : "Meal Plan"}</p>
+               <p className="text-gray-600">{typeof list.mealPlan === "object" ? list.mealPlan.name : "Custom List"}</p>
             </div>
-            <div>
+            <div className="space-x-2">
                <Button variant="outline" onClick={onTransferToPantry} disabled={purchasedItems === 0}>
                   Transfer to Pantry
+               </Button>
+               <Button variant="outline" onClick={() => setShowAddItem(!showAddItem)}>
+                  {showAddItem ? "Hide Form" : "Add Item"}
                </Button>
             </div>
          </div>
@@ -116,6 +121,18 @@ export function ShoppingListDetail({
             </div>
          )}
 
+         {showAddItem && (
+            <div className="my-4">
+               <AddShoppingItem
+                  listId={list._id}
+                  onItemAdded={() => {
+                     // Set a visual indicator here if needed
+                     setShowAddItem(false); // Optionally hide the form after adding
+                  }}
+               />
+            </div>
+         )}
+
          <div className="mt-6 space-y-2">
             {filteredItems.length > 0 ? (
                filteredItems.map((item) => (
@@ -128,6 +145,17 @@ export function ShoppingListDetail({
                ))
             ) : (
                <div className="text-center py-8 text-gray-500">No items match the current filters</div>
+            )}
+         </div>
+
+         <div className="mt-6">
+            <Button onClick={() => setShowAddItem((prev) => !prev)} className="w-full">
+               {showAddItem ? "Cancel" : "Add Shopping Item"}
+            </Button>
+            {showAddItem && (
+               <div className="mt-4">
+                  <AddShoppingItem listId={list._id} onItemAdded={() => setShowAddItem(false)} />
+               </div>
             )}
          </div>
       </div>

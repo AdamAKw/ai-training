@@ -218,6 +218,28 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
           return item;
         }) as unknown as typeof shoppingList.items;
       }
+    } else if (body.operation === 'add-item') {
+      // Add a new item to the shopping list
+      const { item } = body;
+      
+      if (!item.ingredient || !item.quantity || !item.unit) {
+        return createErrorResponse('Invalid item data - ingredient, quantity, and unit are required', 400);
+      }
+      
+      // Check if item is in pantry
+      const pantryItems = await PantryItem.find();
+      const matchingPantryItem = pantryItems.find(
+        pantryItem => 
+          pantryItem.name.toLowerCase() === item.ingredient.toLowerCase() &&
+          pantryItem.unit.toLowerCase() === item.unit.toLowerCase() &&
+          pantryItem.quantity >= item.quantity
+      );
+      
+      // Add the new item with proper inPantry status
+      shoppingList.items.push({
+        ...item,
+        inPantry: !!matchingPantryItem
+      });
     }
     
     // Save the updated shopping list

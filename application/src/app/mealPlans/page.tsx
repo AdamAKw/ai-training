@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MealPlansClient } from "@/components/mealPlan/MealPlansClient";
 import { IMealPlan } from "@/models/mealPlan";
+import { getBaseUrl } from "@/lib/utils/url-helpers";
 
 async function getMealPlans() {
    try {
       // Używamy bezpośredniego URL API na serwerze
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/mealPlans`, {
+      const res = await fetch(`${getBaseUrl()}/api/mealPlans`, {
          cache: "no-store",
       });
 

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MealPlanDetail } from "@/components/mealPlan/MealPlanDetail";
 import { IMealPlan } from "@/models/mealPlan";
+import { getBaseUrl } from "@/lib/utils/url-helpers";
 
 async function getMealPlan(id: string): Promise<IMealPlan | null> {
    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/mealPlans/${id}`, {
+      const res = await fetch(`${getBaseUrl()}/api/mealPlans/${id}`, {
          cache: "no-store",
       });
 

@@ -3,9 +3,11 @@ import { z } from 'zod';
 
 // Define TypeScript interfaces
 export interface IIngredient {
+  _id?: string;  // Optional ID for better identification
   name: string;
   quantity: number;
   unit: string;
+  category?: string; // Added for better pantry matching
 }
 
 export interface IRecipe extends Document {
@@ -24,9 +26,11 @@ export interface IRecipe extends Document {
 
 // Define Zod schema for validation
 export const IngredientValidation = z.object({
+  _id: z.string().optional(),
   name: z.string().min(1, "Ingredient name is required"),
   quantity: z.number().positive("Quantity must be positive"),
   unit: z.string().min(1, "Unit is required"),
+  category: z.string().optional(),
 });
 
 export const RecipeValidation = z.object({
@@ -43,9 +47,11 @@ export const RecipeValidation = z.object({
 
 // Define Mongoose schema
 const IngredientSchemaMongoose = new Schema<IIngredient>({
+  _id: { type: Schema.Types.ObjectId, auto: true },
   name: { type: String, required: true },
   quantity: { type: Number, required: true },
-  unit: { type: String, required: true }
+  unit: { type: String, required: true },
+  category: { type: String }
 });
 
 const RecipeSchemaMongoose = new Schema<IRecipe>(
