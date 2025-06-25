@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -20,6 +20,64 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+
+// ImageWithFallback component for handling image loading errors
+interface ImageWithFallbackProps {
+   src: string;
+   fallbackSrc: string;
+   alt: string;
+   fill?: boolean;
+   className?: string;
+   sizes?: string;
+}
+
+function ImageWithFallback({
+   src,
+   fallbackSrc,
+   alt,
+   fill = false,
+   className = "",
+   sizes,
+   ...props
+}: ImageWithFallbackProps & Omit<React.ComponentProps<typeof Image>, "src" | "alt" | "fill">) {
+   const [imgSrc, setImgSrc] = useState<string>(src);
+   const [hasError, setHasError] = useState<boolean>(false);
+
+   // Initialize with fallback if the URL is invalid
+   useEffect(() => {
+      // Check if the image URL is valid and handle domain issues
+      const isValidImageDomain = () => {
+         try {
+            // Check if URL is valid
+            new URL(src);
+
+            // If we get here, the URL is valid, so we use the provided src
+            return true;
+         } catch {
+            // URL is not valid, use fallback
+            console.warn(`Invalid image URL: ${src}`);
+            return false;
+         }
+      };
+
+      if (!src || !isValidImageDomain()) {
+         setImgSrc(fallbackSrc);
+         setHasError(true);
+      }
+   }, [src, fallbackSrc]);
+
+   const handleError = () => {
+      if (!hasError) {
+         console.warn(`Failed to load image: ${imgSrc}`);
+         setImgSrc(fallbackSrc);
+         setHasError(true);
+      }
+   };
+
+   return (
+      <Image src={imgSrc} alt={alt} fill={fill} className={className} sizes={sizes} onError={handleError} {...props} />
+   );
+}
 
 // Define the Recipe interface based on our model
 interface Ingredient {
@@ -134,21 +192,31 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
          </Card>
 
          {/* Recipe Image (if available) */}
-         {recipe.imageUrl && (
-            <Card className="mb-8 overflow-hidden">
-               <CardContent className="p-0">
-                  <AspectRatio ratio={16 / 9}>
-                     <Image
+         <Card className="mb-8 overflow-hidden">
+            <CardContent className="p-0">
+               <AspectRatio ratio={16 / 9}>
+                  {recipe.imageUrl ? (
+                     // Try to load the image, fallback to placeholder on error
+                     <ImageWithFallback
                         src={recipe.imageUrl}
                         alt={recipe.name}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 800px"
+                        fallbackSrc="/images/recipe-placeholder.svg"
                      />
-                  </AspectRatio>
-               </CardContent>
-            </Card>
-         )}
+                  ) : (
+                     <Image
+                        src="/images/recipe-placeholder.svg"
+                        alt="No image available"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 800px"
+                     />
+                  )}
+               </AspectRatio>
+            </CardContent>
+         </Card>
 
          {/* Recipe Info */}
          <div className="grid grid-cols-3 gap-4 mb-8 text-center">

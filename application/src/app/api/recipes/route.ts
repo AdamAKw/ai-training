@@ -1,19 +1,18 @@
 import { Recipe, RecipeValidation } from '@/models/recipe';
 import { connectToDatabase } from '@/lib/db/mongoose';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { createSuccessResponse, createErrorResponse } from '@/lib/utils/api-helpers';
+import { convertZodIssuesToValidationIssues } from '@/lib/utils/validation-helpers';
 
 export async function GET() {
   try {
     await connectToDatabase();
     const recipes = await Recipe.find({}).sort({ createdAt: -1 });
     
-    return NextResponse.json({ recipes }, { status: 200 });
+    return createSuccessResponse({ recipes });
   } catch (error) {
     console.error('Error fetching recipes:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch recipes' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to fetch recipes', 500);
   }
 }
 
@@ -27,9 +26,11 @@ export async function POST(request: NextRequest) {
     const validatedData = RecipeValidation.safeParse(body);
     
     if (!validatedData.success) {
-      return NextResponse.json(
-        { error: 'Invalid recipe data', issues: validatedData.error.issues },
-        { status: 400 }
+      const validationIssues = convertZodIssuesToValidationIssues(validatedData.error.issues);
+      return createErrorResponse(
+        'Invalid recipe data', 
+        400, 
+        validationIssues
       );
     }
     
@@ -37,12 +38,9 @@ export async function POST(request: NextRequest) {
     const recipe = new Recipe(validatedData.data);
     await recipe.save();
     
-    return NextResponse.json({ recipe }, { status: 201 });
+    return createSuccessResponse({ recipe }, 201);
   } catch (error) {
     console.error('Error creating recipe:', error);
-    return NextResponse.json(
-      { error: 'Failed to create recipe' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to create recipe', 500);
   }
 }

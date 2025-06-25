@@ -1,9 +1,11 @@
 import { Recipe, RecipeValidation } from '@/models/recipe';
 import { connectToDatabase } from '@/lib/db/mongoose';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import mongoose from 'mongoose';
+import { createSuccessResponse, createErrorResponse } from '@/lib/utils/api-helpers';
+import { convertZodIssuesToValidationIssues } from '@/lib/utils/validation-helpers';
 
-// Helper function to validate MongoDB ID
+// Helper function to validate MongoDB ID (using mongoose directly for compatibility)
 const isValidObjectId = (id: string) => mongoose.Types.ObjectId.isValid(id);
 
 export async function GET(
@@ -14,29 +16,20 @@ export async function GET(
     const { id } = params;
     
     if (!isValidObjectId(id)) {
-      return NextResponse.json(
-        { error: 'Invalid recipe ID format' },
-        { status: 400 }
-      );
+      return createErrorResponse('Invalid recipe ID format', 400);
     }
     
     await connectToDatabase();
     const recipe = await Recipe.findById(id);
     
     if (!recipe) {
-      return NextResponse.json(
-        { error: 'Recipe not found' },
-        { status: 404 }
-      );
+      return createErrorResponse('Recipe not found', 404);
     }
     
-    return NextResponse.json({ recipe }, { status: 200 });
+    return createSuccessResponse({ recipe });
   } catch (error) {
     console.error('Error fetching recipe:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch recipe' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to fetch recipe', 500);
   }
 }
 
@@ -48,10 +41,7 @@ export async function PUT(
     const { id } = params;
     
     if (!isValidObjectId(id)) {
-      return NextResponse.json(
-        { error: 'Invalid recipe ID format' },
-        { status: 400 }
-      );
+      return createErrorResponse('Invalid recipe ID format', 400);
     }
     
     await connectToDatabase();
@@ -61,10 +51,8 @@ export async function PUT(
     const validatedData = RecipeValidation.safeParse(body);
     
     if (!validatedData.success) {
-      return NextResponse.json(
-        { error: 'Invalid recipe data', issues: validatedData.error.issues },
-        { status: 400 }
-      );
+      const validationIssues = convertZodIssuesToValidationIssues(validatedData.error.issues);
+      return createErrorResponse('Invalid recipe data', 400, validationIssues);
     }
     
     // Update recipe
@@ -75,19 +63,13 @@ export async function PUT(
     );
     
     if (!updatedRecipe) {
-      return NextResponse.json(
-        { error: 'Recipe not found' },
-        { status: 404 }
-      );
+      return createErrorResponse('Recipe not found', 404);
     }
     
-    return NextResponse.json({ recipe: updatedRecipe }, { status: 200 });
+    return createSuccessResponse({ recipe: updatedRecipe });
   } catch (error) {
     console.error('Error updating recipe:', error);
-    return NextResponse.json(
-      { error: 'Failed to update recipe' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to update recipe', 500);
   }
 }
 
@@ -99,31 +81,19 @@ export async function DELETE(
     const { id } = params;
     
     if (!isValidObjectId(id)) {
-      return NextResponse.json(
-        { error: 'Invalid recipe ID format' },
-        { status: 400 }
-      );
+      return createErrorResponse('Invalid recipe ID format', 400);
     }
     
     await connectToDatabase();
     const deletedRecipe = await Recipe.findByIdAndDelete(id);
     
     if (!deletedRecipe) {
-      return NextResponse.json(
-        { error: 'Recipe not found' },
-        { status: 404 }
-      );
+      return createErrorResponse('Recipe not found', 404);
     }
     
-    return NextResponse.json(
-      { message: 'Recipe deleted successfully' },
-      { status: 200 }
-    );
+    return createSuccessResponse({ message: 'Recipe deleted successfully' });
   } catch (error) {
     console.error('Error deleting recipe:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete recipe' },
-      { status: 500 }
-    );
+    return createErrorResponse('Failed to delete recipe', 500);
   }
 }

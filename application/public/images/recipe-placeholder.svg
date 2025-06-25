@@ -1,0 +1,6 @@
+<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="450" fill="#f0f0f0"/>
+  <text x="400" y="225" font-family="Arial" font-size="24" text-anchor="middle" fill="#888888">Recipe Image Placeholder</text>
+  <path d="M380 180 C420 140, 460 180, 420 220 C460 260, 420 300, 380 260 C340 300, 300 260, 340 220 C300 180, 340 140, 380 180" fill="#aaaaaa"/>
+  <circle cx="380" cy="220" r="10" fill="#f0f0f0"/>
+</svg>

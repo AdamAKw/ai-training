@@ -22,7 +22,7 @@ async function getRecipe(id: string) {
 }
 
 export default async function RecipeDetailPage({ params }: { params: { id: string } }) {
-   const id = params.id;
+   const { id } = await params;
 
    // Fetch recipe data with error handling
    const recipeData = await getRecipe(id).catch(() => null);
