@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,6 +51,17 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
       }
    };
 
+   // Create a map to store image error states for each recipe
+   const [imgErrorMap, setImgErrorMap] = React.useState<Record<string, boolean>>({});
+
+   // Function to handle image loading errors
+   const handleImageError = (recipeId: string) => {
+      setImgErrorMap((prev) => ({
+         ...prev,
+         [recipeId]: true,
+      }));
+   };
+
    return (
       <div className="space-y-8">
          <div className="flex flex-col space-y-3 sm:flex-row sm:justify-between sm:space-y-0">
@@ -81,11 +93,20 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
                         const recipeImage =
                            recipeObject && "imageUrl" in recipeObject ? String(recipeObject.imageUrl) : null;
 
+                        // Check if this image has errored using the map
+                        const hasImgError = imgErrorMap[recipeId] || false;
+
                         return (
                            <Card key={idx} className="overflow-hidden">
                               <div className="relative h-40">
-                                 {recipeImage ? (
-                                    <Image src={recipeImage} alt={recipeName} fill className="object-cover" />
+                                 {recipeImage && !hasImgError ? (
+                                    <Image
+                                       src={recipeImage}
+                                       alt={recipeName}
+                                       fill
+                                       className="object-cover"
+                                       onError={() => handleImageError(recipeId)}
+                                    />
                                  ) : (
                                     <div className="h-full bg-muted flex items-center justify-center">
                                        <span className="text-muted-foreground">Brak zdjęcia</span>

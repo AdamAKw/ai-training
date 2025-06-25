@@ -21,15 +21,15 @@ export interface IMealPlan extends Document {
 // Define Zod schema for validation
 export const MealPlanItemValidation = z.object({
   recipe: z.string().min(1, "Recipe reference is required"),
-  date: z.date(),
+  date: z.string().datetime({ message: "Invalid date format" }),
   mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack', 'other']),
   servings: z.number().positive("Servings must be positive"),
 });
 
 export const MealPlanValidation = z.object({
   name: z.string().min(2, "Meal plan name must be at least 2 characters"),
-  startDate: z.date(),
-  endDate: z.date(),
+  startDate: z.string().datetime({ message: "Invalid start date format" }),
+  endDate: z.string().datetime({ message: "Invalid end date format" }),
   meals: z.array(MealPlanItemValidation),
 });
 

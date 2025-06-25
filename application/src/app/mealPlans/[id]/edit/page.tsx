@@ -37,8 +37,9 @@ async function getRecipes() {
    }
 }
 
-export default async function EditMealPlanPage({ params }: { params: { id: string } }) {
-   const [mealPlan, recipes] = await Promise.all([getMealPlan(params.id), getRecipes()]);
+export default async function EditMealPlanPage({ params }: { params: Promise<{ id: string }> }) {
+   const { id } = await params;
+   const [mealPlan, recipes] = await Promise.all([getMealPlan(id), getRecipes()]);
 
    if (!mealPlan) {
       notFound();

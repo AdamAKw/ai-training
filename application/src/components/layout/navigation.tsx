@@ -16,9 +16,9 @@ export function Navigation() {
                <Button variant="ghost">Plany posiłków</Button>
             </Link>
             <Link href="/pantry">
-               <Button variant="ghost">Spiżarnia</Button>
+               <Button variant="ghost">Spiżarka</Button>
             </Link>
-            <Link href="/shopping-list">
+            <Link href="/shoppingList">
                <Button variant="ghost">Lista zakupów</Button>
             </Link>
          </div>

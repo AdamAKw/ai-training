@@ -7,6 +7,7 @@ export interface IShoppingListItem {
   quantity: number;
   unit: string;
   purchased: boolean;
+  inPantry?: boolean; // Flag to indicate if item is already in the pantry
   recipe?: mongoose.Types.ObjectId; // Reference to recipe that requires this ingredient
 }
 
@@ -24,6 +25,7 @@ export const ShoppingListItemValidation = z.object({
   quantity: z.number().positive("Quantity must be positive"),
   unit: z.string().min(1, "Unit is required"),
   purchased: z.boolean().default(false),
+  inPantry: z.boolean().optional(),
   recipe: z.string().optional(),
 });
 
@@ -39,6 +41,7 @@ const ShoppingListItemSchemaMongoose = new Schema<IShoppingListItem>({
   quantity: { type: Number, required: true },
   unit: { type: String, required: true },
   purchased: { type: Boolean, default: false },
+  inPantry: { type: Boolean, default: false },
   recipe: { type: Schema.Types.ObjectId, ref: 'Recipe' }
 });
 

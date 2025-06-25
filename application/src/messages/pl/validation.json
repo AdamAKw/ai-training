@@ -1,0 +1,47 @@
+{
+   "common": {
+      "required": "To pole jest wymagane",
+      "invalidValue": "Nieprawidłowa wartość"
+   },
+   "mealPlan": {
+      "name": {
+         "required": "Nazwa planu jest wymagana",
+         "minLength": "Nazwa planu musi mieć co najmniej {min} znaki"
+      },
+      "dates": {
+         "startDateRequired": "Data rozpoczęcia jest wymagana",
+         "endDateRequired": "Data zakończenia jest wymagana",
+         "endDateAfterStartDate": "Data zakończenia musi być późniejsza niż data rozpoczęcia",
+         "invalidDate": "Nieprawidłowy format daty"
+      },
+      "meals": {
+         "required": "Plan musi zawierać przynajmniej jeden posiłek",
+         "recipe": {
+            "required": "Przepis jest wymagany",
+            "invalidId": "Nieprawidłowy identyfikator przepisu"
+         },
+         "date": {
+            "required": "Data posiłku jest wymagana",
+            "outsideRange": "Data posiłku musi być w zakresie planu"
+         },
+         "mealType": {
+            "required": "Rodzaj posiłku jest wymagany",
+            "invalid": "Nieprawidłowy rodzaj posiłku"
+         },
+         "servings": {
+            "required": "Liczba porcji jest wymagana",
+            "positive": "Liczba porcji musi być dodatnia"
+         }
+      }
+   },
+   "api": {
+      "errors": {
+         "mealPlanCreation": "Nie udało się utworzyć planu posiłków",
+         "detailedError": "Wystąpił błąd: {message}",
+         "invalidData": "Nieprawidłowe dane planu posiłków",
+         "databaseError": "Błąd bazy danych: {message}",
+         "recipeNotFound": "Przepis o ID {id} nie został znaleziony",
+         "serverError": "Błąd serwera. Prosimy spróbować ponownie później"
+      }
+   }
+}

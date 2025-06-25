@@ -24,8 +24,9 @@ async function getMealPlan(id: string): Promise<IMealPlan | null> {
    }
 }
 
-export default async function MealPlanPage({ params }: { params: { id: string } }) {
-   const mealPlan = await getMealPlan(params.id);
+export default async function MealPlanPage({ params }: { params: Promise<{ id: string }> }) {
+   const { id } = await params;
+   const mealPlan = await getMealPlan(id);
 
    if (!mealPlan) {
       notFound();

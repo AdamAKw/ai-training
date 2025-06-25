@@ -1,0 +1,229 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ShoppingListDetail } from "./ShoppingListDetail";
+// Define types for shopping list data
+export interface ShoppingListItemType {
+   _id: string;
+   ingredient: string;
+   quantity: number;
+   unit: string;
+   purchased: boolean;
+   inPantry?: boolean;
+   recipe?: string;
+}
+
+export interface ShoppingListType {
+   _id: string;
+   name: string;
+   mealPlan: string | { _id: string; name: string };
+   items: ShoppingListItemType[];
+   createdAt: string;
+   updatedAt: string;
+}
+
+export function ShoppingList() {
+   const [lists, setLists] = useState<ShoppingListType[]>([]);
+   const [activeList, setActiveList] = useState<ShoppingListType | null>(null);
+   const [isLoading, setIsLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+   const router = useRouter();
+
+   // Fetch shopping lists on component mount
+   useEffect(() => {
+      async function fetchShoppingLists() {
+         try {
+            setIsLoading(true);
+            const response = await fetch("/api/shoppingList");
+
+            if (!response.ok) {
+               throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            setLists(data);
+
+            // If there are lists and no active list is selected, select the first one
+            if (data.length > 0 && !activeList) {
+               setActiveList(data[0]);
+            }
+         } catch (err) {
+            setError(err instanceof Error ? err.message : "Failed to fetch shopping lists");
+         } finally {
+            setIsLoading(false);
+         }
+      }
+
+      fetchShoppingLists();
+   }, [activeList]);
+
+   // Handle toggle purchased status of an item
+   const handleTogglePurchased = async (itemId: string, purchased: boolean) => {
+      if (!activeList) return;
+
+      try {
+         const response = await fetch(`/api/shoppingList/${activeList._id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+               operation: "toggle-purchased",
+               itemId,
+               purchased,
+               autoAddToPantry: false, // Change this to a user preference later
+            }),
+         });
+
+         if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+         }
+
+         const updatedList = await response.json();
+         setActiveList(updatedList);
+
+         // Also update the lists array
+         setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
+      } catch (err) {
+         setError(err instanceof Error ? err.message : "Failed to update item");
+      }
+   };
+
+   // Handle removing an item from the shopping list
+   const handleRemoveItem = async (itemId: string) => {
+      if (!activeList) return;
+
+      try {
+         const response = await fetch(`/api/shoppingList/${activeList._id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+               operation: "remove-item",
+               itemId,
+            }),
+         });
+
+         if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+         }
+
+         const updatedList = await response.json();
+         setActiveList(updatedList);
+
+         // Also update the lists array
+         setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
+      } catch (err) {
+         setError(err instanceof Error ? err.message : "Failed to remove item");
+      }
+   };
+
+   // Handle transferring purchased items to the pantry
+   const handleTransferToPantry = async () => {
+      if (!activeList) return;
+
+      try {
+         const response = await fetch(`/api/shoppingList/${activeList._id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+               operation: "transfer-to-pantry",
+            }),
+         });
+
+         if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+         }
+
+         const updatedList = await response.json();
+         setActiveList(updatedList);
+
+         // Also update the lists array
+         setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
+
+         // Show success message
+         alert("Selected items transferred to pantry!");
+      } catch (err) {
+         setError(err instanceof Error ? err.message : "Failed to transfer items to pantry");
+      }
+   };
+
+   // Display loading state
+   if (isLoading && lists.length === 0) {
+      return (
+         <div className="flex justify-center items-center h-64">
+            <p>Loading shopping lists...</p>
+         </div>
+      );
+   }
+
+   // Display error message
+   if (error && lists.length === 0) {
+      return (
+         <div className="bg-red-50 p-4 rounded-md border border-red-200">
+            <p className="text-red-600">Error: {error}</p>
+            <Button
+               onClick={() => {
+                  setError(null);
+                  setIsLoading(true);
+               }}
+               className="mt-2"
+            >
+               Try Again
+            </Button>
+         </div>
+      );
+   }
+
+   // Display empty state
+   if (lists.length === 0) {
+      return (
+         <div className="text-center p-6 bg-gray-50 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">No Shopping Lists Yet</h2>
+            <p className="text-gray-600 mb-6">Create a meal plan first to generate a shopping list.</p>
+            <Button onClick={() => router.push("/mealPlans/new")}>Create Meal Plan</Button>
+         </div>
+      );
+   }
+
+   return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+         <div className="lg:col-span-1">
+            <h2 className="text-xl font-medium mb-4">Your Shopping Lists</h2>
+            <div className="space-y-2">
+               {lists.map((list) => (
+                  <div
+                     key={list._id}
+                     className={`p-3 rounded-md cursor-pointer transition-colors ${
+                        activeList?._id === list._id ? "bg-primary text-white" : "bg-gray-100 hover:bg-gray-200"
+                     }`}
+                     onClick={() => setActiveList(list)}
+                  >
+                     <h3 className="font-medium">{list.name}</h3>
+                     <p className="text-sm opacity-80">
+                        {typeof list.mealPlan === "object" ? list.mealPlan.name : "Meal Plan"}
+                     </p>
+                     <p className="text-sm mt-1">
+                        {list.items.length} items • {list.items.filter((i) => i.purchased).length} purchased
+                     </p>
+                  </div>
+               ))}
+            </div>
+         </div>
+
+         <div className="lg:col-span-2">
+            {activeList ? (
+               <ShoppingListDetail
+                  list={activeList}
+                  onTogglePurchased={handleTogglePurchased}
+                  onRemoveItem={handleRemoveItem}
+                  onTransferToPantry={handleTransferToPantry}
+               />
+            ) : (
+               <div className="bg-gray-50 p-6 rounded-lg text-center">
+                  <p>Select a shopping list to view details</p>
+               </div>
+            )}
+         </div>
+      </div>
+   );
+}

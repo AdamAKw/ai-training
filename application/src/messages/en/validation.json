@@ -1,0 +1,47 @@
+{
+   "common": {
+      "required": "This field is required",
+      "invalidValue": "Invalid value"
+   },
+   "mealPlan": {
+      "name": {
+         "required": "Meal plan name is required",
+         "minLength": "Meal plan name must be at least {min} characters"
+      },
+      "dates": {
+         "startDateRequired": "Start date is required",
+         "endDateRequired": "End date is required",
+         "endDateAfterStartDate": "End date must be after start date",
+         "invalidDate": "Invalid date format"
+      },
+      "meals": {
+         "required": "Plan must include at least one meal",
+         "recipe": {
+            "required": "Recipe is required",
+            "invalidId": "Invalid recipe ID"
+         },
+         "date": {
+            "required": "Meal date is required",
+            "outsideRange": "Meal date must be within plan date range"
+         },
+         "mealType": {
+            "required": "Meal type is required",
+            "invalid": "Invalid meal type"
+         },
+         "servings": {
+            "required": "Number of servings is required",
+            "positive": "Number of servings must be positive"
+         }
+      }
+   },
+   "api": {
+      "errors": {
+         "mealPlanCreation": "Failed to create meal plan",
+         "detailedError": "An error occurred: {message}",
+         "invalidData": "Invalid meal plan data",
+         "databaseError": "Database error: {message}",
+         "recipeNotFound": "Recipe with ID {id} was not found",
+         "serverError": "Server error. Please try again later"
+      }
+   }
+}
