@@ -139,6 +139,9 @@
       }
    },
    "mealPlan": {
+      "title": "Meal Plans",
+      "description": "Manage your meal plans and organize meals for the entire week.",
+      "newPlan": "New Plan",
       "name": {
          "label": "Plan Name",
          "required": "Meal plan name is required",

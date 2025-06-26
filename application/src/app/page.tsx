@@ -1,20 +1,25 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CurrentMealPlan } from "@/components/home/CurrentMealPlan";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
+   const t = useTranslations("home");
+
    return (
       <div className="space-y-6">
          <CurrentMealPlan />
 
          <div className="mt-8">
-            <h2 className="text-2xl font-semibold mb-4">Szybka nawigacja</h2>
+            <h2 className="text-2xl font-semibold mb-4">{t("quickNavigation")}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                <Link href="/recipes" className="w-full">
                   <Card>
                      <CardContent className="p-4 flex flex-col items-center justify-center h-24">
                         <span className="text-xl mb-1">📝</span>
-                        <span className="text-sm font-medium">Przepisy</span>
+                        <span className="text-sm font-medium">{t("navigation.recipes")}</span>
                      </CardContent>
                   </Card>
                </Link>
@@ -23,7 +28,7 @@ export default function Home() {
                   <Card>
                      <CardContent className="p-4 flex flex-col items-center justify-center h-24">
                         <span className="text-xl mb-1">🗓️</span>
-                        <span className="text-sm font-medium">Plany posiłków</span>
+                        <span className="text-sm font-medium">{t("navigation.mealPlans")}</span>
                      </CardContent>
                   </Card>
                </Link>
@@ -32,7 +37,7 @@ export default function Home() {
                   <Card>
                      <CardContent className="p-4 flex flex-col items-center justify-center h-24">
                         <span className="text-xl mb-1">🥫</span>
-                        <span className="text-sm font-medium">Spiżarnia</span>
+                        <span className="text-sm font-medium">{t("navigation.pantry")}</span>
                      </CardContent>
                   </Card>
                </Link>
@@ -41,7 +46,7 @@ export default function Home() {
                   <Card>
                      <CardContent className="p-4 flex flex-col items-center justify-center h-24">
                         <span className="text-xl mb-1">🛒</span>
-                        <span className="text-sm font-medium">Listy zakupów</span>
+                        <span className="text-sm font-medium">{t("navigation.shoppingLists")}</span>
                      </CardContent>
                   </Card>
                </Link>

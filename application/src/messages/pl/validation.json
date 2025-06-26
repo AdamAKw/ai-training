@@ -139,6 +139,9 @@
       }
    },
    "mealPlan": {
+      "title": "Plany posiłków",
+      "description": "Zarządzaj swoimi planami posiłków i organizuj posiłki na cały tydzień.",
+      "newPlan": "Nowy plan",
       "name": {
          "label": "Nazwa planu",
          "required": "Nazwa planu jest wymagana",

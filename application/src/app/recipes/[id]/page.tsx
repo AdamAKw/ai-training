@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { RecipeDetail } from "@/components/recipes/RecipeDetail";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
-
+export const dynamic = 'force-dynamic';
 async function getRecipe(id: string) {
    try {
       const response = await fetch(`${getBaseUrl()}/api/recipes/${id}`, {

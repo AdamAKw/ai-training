@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { MealPlansClient } from "@/components/mealPlan/MealPlansClient";
 import { IMealPlan } from "@/models/mealPlan";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
-export const dynamic = 'force-dynamic'
 
 async function getMealPlans() {
    try {
@@ -16,7 +15,6 @@ async function getMealPlans() {
 
       if (!res.ok) {
          throw new Error("Nie udało się pobrać planów posiłków");
-         return [];
       }
 
       const data = await res.json();
@@ -35,13 +33,11 @@ export default async function MealPlansPage() {
       <div className="container py-10 max-w-7xl">
          <div className="flex justify-between items-center mb-8">
             <div>
-               <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-               <p className="text-muted-foreground">
-                  {t('description')}
-               </p>
+               <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+               <p className="text-muted-foreground">{t("description")}</p>
             </div>
             <Button asChild>
-               <Link href="/mealPlans/new">{t('newPlan')}</Link>
+               <Link href="/mealPlans/new">{t("newPlan")}</Link>
             </Button>
          </div>
 

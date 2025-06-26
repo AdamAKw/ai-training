@@ -2,30 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { formatDate } from "@/lib/utils";
-import { IngredientAvailability } from "@/components/recipes/IngredientAvailability";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatDate } from "@/lib/utils";
 import { IMealPlan } from "@/models/mealPlan";
-import { IIngredient } from "@/models/recipe";
 import { IPantryItem } from "@/models/pantryItem";
+import { MealCard } from "./MealCard";
+import { IIngredient } from "@/models/recipe";
 
 export function CurrentMealPlan() {
    const [isLoading, setIsLoading] = useState(true);
    const [currentMealPlan, setCurrentMealPlan] = useState<IMealPlan | null>(null);
    const [pantryItems, setPantryItems] = useState<IPantryItem[]>([]);
-   const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
-
-   // Function to handle image loading errors
-   const handleImageError = (recipeId: string) => {
-      setImgErrorMap((prev) => ({
-         ...prev,
-         [recipeId]: true,
-      }));
-   };
 
    // Get the current meal plan and pantry items
    useEffect(() => {
@@ -80,6 +69,40 @@ export function CurrentMealPlan() {
       fetchData();
    }, []);
 
+   // Function to toggle meal completion status
+   const toggleMealCompletion = async (mealPlanId: string, mealIndex: number, isCurrentlyCompleted: boolean) => {
+      if (!mealPlanId) return;
+
+      try {
+         const url = `/api/mealPlans/${mealPlanId}/meals/${mealIndex}/complete`;
+         const method = isCurrentlyCompleted ? "DELETE" : "POST";
+
+         const response = await fetch(url, { method });
+         const data = await response.json();
+
+         if (!response.ok) {
+            throw new Error(data.error || "Failed to update meal status");
+         }
+
+         // Refresh the meal plan data
+         const detailResponse = await fetch(`/api/mealPlans/${mealPlanId}`);
+         if (detailResponse.ok) {
+            const detailData = await detailResponse.json();
+            setCurrentMealPlan(detailData.mealPlan);
+         }
+
+         // Refresh pantry data to reflect changes
+         const pantryResponse = await fetch("/api/pantry");
+         const pantryData = await pantryResponse.json();
+         if (pantryResponse.ok) {
+            setPantryItems(pantryData.pantryItems || []);
+         }
+      } catch (error) {
+         console.error("Error toggling meal completion:", error);
+         // You might want to show a toast notification here
+      }
+   };
+
    // Group meals by date
    // Define a type for a meal with populated recipe
    type MealRecipePopulated = {
@@ -98,6 +121,8 @@ export function CurrentMealPlan() {
       date: Date | string;
       mealType: "breakfast" | "lunch" | "dinner" | "snack" | "other";
       servings: number;
+      isCompleted?: boolean;
+      completedAt?: Date;
    };
 
    const mealsByDate =
@@ -117,21 +142,6 @@ export function CurrentMealPlan() {
       const dateB = new Date(b.split(".").reverse().join("-"));
       return dateA.getTime() - dateB.getTime();
    });
-
-   const getMealTypeLabel = (mealType: string) => {
-      switch (mealType) {
-         case "breakfast":
-            return "Śniadanie";
-         case "lunch":
-            return "Lunch";
-         case "dinner":
-            return "Obiad";
-         case "snack":
-            return "Przekąska";
-         default:
-            return "Inne";
-      }
-   };
 
    // Function to get recipe details
    const getRecipeDetails = (meal: MealWithRecipeData) => {
@@ -163,13 +173,7 @@ export function CurrentMealPlan() {
                <Skeleton className="h-8 w-1/2" />
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[...Array(3)].map((_, i) => (
-                     <Card key={i} className="overflow-hidden">
-                        <Skeleton className="h-40 w-full" />
-                        <CardContent className="p-4">
-                           <Skeleton className="h-6 w-3/4 mb-2" />
-                           <Skeleton className="h-4 w-1/2" />
-                        </CardContent>
-                     </Card>
+                     <Skeleton key={i} className="h-40 w-full" />
                   ))}
                </div>
             </div>
@@ -214,107 +218,66 @@ export function CurrentMealPlan() {
          </div>
 
          <div className="space-y-6">
-            {sortedDates.map((date) => (
-               <div key={date} className="space-y-3">
-                  <h2 className="text-xl font-semibold">{date}</h2>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                     {mealsByDate[date]
-                        .sort((a, b) => {
-                           const mealTypeOrder = { breakfast: 0, lunch: 1, dinner: 2, snack: 3, other: 4 };
-                           return (
-                              mealTypeOrder[a.mealType as keyof typeof mealTypeOrder] -
-                              mealTypeOrder[b.mealType as keyof typeof mealTypeOrder]
-                           );
-                        })
-                        .map((meal, idx) => {
-                           const { recipeId, recipeName, recipeImage, recipeIngredients, recipeInstructions } =
+            {sortedDates.map((date) => {
+               // Prepare recipes for sequential checking for this date
+               const dayMeals = mealsByDate[date].sort((a, b) => {
+                  const mealTypeOrder = { breakfast: 0, lunch: 1, dinner: 2, snack: 3, other: 4 };
+                  return (
+                     mealTypeOrder[a.mealType as keyof typeof mealTypeOrder] -
+                     mealTypeOrder[b.mealType as keyof typeof mealTypeOrder]
+                  );
+               });
+
+               return (
+                  <div key={date} className="space-y-4">
+                     <h2 className="text-xl font-semibold">{date}</h2>
+
+                     {/* Meal cards */}
+                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {dayMeals.map((meal, idx) => {
+                           const { recipeId, recipeName, recipeImage, recipeInstructions, recipeIngredients } =
                               getRecipeDetails(meal);
-                           const hasImgError = imgErrorMap[recipeId] || false;
+                           const isCompleted = meal.isCompleted || false;
+
+                           // Calculate meal index in the full meal plan for API calls
+                           const mealIndex = currentMealPlan.meals.findIndex((m, index) => {
+                              const mDate = new Date(m.date);
+                              const mealDate = new Date(meal.date);
+                              return (
+                                 mDate.getTime() === mealDate.getTime() &&
+                                 m.mealType === meal.mealType &&
+                                 index ===
+                                    sortedDates
+                                       .slice(0, sortedDates.indexOf(date))
+                                       .reduce((acc, d) => acc + mealsByDate[d].length, 0) +
+                                       idx
+                              );
+                           });
 
                            return (
-                              <Card key={idx} className="overflow-hidden">
-                                 <div className="relative h-40">
-                                    {recipeImage && !hasImgError ? (
-                                       <Image
-                                          src={recipeImage}
-                                          alt={recipeName}
-                                          fill
-                                          className="object-cover"
-                                          onError={() => handleImageError(recipeId)}
-                                       />
-                                    ) : (
-                                       <div className="h-full bg-muted flex items-center justify-center">
-                                          <span className="text-muted-foreground">Brak zdjęcia</span>
-                                       </div>
-                                    )}
-                                    <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-1 rounded text-xs">
-                                       {getMealTypeLabel(meal.mealType)}
-                                    </div>
-                                 </div>
-
-                                 <CardHeader>
-                                    <CardTitle className="text-lg">{recipeName}</CardTitle>
-                                 </CardHeader>
-
-                                 <CardContent className="space-y-4">
-                                    {/* Ingredients with availability */}
-                                    {recipeIngredients &&
-                                    Array.isArray(recipeIngredients) &&
-                                    recipeIngredients.length > 0 ? (
-                                       <IngredientAvailability
-                                          ingredients={recipeIngredients}
-                                          pantryItems={pantryItems}
-                                          servings={meal.servings}
-                                       />
-                                    ) : (
-                                       <div className="text-sm text-muted-foreground">
-                                          Brak informacji o składnikach
-                                       </div>
-                                    )}
-
-                                    {/* Instructions (first 2 only) */}
-                                    {recipeInstructions &&
-                                       Array.isArray(recipeInstructions) &&
-                                       recipeInstructions.length > 0 && (
-                                          <div className="space-y-2">
-                                             <h4 className="font-medium text-sm">Kroki:</h4>
-                                             <ol className="list-decimal list-inside text-sm space-y-1">
-                                                {recipeInstructions
-                                                   .slice(0, 2)
-                                                   .map((instruction: string, i: number) => (
-                                                      <li key={i} className="text-sm text-muted-foreground">
-                                                         {instruction.length > 100
-                                                            ? instruction.substring(0, 100) + "..."
-                                                            : instruction}
-                                                      </li>
-                                                   ))}
-                                                {recipeInstructions.length > 2 && (
-                                                   <li className="text-sm italic">
-                                                      ... oraz {recipeInstructions.length - 2} więcej
-                                                   </li>
-                                                )}
-                                             </ol>
-                                          </div>
-                                       )}
-                                 </CardContent>
-
-                                 <CardFooter>
-                                    <div className="w-full flex items-center justify-between">
-                                       <span className="text-sm text-muted-foreground">
-                                          Liczba porcji: {meal.servings}
-                                       </span>
-                                       <Button variant="outline" size="sm" asChild>
-                                          <Link href={`/recipes/${recipeId}`}>Pokaż przepis</Link>
-                                       </Button>
-                                    </div>
-                                 </CardFooter>
-                              </Card>
+                              <MealCard
+                                 key={idx}
+                                 recipeId={recipeId}
+                                 recipeName={recipeName}
+                                 recipeImage={recipeImage}
+                                 recipeInstructions={recipeInstructions}
+                                 recipeIngredients={recipeIngredients}
+                                 mealType={meal.mealType}
+                                 servings={meal.servings}
+                                 isCompleted={isCompleted}
+                                 completedAt={meal.completedAt}
+                                 mealIndex={mealIndex}
+                                 currentMealPlan={currentMealPlan as IMealPlan & { _id: string }}
+                                 onMealStatusChange={toggleMealCompletion}
+                                 pantryItems={pantryItems}
+                              />
                            );
                         })}
+                     </div>
+                     <Separator className="my-6" />
                   </div>
-                  <Separator className="my-6" />
-               </div>
-            ))}
+               );
+            })}
          </div>
       </div>
    );

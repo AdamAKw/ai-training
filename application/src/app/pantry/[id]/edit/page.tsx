@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/db/mongoose";
 import { IPantryItem } from "@/models/pantryItem";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
 import EditPantryClient from "./page.client";
-
+export const dynamic = 'force-dynamic';
 // Fetch pantry item from database
 async function getPantryItem(id: string): Promise<IPantryItem | null> {
    try {

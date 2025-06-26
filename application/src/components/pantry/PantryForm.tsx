@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -29,8 +31,7 @@ export interface PantryFormData {
 
 export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormProps) {
    const router = useRouter();
-   const t = useTranslations("pantry");
-   const tCommon = useTranslations("common");
+   const t = useTranslations();
 
    // Form state
    const [name, setName] = useState(initialData?.name || "");
@@ -44,45 +45,45 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
    // Common units for pantry items
    const unitOptions = [
-      { value: "szt.", label: t("units.szt") },
-      { value: "g", label: t("units.g") },
-      { value: "kg", label: t("units.kg") },
-      { value: "ml", label: t("units.ml") },
-      { value: "l", label: t("units.l") },
-      { value: "łyżka", label: t("units.łyżka") },
-      { value: "łyżeczka", label: t("units.łyżeczka") },
-      { value: "szklanka", label: t("units.szklanka") },
-      { value: "opakowanie", label: t("units.opakowanie") },
+      { value: "szt.", label: t("pantry.units.szt") },
+      { value: "g", label: t("pantry.units.g") },
+      { value: "kg", label: t("pantry.units.kg") },
+      { value: "ml", label: t("pantry.units.ml") },
+      { value: "l", label: t("pantry.units.l") },
+      { value: "łyżka", label: t("pantry.units.łyżka") },
+      { value: "łyżeczka", label: t("pantry.units.łyżeczka") },
+      { value: "szklanka", label: t("pantry.units.szklanka") },
+      { value: "opakowanie", label: t("pantry.units.opakowanie") },
    ];
 
    // Common categories for pantry items
    const categoryOptions = [
-      { value: "warzywa", label: t("categories.warzywa") },
-      { value: "owoce", label: t("categories.owoce") },
-      { value: "mięso", label: t("categories.mięso") },
-      { value: "nabiał", label: t("categories.nabiał") },
-      { value: "pieczywo", label: t("categories.pieczywo") },
-      { value: "przyprawy", label: t("categories.przyprawy") },
-      { value: "napoje", label: t("categories.napoje") },
-      { value: "mrożonki", label: t("categories.mrożonki") },
-      { value: "słodycze", label: t("categories.słodycze") },
-      { value: "konserwy", label: t("categories.konserwy") },
-      { value: "inne", label: t("categories.inne") },
+      { value: "warzywa", label: t("pantry.categories.warzywa") },
+      { value: "owoce", label: t("pantry.categories.owoce") },
+      { value: "mięso", label: t("pantry.categories.mięso") },
+      { value: "nabiał", label: t("pantry.categories.nabiał") },
+      { value: "pieczywo", label: t("pantry.categories.pieczywo") },
+      { value: "przyprawy", label: t("pantry.categories.przyprawy") },
+      { value: "napoje", label: t("pantry.categories.napoje") },
+      { value: "mrożonki", label: t("pantry.categories.mrożonki") },
+      { value: "słodycze", label: t("pantry.categories.słodycze") },
+      { value: "konserwy", label: t("pantry.categories.konserwy") },
+      { value: "inne", label: t("pantry.categories.inne") },
    ];
 
    const validate = () => {
       const newErrors: Record<string, string> = {};
 
       if (!name.trim()) {
-         newErrors.name = t("item.name.required");
+         newErrors.name = t("pantry.item.name.required");
       }
 
       if (quantity <= 0) {
-         newErrors.quantity = t("item.quantity.positive");
+         newErrors.quantity = t("pantry.item.quantity.positive");
       }
 
       if (!unit.trim()) {
-         newErrors.unit = t("item.unit.required");
+         newErrors.unit = t("pantry.item.unit.required");
       }
 
       setErrors(newErrors);
@@ -113,12 +114,12 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
       <form onSubmit={handleSubmit}>
          <Card>
             <CardHeader>
-               <CardTitle>{initialData?._id ? t("form.editTitle") : t("form.addTitle")}</CardTitle>
+               <CardTitle>{initialData?._id ? t("pantry.form.editTitle") : t("pantry.form.addTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                {/* Name field */}
                <div className="space-y-2">
-                  <Label htmlFor="name">{t("item.name.label")}</Label>
+                  <Label htmlFor="name">{t("pantry.item.name.label")}</Label>
                   <Input
                      id="name"
                      value={name}
@@ -132,7 +133,7 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
                {/* Quantity and Unit fields */}
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                     <Label htmlFor="quantity">Ilość</Label>
+                     <Label htmlFor="quantity">{t("pantry.item.quantity.label")}</Label>
                      <Input
                         id="quantity"
                         type="number"
@@ -146,10 +147,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
                   </div>
 
                   <div className="space-y-2">
-                     <Label htmlFor="unit">{t("item.unit.label")}</Label>
+                     <Label htmlFor="unit">{t("pantry.item.unit.label")}</Label>
                      <Select value={unit} onValueChange={setUnit}>
                         <SelectTrigger id="unit" className={errors.unit ? "border-destructive" : ""}>
-                           <SelectValue placeholder={t("item.unit.label")} />
+                           <SelectValue placeholder={t("pantry.item.unit.label")} />
                         </SelectTrigger>
                         <SelectContent>
                            {unitOptions.map((option) => (
@@ -165,10 +166,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
                {/* Category field */}
                <div className="space-y-2">
-                  <Label htmlFor="category">{t("item.category.label")}</Label>
+                  <Label htmlFor="category">{t("pantry.item.category.label")}</Label>
                   <Select value={category} onValueChange={setCategory}>
                      <SelectTrigger id="category">
-                        <SelectValue placeholder={t("item.category.label")} />
+                        <SelectValue placeholder={t("pantry.item.category.label")} />
                      </SelectTrigger>
                      <SelectContent>
                         {categoryOptions.map((option) => (
@@ -182,7 +183,7 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
                {/* Expiry date field */}
                <div className="space-y-2">
-                  <Label htmlFor="expiryDate">{t("item.expiryDate.label")}</Label>
+                  <Label htmlFor="expiryDate">{t("pantry.item.expiryDate.label")}</Label>
                   <Popover>
                      <PopoverTrigger asChild>
                         <Button
@@ -215,10 +216,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
             <CardFooter className="flex justify-between">
                <Button type="button" variant="outline" onClick={() => router.back()}>
-                  {tCommon("cancel")}
+                  {t("common.cancel")}
                </Button>
                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? tCommon("saving") : t("form.saveButton")}
+                  {isSubmitting ? t("common.saving") : t("pantry.form.saveButton")}
                </Button>
             </CardFooter>
          </Card>

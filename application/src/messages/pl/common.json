@@ -1,0 +1,45 @@
+{
+   "buttons": {
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "edit": "Edytuj",
+      "add": "Dodaj",
+      "remove": "Usuń",
+      "close": "Zamknij",
+      "back": "Wstecz",
+      "next": "Dalej",
+      "previous": "Poprzedni",
+      "confirm": "Potwierdź"
+   },
+   "status": {
+      "loading": "Ładowanie...",
+      "saving": "Zapisywanie...",
+      "deleting": "Usuwanie...",
+      "success": "Sukces",
+      "error": "Błąd"
+   },
+   "navigation": {
+      "recipes": "Przepisy",
+      "mealPlans": "Plany posiłków",
+      "pantry": "Spiżarka",
+      "shoppingList": "Lista zakupów",
+      "appName": "CookingApp"
+   },
+   "mealPlan": {
+      "title": "Plany posiłków",
+      "description": "Zarządzaj swoimi planami posiłków i organizuj posiłki na cały tydzień.",
+      "newPlan": "Nowy plan",
+      "noPlans": "Nie masz jeszcze żadnych planów posiłków.",
+      "createFirst": "Utwórz swój pierwszy plan posiłków."
+   },
+   "home": {
+      "quickNavigation": "Szybka nawigacja",
+      "navigation": {
+         "recipes": "Przepisy",
+         "mealPlans": "Plany posiłków",
+         "pantry": "Spiżarnia",
+         "shoppingLists": "Listy zakupów"
+      }
+   }
+}

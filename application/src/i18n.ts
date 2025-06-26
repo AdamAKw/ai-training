@@ -6,6 +6,9 @@ export default getRequestConfig(async ({ locale }) => {
   
   return {
     locale: resolvedLocale,
-    messages: (await import(`./messages/${resolvedLocale}/validation.json`)).default
+    messages: {
+      ...(await import(`./messages/${resolvedLocale}/common.json`)).default,
+      validation: (await import(`./messages/${resolvedLocale}/validation.json`)).default
+    }
   };
 });

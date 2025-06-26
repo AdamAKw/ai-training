@@ -1,0 +1,45 @@
+{
+   "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "remove": "Remove",
+      "close": "Close",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "confirm": "Confirm"
+   },
+   "status": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "success": "Success",
+      "error": "Error"
+   },
+   "navigation": {
+      "recipes": "Recipes",
+      "mealPlans": "Meal Plans",
+      "pantry": "Pantry",
+      "shoppingList": "Shopping List",
+      "appName": "CookingApp"
+   },
+   "mealPlan": {
+      "title": "Meal Plans",
+      "description": "Manage your meal plans and organize meals for the entire week.",
+      "newPlan": "New Plan",
+      "noPlans": "You don't have any meal plans yet.",
+      "createFirst": "Create your first meal plan."
+   },
+   "home": {
+      "quickNavigation": "Quick Navigation",
+      "navigation": {
+         "recipes": "Recipes",
+         "mealPlans": "Meal Plans",
+         "pantry": "Pantry",
+         "shoppingLists": "Shopping Lists"
+      }
+   }
+}

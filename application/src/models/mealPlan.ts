@@ -7,6 +7,14 @@ export interface IMealPlanItem {
   date: Date;
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'other';
   servings: number;
+  isCompleted?: boolean;
+  completedAt?: Date;
+  removedIngredients?: Array<{
+    ingredientName: string;
+    quantity: number;
+    unit: string;
+    pantryItemId: string;
+  }>;
 }
 
 export interface IMealPlan extends Document {
@@ -24,6 +32,14 @@ export const MealPlanItemValidation = z.object({
   date: z.string().datetime({ message: "Invalid date format" }),
   mealType: z.enum(['breakfast', 'lunch', 'dinner', 'snack', 'other']),
   servings: z.number().positive("Servings must be positive"),
+  isCompleted: z.boolean().optional(),
+  completedAt: z.string().datetime().optional(),
+  removedIngredients: z.array(z.object({
+    ingredientName: z.string(),
+    quantity: z.number(),
+    unit: z.string(),
+    pantryItemId: z.string(),
+  })).optional(),
 });
 
 export const MealPlanValidation = z.object({
@@ -43,6 +59,14 @@ const MealPlanItemSchemaMongoose = new Schema<IMealPlanItem>({
     enum: ['breakfast', 'lunch', 'dinner', 'snack', 'other'] 
   },
   servings: { type: Number, required: true },
+  isCompleted: { type: Boolean, default: false },
+  completedAt: { type: Date },
+  removedIngredients: [{
+    ingredientName: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    unit: { type: String, required: true },
+    pantryItemId: { type: String, required: true },
+  }],
 });
 
 const MealPlanSchemaMongoose = new Schema<IMealPlan>(

@@ -1,9 +1,10 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
-export function Navigation() {
-   const t = useTranslations("navigation");
+export async function Navigation() {
+   const t = await getTranslations("navigation");
 
    return (
       <nav className="flex items-center justify-between p-4 bg-white shadow-sm">

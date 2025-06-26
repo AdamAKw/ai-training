@@ -1,25 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
 // ImageWithFallback component for handling image loading errors
 interface ImageWithFallbackProps {
@@ -111,31 +100,8 @@ export interface RecipeDetailProps {
 }
 
 export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
-   const [error, setError] = useState<string | null>(null);
-   const [isDeleting, setIsDeleting] = useState(false);
-
-   const router = useRouter();
-
-   // Handle recipe deletion
-   const handleDelete = async () => {
-      try {
-         setIsDeleting(true);
-         const response = await fetch(`/api/recipes/${id}`, {
-            method: "DELETE",
-         });
-
-         if (!response.ok) {
-            throw new Error("Failed to delete recipe");
-         }
-
-         // Navigate back to recipes list
-         router.push("/recipes");
-         router.refresh();
-      } catch (err) {
-         setError(err instanceof Error ? err.message : "Failed to delete recipe");
-         setIsDeleting(false);
-      }
-   };
+   // No need for state anymore since delete functionality is handled by the client component
+   const [error] = useState<string | null>(null);
 
    return (
       <div className="max-w-4xl mx-auto p-6">
@@ -157,28 +123,15 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
                <Button variant="outline" asChild>
                   <Link href={`/recipes/${id}/edit`}>Edit Recipe</Link>
                </Button>
-
-               <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                     <Button variant="destructive">Delete Recipe</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                           This action cannot be undone. This will permanently delete this recipe.
-                        </AlertDialogDescription>
-                     </AlertDialogHeader>
-                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-                           {isDeleting ? "Deleting..." : "Yes, Delete"}
-                        </AlertDialogAction>
-                     </AlertDialogFooter>
-                  </AlertDialogContent>
-               </AlertDialog>
+               <DeleteRecipeDialog recipeId={id} recipeName={recipe.name} />
             </div>
          </div>
+
+         {error && (
+            <Alert variant="destructive" className="mb-6">
+               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+         )}
 
          {/* Recipe Header */}
          <Card className="mb-8 border-none shadow-none">

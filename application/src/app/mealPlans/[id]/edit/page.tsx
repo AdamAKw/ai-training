@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
-
+export const dynamic = 'force-dynamic';
 async function getMealPlan(id: string) {
    try {
       const res = await fetch(`${getBaseUrl()}/api/mealPlans/${id}`, {
