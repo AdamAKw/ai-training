@@ -197,5 +197,77 @@
          "pantryItemUpdated": "Product was successfully updated",
          "pantryItemDeleted": "Product was successfully deleted"
       }
+   },
+   "shoppingList": {
+      "title": "Shopping Lists",
+      "yourLists": "Your Shopping Lists",
+      "newListButton": "+ New List",
+      "loading": "Loading shopping lists...",
+      "noListsYet": "No Shopping Lists Yet",
+      "noListsDescription": "You have several options to create a shopping list:",
+      "fromMealPlan": "From Meal Plan",
+      "createEmptyList": "Create Empty List",
+      "selectList": "Select a shopping list to view details",
+      "items": "items",
+      "purchased": "purchased",
+      "transferredToPantry": "Selected items transferred to pantry!",
+      "errors": {
+         "fetchFailed": "Failed to fetch shopping lists",
+         "updateFailed": "Failed to update item",
+         "removeFailed": "Failed to remove item",
+         "transferFailed": "Failed to transfer items to pantry",
+         "deleteFailed": "Failed to delete shopping list"
+      },
+      "tryAgain": "Try Again",
+      "deleteList": "Delete List",
+      "deleteConfirm": "Are you sure you want to delete this shopping list?",
+      "deleteConfirmDescription": "This action cannot be undone. All items in this list will be permanently removed.",
+      "deleteSuccess": "Shopping list deleted successfully",
+      "newList": {
+         "title": "Create New Shopping List",
+         "cardTitle": "New Shopping List",
+         "backButton": "← Back to Shopping Lists",
+         "listNameLabel": "List Name",
+         "listNamePlaceholder": "Enter a name for your shopping list",
+         "listNameRequired": "Please enter a name for your shopping list",
+         "createButton": "Create Shopping List",
+         "creating": "Creating...",
+         "successMessage": "Shopping list created successfully",
+         "createFailed": "Failed to create shopping list",
+         "unexpectedError": "An unexpected error occurred"
+      },
+      "detail": {
+         "customList": "Custom List",
+         "transferToPantry": "Transfer to Pantry",
+         "addItem": "Add Item",
+         "hideForm": "Hide Form",
+         "allFilter": "All",
+         "remainingFilter": "Remaining",
+         "purchasedFilter": "Purchased",
+         "inPantryFilter": "In Pantry",
+         "allCategories": "All Categories",
+         "noItemsMatch": "No items match the current filters",
+         "addShoppingItem": "Add Shopping Item",
+         "cancel": "Cancel"
+      },
+      "addItem": {
+         "title": "Add New Item",
+         "itemNamePlaceholder": "Item name",
+         "quantityPlaceholder": "Quantity",
+         "unitPlaceholder": "Unit",
+         "addButton": "Add Item",
+         "adding": "Adding...",
+         "itemNameRequired": "Please enter an item name",
+         "quantityInvalid": "Please enter a valid quantity",
+         "addFailed": "Failed to add item to shopping list",
+         "addSuccess": "Item added to shopping list",
+         "unexpectedError": "An unexpected error occurred"
+      },
+      "item": {
+         "removeConfirm": "Remove {item} from the shopping list?",
+         "markAsNotPurchased": "Mark as not purchased",
+         "markAsPurchased": "Mark as purchased",
+         "inPantry": "In Pantry"
+      }
    }
 }

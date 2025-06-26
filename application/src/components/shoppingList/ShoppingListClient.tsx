@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ShoppingListDetail } from "./ShoppingListDetail";
 // Define types for shopping list data
@@ -30,6 +31,7 @@ export function ShoppingList() {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
    const router = useRouter();
+   const t = useTranslations("shoppingList");
 
    // Fetch shopping lists on component mount
    useEffect(() => {
@@ -50,14 +52,14 @@ export function ShoppingList() {
                setActiveList(data[0]);
             }
          } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to fetch shopping lists");
+            setError(err instanceof Error ? err.message : t("errors.fetchFailed"));
          } finally {
             setIsLoading(false);
          }
       }
 
       fetchShoppingLists();
-   }, [activeList]);
+   }, [activeList, t]);
 
    // Handle toggle purchased status of an item
    const handleTogglePurchased = async (itemId: string, purchased: boolean) => {
@@ -85,7 +87,7 @@ export function ShoppingList() {
          // Also update the lists array
          setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
       } catch (err) {
-         setError(err instanceof Error ? err.message : "Failed to update item");
+         setError(err instanceof Error ? err.message : t("errors.updateFailed"));
       }
    };
 
@@ -113,7 +115,7 @@ export function ShoppingList() {
          // Also update the lists array
          setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
       } catch (err) {
-         setError(err instanceof Error ? err.message : "Failed to remove item");
+         setError(err instanceof Error ? err.message : t("errors.removeFailed"));
       }
    };
 
@@ -141,9 +143,36 @@ export function ShoppingList() {
          setLists(lists.map((list) => (list._id === updatedList._id ? updatedList : list)));
 
          // Show success message
-         alert("Selected items transferred to pantry!");
+         alert(t("transferredToPantry"));
       } catch (err) {
-         setError(err instanceof Error ? err.message : "Failed to transfer items to pantry");
+         setError(err instanceof Error ? err.message : t("errors.transferFailed"));
+      }
+   };
+
+   // Handle deleting a shopping list
+   const handleDeleteList = async () => {
+      if (!activeList) return;
+
+      try {
+         const response = await fetch(`/api/shoppingList/${activeList._id}`, {
+            method: "DELETE",
+         });
+
+         if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+         }
+
+         // Remove the deleted list from the lists array
+         const updatedLists = lists.filter((list) => list._id !== activeList._id);
+         setLists(updatedLists);
+
+         // Set the active list to the first remaining list or null
+         setActiveList(updatedLists.length > 0 ? updatedLists[0] : null);
+
+         // Show success message
+         alert(t("deleteSuccess"));
+      } catch (err) {
+         setError(err instanceof Error ? err.message : t("errors.deleteFailed"));
       }
    };
 
@@ -151,7 +180,7 @@ export function ShoppingList() {
    if (isLoading && lists.length === 0) {
       return (
          <div className="flex justify-center items-center h-64">
-            <p>Loading shopping lists...</p>
+            <p>{t("loading")}</p>
          </div>
       );
    }
@@ -168,7 +197,7 @@ export function ShoppingList() {
                }}
                className="mt-2"
             >
-               Try Again
+               {t("tryAgain")}
             </Button>
          </div>
       );
@@ -178,12 +207,12 @@ export function ShoppingList() {
    if (lists.length === 0) {
       return (
          <div className="text-center p-6 bg-gray-50 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">No Shopping Lists Yet</h2>
-            <p className="text-gray-600 mb-6">You have several options to create a shopping list:</p>
+            <h2 className="text-xl font-semibold mb-4">{t("noListsYet")}</h2>
+            <p className="text-gray-600 mb-6">{t("noListsDescription")}</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-               <Button onClick={() => router.push("/mealPlans")}>From Meal Plan</Button>
+               <Button onClick={() => router.push("/mealPlans")}>{t("fromMealPlan")}</Button>
                <Button onClick={() => router.push("/shoppingList/new")} variant="outline">
-                  Create Empty List
+                  {t("createEmptyList")}
                </Button>
             </div>
          </div>
@@ -193,7 +222,12 @@ export function ShoppingList() {
    return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          <div className="lg:col-span-1">
-            <h2 className="text-xl font-medium mb-4">Your Shopping Lists</h2>
+            <div className="flex justify-between items-center mb-4">
+               <h2 className="text-xl font-medium">{t("yourLists")}</h2>
+               <Button onClick={() => router.push("/shoppingList/new")} size="sm" className="text-sm">
+                  {t("newListButton")}
+               </Button>
+            </div>
             <div className="space-y-2">
                {lists.map((list) => (
                   <div
@@ -208,7 +242,8 @@ export function ShoppingList() {
                         {typeof list.mealPlan === "object" ? list.mealPlan.name : "Meal Plan"}
                      </p>
                      <p className="text-sm mt-1">
-                        {list.items.length} items • {list.items.filter((i) => i.purchased).length} purchased
+                        {list.items.length} {t("items")} • {list.items.filter((i) => i.purchased).length}{" "}
+                        {t("purchased")}
                      </p>
                   </div>
                ))}
@@ -222,10 +257,11 @@ export function ShoppingList() {
                   onTogglePurchased={handleTogglePurchased}
                   onRemoveItem={handleRemoveItem}
                   onTransferToPantry={handleTransferToPantry}
+                  onDeleteList={handleDeleteList}
                />
             ) : (
                <div className="bg-gray-50 p-6 rounded-lg text-center">
-                  <p>Select a shopping list to view details</p>
+                  <p>{t("selectList")}</p>
                </div>
             )}
          </div>

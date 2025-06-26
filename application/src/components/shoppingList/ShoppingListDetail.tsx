@@ -1,8 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { ShoppingListType } from "./ShoppingListClient";
 import { ShoppingListItem } from "./ShoppingListItem";
 import { AddShoppingItem } from "./AddShoppingItem";
@@ -12,6 +24,7 @@ interface ShoppingListDetailProps {
    onTogglePurchased: (itemId: string, purchased: boolean) => Promise<void>;
    onRemoveItem: (itemId: string) => Promise<void>;
    onTransferToPantry: () => Promise<void>;
+   onDeleteList?: () => Promise<void>;
 }
 
 export function ShoppingListDetail({
@@ -19,10 +32,12 @@ export function ShoppingListDetail({
    onTogglePurchased,
    onRemoveItem,
    onTransferToPantry,
+   onDeleteList,
 }: ShoppingListDetailProps) {
    const [activeFilter, setActiveFilter] = useState<"all" | "remaining" | "purchased" | "in-pantry">("all");
    const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
    const [showAddItem, setShowAddItem] = useState(false);
+   const t = useTranslations("shoppingList.detail");
 
    // Get unique categories from items (using recipe names)
    const categories = Array.from(
@@ -54,15 +69,41 @@ export function ShoppingListDetail({
          <div className="flex justify-between items-start mb-6">
             <div>
                <h2 className="text-2xl font-bold">{list.name}</h2>
-               <p className="text-gray-600">{typeof list.mealPlan === "object" ? list.mealPlan.name : "Custom List"}</p>
+               <p className="text-gray-600">
+                  {typeof list.mealPlan === "object" ? list.mealPlan.name : t("customList")}
+               </p>
             </div>
             <div className="space-x-2">
                <Button variant="outline" onClick={onTransferToPantry} disabled={purchasedItems === 0}>
-                  Transfer to Pantry
+                  {t("transferToPantry")}
                </Button>
                <Button variant="outline" onClick={() => setShowAddItem(!showAddItem)}>
-                  {showAddItem ? "Hide Form" : "Add Item"}
+                  {showAddItem ? t("hideForm") : t("addItem")}
                </Button>
+               {onDeleteList && (
+                  <AlertDialog>
+                     <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                           {t("deleteList")}
+                        </Button>
+                     </AlertDialogTrigger>
+                     <AlertDialogContent>
+                        <AlertDialogHeader>
+                           <AlertDialogTitle>{t("deleteConfirm")}</AlertDialogTitle>
+                           <AlertDialogDescription>{t("deleteConfirmDescription")}</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                           <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                           <AlertDialogAction
+                              onClick={onDeleteList}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                           >
+                              {t("deleteList")}
+                           </AlertDialogAction>
+                        </AlertDialogFooter>
+                     </AlertDialogContent>
+                  </AlertDialog>
+               )}
             </div>
          </div>
 
@@ -73,28 +114,28 @@ export function ShoppingListDetail({
                   className="cursor-pointer"
                   onClick={() => setActiveFilter("all")}
                >
-                  All ({totalItems})
+                  {t("allFilter")} ({totalItems})
                </Badge>
                <Badge
                   variant={activeFilter === "remaining" ? "default" : "outline"}
                   className="cursor-pointer"
                   onClick={() => setActiveFilter("remaining")}
                >
-                  Remaining ({totalItems - purchasedItems})
+                  {t("remainingFilter")} ({totalItems - purchasedItems})
                </Badge>
                <Badge
                   variant={activeFilter === "purchased" ? "default" : "outline"}
                   className="cursor-pointer"
                   onClick={() => setActiveFilter("purchased")}
                >
-                  Purchased ({purchasedItems})
+                  {t("purchasedFilter")} ({purchasedItems})
                </Badge>
                <Badge
                   variant={activeFilter === "in-pantry" ? "default" : "outline"}
                   className="cursor-pointer"
                   onClick={() => setActiveFilter("in-pantry")}
                >
-                  In Pantry ({inPantryItems})
+                  {t("inPantryFilter")} ({inPantryItems})
                </Badge>
             </div>
          </div>
@@ -106,7 +147,7 @@ export function ShoppingListDetail({
                   className="cursor-pointer"
                   onClick={() => setCategoryFilter(null)}
                >
-                  All Categories
+                  {t("allCategories")}
                </Badge>
                {categories.map((category) => (
                   <Badge
@@ -144,19 +185,14 @@ export function ShoppingListDetail({
                   />
                ))
             ) : (
-               <div className="text-center py-8 text-gray-500">No items match the current filters</div>
+               <div className="text-center py-8 text-gray-500">{t("noItemsMatch")}</div>
             )}
          </div>
 
          <div className="mt-6">
             <Button onClick={() => setShowAddItem((prev) => !prev)} className="w-full">
-               {showAddItem ? "Cancel" : "Add Shopping Item"}
+               {showAddItem ? t("cancel") : t("addShoppingItem")}
             </Button>
-            {showAddItem && (
-               <div className="mt-4">
-                  <AddShoppingItem listId={list._id} onItemAdded={() => setShowAddItem(false)} />
-               </div>
-            )}
          </div>
       </div>
    );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, X } from "lucide-react";
 import { ShoppingListItemType } from "./ShoppingListClient";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface ShoppingListItemProps {
 
 export function ShoppingListItem({ item, onTogglePurchased, onRemoveItem }: ShoppingListItemProps) {
    const [isUpdating, setIsUpdating] = useState(false);
+   const t = useTranslations("shoppingList.item");
 
    const handleTogglePurchased = async () => {
       try {
@@ -24,7 +26,7 @@ export function ShoppingListItem({ item, onTogglePurchased, onRemoveItem }: Shop
    };
 
    const handleRemoveItem = async () => {
-      if (window.confirm(`Remove ${item.ingredient} from the shopping list?`)) {
+      if (window.confirm(t("removeConfirm", { item: item.ingredient }))) {
          try {
             setIsUpdating(true);
             await onRemoveItem(item._id);
@@ -50,7 +52,7 @@ export function ShoppingListItem({ item, onTogglePurchased, onRemoveItem }: Shop
             w-6 h-6 rounded-full border flex items-center justify-center
             ${item.purchased ? "bg-primary text-white" : "bg-white hover:bg-gray-100"}
           `}
-               aria-label={item.purchased ? "Mark as not purchased" : "Mark as purchased"}
+               aria-label={item.purchased ? t("markAsNotPurchased") : t("markAsPurchased")}
             >
                {item.purchased && <Check size={14} />}
             </button>
@@ -59,7 +61,7 @@ export function ShoppingListItem({ item, onTogglePurchased, onRemoveItem }: Shop
                <div className="flex items-center gap-2">
                   <span className={`font-medium ${item.purchased ? "line-through" : ""}`}>{item.ingredient}</span>
                   {item.inPantry && (
-                     <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">In Pantry</span>
+                     <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">{t("inPantry")}</span>
                   )}
                </div>
                <div className="text-sm text-gray-600">

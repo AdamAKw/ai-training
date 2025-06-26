@@ -40,7 +40,6 @@ function ImageWithFallback({
    sizes,
    ...props
 }: ImageWithFallbackProps & Omit<React.ComponentProps<typeof Image>, "src" | "alt" | "fill">) {
-   const [imgSrc, setImgSrc] = useState<string>(src);
    const [hasError, setHasError] = useState<boolean>(false);
 
    // Initialize with fallback if the URL is invalid
@@ -61,21 +60,28 @@ function ImageWithFallback({
       };
 
       if (!src || !isValidImageDomain()) {
-         setImgSrc(fallbackSrc);
          setHasError(true);
       }
    }, [src, fallbackSrc]);
 
    const handleError = () => {
       if (!hasError) {
-         console.warn(`Failed to load image: ${imgSrc}`);
-         setImgSrc(fallbackSrc);
+         console.warn(`Failed to load image: ${src}`);
          setHasError(true);
       }
    };
 
+   // If there's an error or no fallbackSrc provided, show text placeholder
+   if (hasError || !fallbackSrc) {
+      return (
+         <div className="h-full bg-muted flex items-center justify-center">
+            <span className="text-muted-foreground">Brak zdjęcia</span>
+         </div>
+      );
+   }
+
    return (
-      <Image src={imgSrc} alt={alt} fill={fill} className={className} sizes={sizes} onError={handleError} {...props} />
+      <Image src={src} alt={alt} fill={fill} className={className} sizes={sizes} onError={handleError} {...props} />
    );
 }
 
@@ -196,23 +202,18 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
             <CardContent className="p-0">
                <AspectRatio ratio={16 / 9}>
                   {recipe.imageUrl ? (
-                     // Try to load the image, fallback to placeholder on error
                      <ImageWithFallback
                         src={recipe.imageUrl}
                         alt={recipe.name}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, 800px"
-                        fallbackSrc="/images/recipe-placeholder.svg"
+                        fallbackSrc=""
                      />
                   ) : (
-                     <Image
-                        src="/images/recipe-placeholder.svg"
-                        alt="No image available"
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 800px"
-                     />
+                     <div className="h-full bg-muted flex items-center justify-center">
+                        <span className="text-muted-foreground">Brak zdjęcia</span>
+                     </div>
                   )}
                </AspectRatio>
             </CardContent>

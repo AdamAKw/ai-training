@@ -197,5 +197,77 @@
          "pantryItemUpdated": "Produkt został pomyślnie zaktualizowany",
          "pantryItemDeleted": "Produkt został pomyślnie usunięty"
       }
+   },
+   "shoppingList": {
+      "title": "Listy zakupów",
+      "yourLists": "Twoje listy zakupów",
+      "newListButton": "+ Nowa lista",
+      "loading": "Ładowanie list zakupów...",
+      "noListsYet": "Nie masz jeszcze żadnych list zakupów",
+      "noListsDescription": "Masz kilka opcji tworzenia listy zakupów:",
+      "fromMealPlan": "Z planu posiłków",
+      "createEmptyList": "Utwórz pustą listę",
+      "selectList": "Wybierz listę zakupów, aby zobaczyć szczegóły",
+      "items": "produktów",
+      "purchased": "zakupionych",
+      "transferredToPantry": "Wybrane produkty zostały przeniesione do spiżarki!",
+      "errors": {
+         "fetchFailed": "Nie udało się pobrać list zakupów",
+         "updateFailed": "Nie udało się zaktualizować produktu",
+         "removeFailed": "Nie udało się usunąć produktu",
+         "transferFailed": "Nie udało się przenieść produktów do spiżarki",
+         "deleteFailed": "Nie udało się usunąć listy zakupów"
+      },
+      "tryAgain": "Spróbuj ponownie",
+      "deleteList": "Usuń listę",
+      "deleteConfirm": "Czy na pewno chcesz usunąć tę listę zakupów?",
+      "deleteConfirmDescription": "Ta operacja nie może być cofnięta. Wszystkie produkty z tej listy zostaną trwale usunięte.",
+      "deleteSuccess": "Lista zakupów została pomyślnie usunięta",
+      "newList": {
+         "title": "Utwórz nową listę zakupów",
+         "cardTitle": "Nowa lista zakupów",
+         "backButton": "← Powrót do list zakupów",
+         "listNameLabel": "Nazwa listy",
+         "listNamePlaceholder": "Wprowadź nazwę dla swojej listy zakupów",
+         "listNameRequired": "Wprowadź nazwę listy zakupów",
+         "createButton": "Utwórz listę zakupów",
+         "creating": "Tworzenie...",
+         "successMessage": "Lista zakupów została pomyślnie utworzona",
+         "createFailed": "Nie udało się utworzyć listy zakupów",
+         "unexpectedError": "Wystąpił nieoczekiwany błąd"
+      },
+      "detail": {
+         "customList": "Lista niestandardowa",
+         "transferToPantry": "Przenieś do spiżarki",
+         "addItem": "Dodaj produkt",
+         "hideForm": "Ukryj formularz",
+         "allFilter": "Wszystkie",
+         "remainingFilter": "Pozostałe",
+         "purchasedFilter": "Zakupione",
+         "inPantryFilter": "W spiżarce",
+         "allCategories": "Wszystkie kategorie",
+         "noItemsMatch": "Żadne produkty nie pasują do aktualnych filtrów",
+         "addShoppingItem": "Dodaj produkt do listy",
+         "cancel": "Anuluj"
+      },
+      "addItem": {
+         "title": "Dodaj nowy produkt",
+         "itemNamePlaceholder": "Nazwa produktu",
+         "quantityPlaceholder": "Ilość",
+         "unitPlaceholder": "Jednostka",
+         "addButton": "Dodaj produkt",
+         "adding": "Dodawanie...",
+         "itemNameRequired": "Wprowadź nazwę produktu",
+         "quantityInvalid": "Wprowadź prawidłową ilość",
+         "addFailed": "Nie udało się dodać produktu do listy zakupów",
+         "addSuccess": "Produkt został dodany do listy zakupów",
+         "unexpectedError": "Wystąpił nieoczekiwany błąd"
+      },
+      "item": {
+         "removeConfirm": "Usunąć {item} z listy zakupów?",
+         "markAsNotPurchased": "Oznacz jako niezakupiony",
+         "markAsPurchased": "Oznacz jako zakupiony",
+         "inPantry": "W spiżarce"
+      }
    }
 }

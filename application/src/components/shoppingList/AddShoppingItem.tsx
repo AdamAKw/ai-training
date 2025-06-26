@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,6 +15,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
    const [quantity, setQuantity] = useState("1");
    const [unit, setUnit] = useState("szt");
    const [isSubmitting, setIsSubmitting] = useState(false);
+   const t = useTranslations("shoppingList.addItem");
 
    // Common units for cooking
    const commonUnits = ["szt", "kg", "g", "l", "ml", "łyżka", "łyżeczka", "szklanka"];
@@ -23,12 +25,12 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
 
       // Basic validation
       if (!itemName.trim()) {
-         toast.error("Please enter an item name");
+         toast.error(t("itemNameRequired"));
          return;
       }
 
       if (isNaN(parseFloat(quantity)) || parseFloat(quantity) <= 0) {
-         toast.error("Please enter a valid quantity");
+         toast.error(t("quantityInvalid"));
          return;
       }
 
@@ -55,7 +57,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
 
          if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to add item to shopping list");
+            throw new Error(errorData.error || t("addFailed"));
          }
 
          // Reset form fields
@@ -64,10 +66,10 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
 
          // Notify parent component that an item was added
          onItemAdded();
-         toast.success("Item added to shopping list");
+         toast.success(t("addSuccess"));
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-         toast.error(`Failed to add item: ${errorMessage}`);
+         const errorMessage = error instanceof Error ? error.message : t("unexpectedError");
+         toast.error(`${t("addFailed")}: ${errorMessage}`);
       } finally {
          setIsSubmitting(false);
       }
@@ -75,11 +77,16 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
 
    return (
       <form onSubmit={handleSubmit} className="space-y-4 border p-4 rounded-md">
-         <h3 className="font-medium">Add New Item</h3>
+         <h3 className="font-medium">{t("title")}</h3>
 
          <div className="flex flex-col gap-3">
             <div>
-               <Input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder="Item name" required />
+               <Input
+                  value={itemName}
+                  onChange={(e) => setItemName(e.target.value)}
+                  placeholder={t("itemNamePlaceholder")}
+                  required
+               />
             </div>
 
             <div className="flex gap-2">
@@ -90,7 +97,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
                      step="0.01"
                      value={quantity}
                      onChange={(e) => setQuantity(e.target.value)}
-                     placeholder="Quantity"
+                     placeholder={t("quantityPlaceholder")}
                      required
                   />
                </div>
@@ -98,7 +105,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
                <div className="w-2/3">
                   <Select value={unit} onValueChange={setUnit}>
                      <SelectTrigger>
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue placeholder={t("unitPlaceholder")} />
                      </SelectTrigger>
                      <SelectContent>
                         {commonUnits.map((unit) => (
@@ -113,7 +120,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
          </div>
 
          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "Adding..." : "Add Item"}
+            {isSubmitting ? t("adding") : t("addButton")}
          </Button>
       </form>
    );

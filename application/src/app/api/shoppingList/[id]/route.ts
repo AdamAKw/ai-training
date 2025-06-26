@@ -107,9 +107,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
     
     await connectToDatabase();
-    const deletedShoppingList = await ShoppingList.findByIdAndDelete(id);
+    const shoppingList = await ShoppingList.findByIdAndDelete(id);
     
-    if (!deletedShoppingList) {
+    if (!shoppingList) {
       return createErrorResponse('Shopping list not found', 404);
     }
     
