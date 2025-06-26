@@ -1,10 +1,146 @@
 {
    "common": {
       "required": "To pole jest wymagane",
-      "invalidValue": "Nieprawidłowa wartość"
+      "invalidValue": "Nieprawidłowa wartość",
+      "loading": "Ładowanie...",
+      "saving": "Zapisywanie...",
+      "deleting": "Usuwanie...",
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "edit": "Edytuj",
+      "add": "Dodaj",
+      "remove": "Usuń",
+      "close": "Zamknij"
+   },
+   "navigation": {
+      "recipes": "Przepisy",
+      "mealPlans": "Plany posiłków",
+      "pantry": "Spiżarka",
+      "shoppingList": "Lista zakupów",
+      "appName": "CookingApp"
+   },
+   "recipe": {
+      "name": {
+         "label": "Nazwa przepisu",
+         "required": "Nazwa przepisu jest wymagana",
+         "minLength": "Nazwa przepisu musi mieć co najmniej 2 znaki"
+      },
+      "description": {
+         "label": "Opis"
+      },
+      "ingredients": {
+         "title": "Składniki",
+         "name": {
+            "label": "Nazwa składnika",
+            "required": "Nazwa składnika jest wymagana"
+         },
+         "quantity": {
+            "label": "Ilość",
+            "required": "Ilość jest wymagana",
+            "positive": "Ilość musi być dodatnia"
+         },
+         "unit": {
+            "label": "Jednostka",
+            "required": "Jednostka jest wymagana"
+         },
+         "addButton": "Dodaj składnik",
+         "atLeastOne": "Wymagany jest co najmniej jeden składnik"
+      },
+      "instructions": {
+         "title": "Instrukcje",
+         "label": "Dodaj kroki instrukcji jeden po drugim",
+         "placeholder": "Wprowadź krok instrukcji",
+         "addButton": "Dodaj",
+         "steps": "Kroki",
+         "atLeastOne": "Wymagana jest co najmniej jedna instrukcja"
+      },
+      "prepTime": {
+         "label": "Czas przygotowania (minuty)",
+         "negative": "Czas przygotowania nie może być ujemny"
+      },
+      "cookTime": {
+         "label": "Czas gotowania (minuty)",
+         "negative": "Czas gotowania nie może być ujemny"
+      },
+      "servings": {
+         "label": "Porcje",
+         "positive": "Liczba porcji musi być dodatnia"
+      },
+      "imageUrl": {
+         "label": "URL obrazu",
+         "invalid": "URL obrazu musi być prawidłowy"
+      },
+      "basicInfo": "Podstawowe informacje",
+      "saveButton": "Zapisz przepis",
+      "saving": "Zapisywanie..."
+   },
+   "pantry": {
+      "item": {
+         "name": {
+            "label": "Nazwa produktu",
+            "required": "Nazwa produktu jest wymagana"
+         },
+         "quantity": {
+            "label": "Ilość",
+            "positive": "Ilość musi być większa od 0"
+         },
+         "unit": {
+            "label": "Jednostka",
+            "required": "Jednostka jest wymagana"
+         },
+         "category": {
+            "label": "Kategoria"
+         },
+         "expiryDate": {
+            "label": "Data ważności"
+         }
+      },
+      "form": {
+         "addTitle": "Dodaj nowy produkt",
+         "editTitle": "Edytuj produkt",
+         "saveButton": "Zapisz produkt"
+      },
+      "units": {
+         "kg": "Kilogram",
+         "g": "Gram",
+         "l": "Litr",
+         "ml": "Mililitr",
+         "szt": "Sztuka",
+         "łyżka": "Łyżka",
+         "łyżeczka": "Łyżeczka",
+         "szklanka": "Szklanka",
+         "opakowanie": "Opakowanie"
+      },
+      "categories": {
+         "warzywa": "Warzywa",
+         "owoce": "Owoce",
+         "mięso": "Mięso",
+         "nabiał": "Nabiał",
+         "pieczywo": "Pieczywo",
+         "przyprawy": "Przyprawy",
+         "napoje": "Napoje",
+         "mrożonki": "Mrożonki",
+         "słodycze": "Słodycze",
+         "konserwy": "Konserwy",
+         "inne": "Inne"
+      },
+      "title": "Spiżarka",
+      "description": "Zarządzaj produktami w swojej spiżarce",
+      "addNewButton": "Dodaj nowy produkt",
+      "statistics": {
+         "totalItems": "Wszystkich produktów",
+         "expiredItems": "Przeterminowane",
+         "soonExpiringItems": "Wkrótce się przeterminują"
+      },
+      "deleteDialog": {
+         "title": "Czy na pewno chcesz usunąć ten produkt?",
+         "description": "Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki."
+      }
    },
    "mealPlan": {
       "name": {
+         "label": "Nazwa planu",
          "required": "Nazwa planu jest wymagana",
          "minLength": "Nazwa planu musi mieć co najmniej {min} znaki"
       },
@@ -37,11 +173,29 @@
    "api": {
       "errors": {
          "mealPlanCreation": "Nie udało się utworzyć planu posiłków",
+         "mealPlanUpdate": "Nie udało się zaktualizować planu posiłków",
+         "mealPlanDeletion": "Nie udało się usunąć planu posiłków",
+         "mealPlanFetch": "Nie udało się pobrać planu posiłków",
+         "mealPlansFetch": "Nie udało się pobrać planów posiłków",
+         "recipesFetch": "Nie udało się pobrać przepisów",
+         "pantryItemAdd": "Nie udało się dodać produktu",
+         "pantryItemUpdate": "Nie udało się zaktualizować produktu",
+         "pantryItemDelete": "Nie udało się usunąć produktu",
          "detailedError": "Wystąpił błąd: {message}",
          "invalidData": "Nieprawidłowe dane planu posiłków",
          "databaseError": "Błąd bazy danych: {message}",
          "recipeNotFound": "Przepis o ID {id} nie został znaleziony",
-         "serverError": "Błąd serwera. Prosimy spróbować ponownie później"
+         "serverError": "Błąd serwera. Prosimy spróbować ponownie później",
+         "unknownError": "Nieznany błąd",
+         "validationErrors": "Wystąpiły błędy walidacji"
+      },
+      "success": {
+         "mealPlanCreated": "Plan posiłków został pomyślnie utworzony",
+         "mealPlanUpdated": "Plan posiłków został pomyślnie zaktualizowany",
+         "mealPlanDeleted": "Plan posiłków został pomyślnie usunięty",
+         "pantryItemAdded": "Produkt został pomyślnie dodany",
+         "pantryItemUpdated": "Produkt został pomyślnie zaktualizowany",
+         "pantryItemDeleted": "Produkt został pomyślnie usunięty"
       }
    }
 }

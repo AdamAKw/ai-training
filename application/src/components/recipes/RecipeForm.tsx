@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -89,6 +90,8 @@ interface RecipeFormProps {
 
 export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeFormProps) => {
    const [instructionInput, setInstructionInput] = useState("");
+   const t = useTranslations("recipe");
+   const tCommon = useTranslations("common");
 
    // Initialize the form with safe defaults
    const defaultValues = {
@@ -170,7 +173,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
          <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-8">
             {/* Basic Information */}
             <div className="space-y-4">
-               <h2 className="text-xl font-semibold">Basic Information</h2>
+               <h2 className="text-xl font-semibold">{t("basicInfo")}</h2>
                <Separator className="my-4" />
 
                <FormField
@@ -178,7 +181,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                   name="name"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Recipe Name *</FormLabel>
+                        <FormLabel>{t("name.label")} *</FormLabel>
                         <FormControl>
                            <Input {...field} disabled={isLoading} />
                         </FormControl>
@@ -192,7 +195,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                   name="description"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{t("description.label")}</FormLabel>
                         <FormControl>
                            <Textarea rows={3} {...field} disabled={isLoading} />
                         </FormControl>
@@ -207,7 +210,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                      name="prepTime"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Prep Time (minutes) *</FormLabel>
+                           <FormLabel>{t("prepTime.label")} *</FormLabel>
                            <FormControl>
                               <Input
                                  type="number"
@@ -226,7 +229,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                      name="cookTime"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Cook Time (minutes) *</FormLabel>
+                           <FormLabel>{t("cookTime.label")} *</FormLabel>
                            <FormControl>
                               <Input
                                  type="number"
@@ -245,7 +248,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                      name="servings"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Servings *</FormLabel>
+                           <FormLabel>{t("servings.label")} *</FormLabel>
                            <FormControl>
                               <Input
                                  type="number"
@@ -263,13 +266,13 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
 
             {/* Ingredients */}
             <div className="space-y-4">
-               <h2 className="text-xl font-semibold">Ingredients</h2>
+               <h2 className="text-xl font-semibold">{t("ingredients.title")}</h2>
                <Separator className="my-4" />
 
                {ingredientFields.map((field, index) => (
                   <div key={field.id} className="flex items-end gap-2">
                      <div className="flex-grow">
-                        <Label className="mb-1">Ingredient Name *</Label>
+                        <Label className="mb-1">{t("ingredients.name.label")} *</Label>
                         <Input {...register(`ingredients.${index}.name`)} className="w-full" disabled={isLoading} />
                         {errors.ingredients?.[index]?.name && (
                            <p className="mt-1 text-sm text-red-600">
@@ -279,7 +282,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                      </div>
 
                      <div className="w-24">
-                        <Label className="mb-1">Quantity *</Label>
+                        <Label className="mb-1">{t("ingredients.quantity.label")} *</Label>
                         <Input
                            type="number"
                            step="0.01"
@@ -295,7 +298,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                      </div>
 
                      <div className="w-32">
-                        <Label className="mb-1">Unit *</Label>
+                        <Label className="mb-1">{t("ingredients.unit.label")} *</Label>
                         <Input {...register(`ingredients.${index}.unit`)} className="w-full" disabled={isLoading} />
                         {errors.ingredients?.[index]?.unit && (
                            <p className="mt-1 text-sm text-red-600">
@@ -311,7 +314,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                         onClick={() => removeIngredient(index)}
                         disabled={isLoading || ingredientFields.length <= 1}
                      >
-                        Remove
+                        {tCommon("remove")}
                      </Button>
                   </div>
                ))}
@@ -322,7 +325,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                   onClick={() => appendIngredient({ name: "", quantity: 1, unit: "" })}
                   disabled={isLoading}
                >
-                  Add Ingredient
+                  {t("ingredients.addButton")}
                </Button>
 
                {errors.ingredients?.root && (
@@ -332,17 +335,17 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
 
             {/* Instructions */}
             <div className="space-y-4">
-               <h2 className="text-xl font-semibold">Instructions</h2>
+               <h2 className="text-xl font-semibold">{t("instructions.title")}</h2>
                <Separator className="my-4" />
 
                <div>
-                  <Label className="mb-1">Add instruction steps one by one</Label>
+                  <Label className="mb-1">{t("instructions.label")}</Label>
                   <div className="flex gap-2">
                      <Input
                         value={instructionInput}
                         onChange={(e) => setInstructionInput(e.target.value)}
                         className="flex-grow"
-                        placeholder="Enter an instruction step"
+                        placeholder={t("instructions.placeholder")}
                         disabled={isLoading}
                      />
                      <Button
@@ -350,14 +353,14 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                         onClick={handleAddInstruction}
                         disabled={isLoading || !instructionInput.trim()}
                      >
-                        Add
+                        {t("instructions.addButton")}
                      </Button>
                   </div>
                </div>
 
                {instructionFields.length > 0 && (
                   <div className="space-y-2 mt-4">
-                     <h3 className="text-md font-medium">Steps:</h3>
+                     <h3 className="text-md font-medium">{t("instructions.steps")}:</h3>
                      <ul className="space-y-2">
                         {instructionFields.map((field, index) => (
                            <li key={field.id} className="flex items-center gap-2">
@@ -419,7 +422,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                   name="imageUrl"
                   render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Image URL (optional)</FormLabel>
+                        <FormLabel>{t("imageUrl.label")}</FormLabel>
                         <FormControl>
                            <Input type="url" {...field} disabled={isLoading} />
                         </FormControl>
@@ -432,7 +435,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
             {/* Submit Button */}
             <div>
                <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
-                  {isLoading ? "Saving..." : "Save Recipe"}
+                  {isLoading ? t("saving") : t("saveButton")}
                </Button>
             </div>
          </form>

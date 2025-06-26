@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,8 @@ export interface PantryFormData {
 
 export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormProps) {
    const router = useRouter();
+   const t = useTranslations("pantry");
+   const tCommon = useTranslations("common");
 
    // Form state
    const [name, setName] = useState(initialData?.name || "");
@@ -41,45 +44,45 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
    // Common units for pantry items
    const unitOptions = [
-      { value: "szt.", label: "Sztuka" },
-      { value: "g", label: "Gram" },
-      { value: "kg", label: "Kilogram" },
-      { value: "ml", label: "Mililitr" },
-      { value: "l", label: "Litr" },
-      { value: "łyżka", label: "Łyżka" },
-      { value: "łyżeczka", label: "Łyżeczka" },
-      { value: "szklanka", label: "Szklanka" },
-      { value: "opakowanie", label: "Opakowanie" },
+      { value: "szt.", label: t("units.szt") },
+      { value: "g", label: t("units.g") },
+      { value: "kg", label: t("units.kg") },
+      { value: "ml", label: t("units.ml") },
+      { value: "l", label: t("units.l") },
+      { value: "łyżka", label: t("units.łyżka") },
+      { value: "łyżeczka", label: t("units.łyżeczka") },
+      { value: "szklanka", label: t("units.szklanka") },
+      { value: "opakowanie", label: t("units.opakowanie") },
    ];
 
    // Common categories for pantry items
    const categoryOptions = [
-      { value: "warzywa", label: "Warzywa" },
-      { value: "owoce", label: "Owoce" },
-      { value: "mięso", label: "Mięso" },
-      { value: "nabiał", label: "Nabiał" },
-      { value: "pieczywo", label: "Pieczywo" },
-      { value: "przyprawy", label: "Przyprawy" },
-      { value: "napoje", label: "Napoje" },
-      { value: "mrożonki", label: "Mrożonki" },
-      { value: "słodycze", label: "Słodycze" },
-      { value: "konserwy", label: "Konserwy" },
-      { value: "inne", label: "Inne" },
+      { value: "warzywa", label: t("categories.warzywa") },
+      { value: "owoce", label: t("categories.owoce") },
+      { value: "mięso", label: t("categories.mięso") },
+      { value: "nabiał", label: t("categories.nabiał") },
+      { value: "pieczywo", label: t("categories.pieczywo") },
+      { value: "przyprawy", label: t("categories.przyprawy") },
+      { value: "napoje", label: t("categories.napoje") },
+      { value: "mrożonki", label: t("categories.mrożonki") },
+      { value: "słodycze", label: t("categories.słodycze") },
+      { value: "konserwy", label: t("categories.konserwy") },
+      { value: "inne", label: t("categories.inne") },
    ];
 
    const validate = () => {
       const newErrors: Record<string, string> = {};
 
       if (!name.trim()) {
-         newErrors.name = "Nazwa produktu jest wymagana";
+         newErrors.name = t("item.name.required");
       }
 
       if (quantity <= 0) {
-         newErrors.quantity = "Ilość musi być większa od 0";
+         newErrors.quantity = t("item.quantity.positive");
       }
 
       if (!unit.trim()) {
-         newErrors.unit = "Jednostka jest wymagana";
+         newErrors.unit = t("item.unit.required");
       }
 
       setErrors(newErrors);
@@ -110,12 +113,12 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
       <form onSubmit={handleSubmit}>
          <Card>
             <CardHeader>
-               <CardTitle>{initialData?._id ? "Edytuj produkt" : "Dodaj nowy produkt"}</CardTitle>
+               <CardTitle>{initialData?._id ? t("form.editTitle") : t("form.addTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                {/* Name field */}
                <div className="space-y-2">
-                  <Label htmlFor="name">Nazwa produktu</Label>
+                  <Label htmlFor="name">{t("item.name.label")}</Label>
                   <Input
                      id="name"
                      value={name}
@@ -143,10 +146,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
                   </div>
 
                   <div className="space-y-2">
-                     <Label htmlFor="unit">Jednostka</Label>
+                     <Label htmlFor="unit">{t("item.unit.label")}</Label>
                      <Select value={unit} onValueChange={setUnit}>
                         <SelectTrigger id="unit" className={errors.unit ? "border-destructive" : ""}>
-                           <SelectValue placeholder="Wybierz jednostkę" />
+                           <SelectValue placeholder={t("item.unit.label")} />
                         </SelectTrigger>
                         <SelectContent>
                            {unitOptions.map((option) => (
@@ -162,10 +165,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
                {/* Category field */}
                <div className="space-y-2">
-                  <Label htmlFor="category">Kategoria (opcjonalna)</Label>
+                  <Label htmlFor="category">{t("item.category.label")}</Label>
                   <Select value={category} onValueChange={setCategory}>
                      <SelectTrigger id="category">
-                        <SelectValue placeholder="Wybierz kategorię" />
+                        <SelectValue placeholder={t("item.category.label")} />
                      </SelectTrigger>
                      <SelectContent>
                         {categoryOptions.map((option) => (
@@ -179,7 +182,7 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
                {/* Expiry date field */}
                <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Data ważności (opcjonalna)</Label>
+                  <Label htmlFor="expiryDate">{t("item.expiryDate.label")}</Label>
                   <Popover>
                      <PopoverTrigger asChild>
                         <Button
@@ -212,10 +215,10 @@ export function PantryForm({ initialData, onSubmit, isSubmitting }: PantryFormPr
 
             <CardFooter className="flex justify-between">
                <Button type="button" variant="outline" onClick={() => router.back()}>
-                  Anuluj
+                  {tCommon("cancel")}
                </Button>
                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Zapisywanie..." : "Zapisz produkt"}
+                  {isSubmitting ? tCommon("saving") : t("form.saveButton")}
                </Button>
             </CardFooter>
          </Card>

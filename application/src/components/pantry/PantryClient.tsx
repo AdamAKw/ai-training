@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { IPantryItem } from "@/models/pantryItem";
 import PantryList from "./PantryList";
@@ -22,6 +23,8 @@ interface PantryClientProps {
 
 export function PantryClient({ initialItems }: PantryClientProps) {
    const router = useRouter();
+   const t = useTranslations("pantry");
+   const tCommon = useTranslations("common");
    const [items, setItems] = useState<IPantryItem[]>(initialItems);
    const [isLoading, setIsLoading] = useState(false);
 
@@ -99,24 +102,24 @@ export function PantryClient({ initialItems }: PantryClientProps) {
       <div className="space-y-6">
          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-               <h1 className="text-3xl font-bold tracking-tight">Spiżarka</h1>
-               <p className="text-muted-foreground mt-1">Zarządzaj produktami w swojej spiżarce</p>
+               <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+               <p className="text-muted-foreground mt-1">{t("description")}</p>
             </div>
-            <Button onClick={() => router.push("/pantry/new")}>Dodaj nowy produkt</Button>
+            <Button onClick={() => router.push("/pantry/new")}>{t("addNewButton")}</Button>
          </div>
 
          {/* Statistics */}
          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-secondary/50 p-4 rounded-lg">
-               <p className="text-sm text-muted-foreground">Wszystkich produktów</p>
+               <p className="text-sm text-muted-foreground">{t("statistics.totalItems")}</p>
                <p className="text-2xl font-bold">{totalItems}</p>
             </div>
             <div className={`p-4 rounded-lg ${expiredItems > 0 ? "bg-destructive/20" : "bg-secondary/50"}`}>
-               <p className="text-sm text-muted-foreground">Przeterminowane</p>
+               <p className="text-sm text-muted-foreground">{t("statistics.expiredItems")}</p>
                <p className="text-2xl font-bold">{expiredItems}</p>
             </div>
             <div className={`p-4 rounded-lg ${soonExpiringItems > 0 ? "bg-amber-500/20" : "bg-secondary/50"}`}>
-               <p className="text-sm text-muted-foreground">Wkrótce się przeterminują</p>
+               <p className="text-sm text-muted-foreground">{t("statistics.soonExpiringItems")}</p>
                <p className="text-2xl font-bold">{soonExpiringItems}</p>
             </div>
          </div>
@@ -128,19 +131,17 @@ export function PantryClient({ initialItems }: PantryClientProps) {
          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogContent>
                <AlertDialogHeader>
-                  <AlertDialogTitle>Czy na pewno chcesz usunąć ten produkt?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                     Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki.
-                  </AlertDialogDescription>
+                  <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
+                  <AlertDialogDescription>{t("deleteDialog.description")}</AlertDialogDescription>
                </AlertDialogHeader>
                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={isLoading}>Anuluj</AlertDialogCancel>
+                  <AlertDialogCancel disabled={isLoading}>{tCommon("cancel")}</AlertDialogCancel>
                   <AlertDialogAction
                      onClick={confirmDeleteItem}
                      disabled={isLoading}
                      className="bg-destructive hover:bg-destructive/90"
                   >
-                     {isLoading ? "Usuwanie..." : "Usuń"}
+                     {isLoading ? tCommon("deleting") : tCommon("delete")}
                   </AlertDialogAction>
                </AlertDialogFooter>
             </AlertDialogContent>
