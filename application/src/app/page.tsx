@@ -1,5 +1,3 @@
-"use client";
-
 import { CurrentMealPlan } from "@/components/home/CurrentMealPlan";
 import QuickNavigation from "@/components/home/quickNavigation";
 
