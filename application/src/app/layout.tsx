@@ -28,7 +28,7 @@ export default function RootLayout({
       <html lang="en">
          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             <Navigation />
-            <main className="container mx-auto p-4">
+            <main className="container mx-auto p-4 py-10">
                <NextIntlClientProvider>{children}</NextIntlClientProvider>
             </main>
          </body>

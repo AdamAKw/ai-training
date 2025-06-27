@@ -19,5 +19,5 @@ export type MealWithRecipeData = {
    isCompleted?: boolean;
    completedAt?: Date;
 };
-
 export type GroupedMeals = Record<string, MealWithRecipeData[]>;
+
