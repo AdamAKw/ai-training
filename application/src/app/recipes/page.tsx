@@ -1,11 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RecipeCard } from "@/components/recipes/RecipeCard";
+import { EmptyState } from "@/components/layout/EmptyState";
 
 interface Recipe {
   _id: string;
@@ -71,14 +70,11 @@ export default function RecipesPage() {
       )}
 
       {!isLoading && !error && recipes.length === 0 && (
-        <div className="text-center py-10">
-          <p className="text-gray-500 mb-4">
-            You don&apos;t have any recipes yet.
-          </p>
-          <Link href="/recipes/new">
-            <Button>Create Your First Recipe</Button>
-          </Link>
-        </div>
+        <EmptyState
+          description="You don't have any recipes yet."
+          actionLabel="Create Your First Recipe"
+          actionHref="/recipes/new"
+        />
       )}
 
       {recipes.length > 0 && (

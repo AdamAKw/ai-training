@@ -9,7 +9,7 @@ export default function ShoppingListPage() {
 
   return (
     <div>
-      <PageHeader title={t("title")} />
+      <PageHeader title={t("title")} action={{href:"/shoppingList/new", label:t("createEmptyList")}}/>
       <ShoppingList />
     </div>
   );
