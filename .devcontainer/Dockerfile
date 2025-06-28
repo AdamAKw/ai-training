@@ -43,34 +43,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     xvfb \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install X11 and GUI support packages for desktop applications
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y \
-    # X11 client libraries and utilities
-    x11-apps \
-    x11-utils \
-    x11-xserver-utils \
-    # X11 authentication
-    xauth \
-    # Additional X11 libraries
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxi6 \
-    libxrandr2 \
-    libxrender1 \
-    libxss1 \
-    libxtst6 \
-    # Fonts for better GUI rendering
-    fonts-liberation \
-    fonts-dejavu-core \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
-
 # [Optional] Uncomment if you want to install an additional version of node using nvm
 # ARG EXTRA_NODE_VERSION=10
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
