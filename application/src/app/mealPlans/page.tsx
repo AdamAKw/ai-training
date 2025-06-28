@@ -14,14 +14,14 @@ async function getMealPlans() {
     });
 
     if (!res.ok) {
-      throw new Error("Nie udało się pobrać planów posiłków");
+      throw new Error("Failed to fetch meal plans");
       return [];
     }
 
     const data = await res.json();
     return data.mealPlans as IMealPlan[];
   } catch (error) {
-    console.error("Błąd podczas pobierania planów posiłków:", error);
+    console.error("Error fetching meal plans:", error);
     return [];
   }
 }

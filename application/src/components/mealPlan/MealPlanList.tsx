@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { MealPlanCard } from "./MealPlanCard";
 import { IMealPlan } from "@/models/mealPlan";
 import { EmptyState } from "@/components/layout/EmptyState";
@@ -21,6 +24,8 @@ interface MealPlanListProps {
 export function MealPlanList({ mealPlans, onDelete }: MealPlanListProps) {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [mealPlanToDelete, setMealPlanToDelete] = useState<string | null>(null);
+  const t = useTranslations("mealPlan");
+  const buttonT = useTranslations("buttons");
 
   const handleDeleteClick = (id: string) => {
     setMealPlanToDelete(id);
@@ -38,8 +43,8 @@ export function MealPlanList({ mealPlans, onDelete }: MealPlanListProps) {
   if (mealPlans.length === 0) {
     return (
       <EmptyState
-        description="Nie masz jeszcze żadnych planów posiłków."
-        actionLabel="Utwórz pierwszy plan"
+        description={t("noPlans")}
+        actionLabel={t("createFirst")}
         actionHref="/mealPlans/new"
       />
     );
@@ -60,21 +65,18 @@ export function MealPlanList({ mealPlans, onDelete }: MealPlanListProps) {
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Czy na pewno chcesz usunąć ten plan posiłków?
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Ta akcja jest nieodwracalna. Spowoduje trwałe usunięcie planu
-              posiłków.
+              {t("deleteConfirmDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogCancel>{buttonT("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Usuń
+              {buttonT("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

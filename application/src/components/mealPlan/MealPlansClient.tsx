@@ -1,36 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { MealPlanList } from "@/components/mealPlan/MealPlanList";
 import { IMealPlan } from "@/models/mealPlan";
 
 interface MealPlansClientProps {
-   initialMealPlans: IMealPlan[];
+  initialMealPlans: IMealPlan[];
 }
 
 export function MealPlansClient({ initialMealPlans }: MealPlansClientProps) {
-   const [mealPlans, setMealPlans] = useState(initialMealPlans);
+  const [mealPlans, setMealPlans] = useState(initialMealPlans);
+  const t = useTranslations("mealPlan");
 
-   const handleDelete = async (id: string) => {
-      try {
-         const res = await fetch(`/api/mealPlans/${id}`, {
-            method: "DELETE",
-         });
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`/api/mealPlans/${id}`, {
+        method: "DELETE",
+      });
 
-         if (!res.ok) {
-            const error = await res.json();
-            throw new Error(error.error || "Wystąpił problem podczas usuwania planu");
-         }
-
-         // Aktualizuj stan, usuwając plan
-         setMealPlans(mealPlans.filter((plan) => plan._id !== id));
-         toast.success("Plan posiłków został pomyślnie usunięty");
-      } catch (error) {
-         console.error("Błąd podczas usuwania planu:", error);
-         toast.error("Nie udało się usunąć planu posiłków");
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || t("deleteFailed"));
       }
-   };
 
-   return <MealPlanList mealPlans={mealPlans} onDelete={handleDelete} />;
+      // Aktualizuj stan, usuwając plan
+      setMealPlans(mealPlans.filter((plan) => plan._id !== id));
+      toast.success(t("deleteSuccess"));
+    } catch (error) {
+      console.error("Error deleting meal plan:", error);
+      toast.error(t("deleteError"));
+    }
+  };
+
+  return <MealPlanList mealPlans={mealPlans} onDelete={handleDelete} />;
 }
