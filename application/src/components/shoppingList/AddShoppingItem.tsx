@@ -92,7 +92,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t("unexpectedError");
-      toast.error(`${t("addFailed")}: ${errorMessage}`);
+      toast.error(t("addFailedWithMessage", { message: errorMessage }));
     } finally {
       setIsSubmitting(false);
     }

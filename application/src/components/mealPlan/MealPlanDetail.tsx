@@ -53,6 +53,8 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
         return t("mealTypes.dinner");
       case "snack":
         return t("mealTypes.snack");
+      case "supper":
+        return t("mealTypes.supper");
       default:
         return t("mealTypes.other");
     }
@@ -93,7 +95,9 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : t("detail.shoppingListFailed");
-      toast.error(`${t("detail.shoppingListFailed")}: ${errorMessage}`);
+      toast.error(
+        t("detail.shoppingListFailedWithMessage", { message: errorMessage })
+      );
     } finally {
       setIsCreatingList(false);
     }

@@ -18,8 +18,8 @@ interface MealPlanCardProps {
   onDelete?: (id: string) => void;
 }
 
-export async function  MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
-  const t =await  getTranslations("mealPlan");
+export async function MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
+  const t = await getTranslations("mealPlan");
 
   // Format dates
   const startDateFormatted = formatDate(new Date(mealPlan.startDate));
@@ -46,6 +46,8 @@ export async function  MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
         return t("mealTypes.dinner");
       case "snack":
         return t("mealTypes.snack");
+      case "supper":
+        return t("mealTypes.supper");
       case "other":
         return t("mealTypes.other");
       default:

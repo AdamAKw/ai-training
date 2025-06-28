@@ -50,6 +50,7 @@
       "lunch": "Lunch",
       "dinner": "Dinner",
       "snack": "Snack",
+      "supper": "Supper",
       "other": "Other"
     },
     "detail": {
@@ -60,7 +61,8 @@
       "servings": "Servings",
       "showRecipe": "Show recipe",
       "shoppingListCreated": "Shopping list created successfully",
-      "shoppingListFailed": "Failed to create shopping list"
+      "shoppingListFailed": "Failed to create shopping list",
+      "shoppingListFailedWithMessage": "Failed to create shopping list: {message}"
     },
     "form": {
       "name": "Meal plan name",
@@ -106,6 +108,31 @@
       "mealPlans": "Meal Plans",
       "pantry": "Pantry",
       "shoppingLists": "Shopping Lists"
+    },
+    "mealPlanHeader": {
+      "planDetails": "Plan Details",
+      "editPlan": "Edit Plan",
+      "createShoppingList": "Create Shopping List",
+      "currentPlan": "Current meal plan: {planName}"
+    },
+    "mealCard": {
+      "servings": "Servings: {count}",
+      "showRecipe": "Show Recipe",
+      "markCompleted": "Mark as Completed",
+      "markUncompleted": "Mark as Not Completed",
+      "noImage": "No image",
+      "completed": "✓ Completed",
+      "steps": "Steps:",
+      "moreSteps": "... and {count} more",
+      "completedAt": "Completed: {date}",
+      "mealTypes": {
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner",
+        "snack": "Snack",
+        "supper": "Supper",
+        "other": "Other"
+      }
     }
   },
   "shoppingList": {
@@ -127,7 +154,8 @@
       "updateFailed": "Failed to update item",
       "removeFailed": "Failed to remove item",
       "transferFailed": "Failed to transfer items to pantry",
-      "deleteFailed": "Failed to delete shopping list"
+      "deleteFailed": "Failed to delete shopping list",
+      "generalError": "Error: {message}"
     },
     "tryAgain": "Try Again",
     "deleteList": "Delete List",
@@ -145,7 +173,8 @@
       "creating": "Creating...",
       "successMessage": "Shopping list created successfully",
       "createFailed": "Failed to create shopping list",
-      "unexpectedError": "An unexpected error occurred"
+      "unexpectedError": "An unexpected error occurred",
+      "createFailedWithMessage": "Failed to create shopping list: {message}"
     },
     "detail": {
       "customList": "Custom List",
@@ -172,7 +201,8 @@
       "quantityInvalid": "Please enter a valid quantity",
       "addFailed": "Failed to add item to shopping list",
       "addSuccess": "Item added to shopping list",
-      "unexpectedError": "An unexpected error occurred"
+      "unexpectedError": "An unexpected error occurred",
+      "addFailedWithMessage": "Failed to add item to shopping list: {message}"
     },
     "units": {
       "kg": "Kilogram",

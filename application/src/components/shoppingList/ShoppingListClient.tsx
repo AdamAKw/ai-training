@@ -196,7 +196,9 @@ export function ShoppingList() {
   if (error && lists.length === 0) {
     return (
       <div className="bg-red-50 p-4 rounded-md border border-red-200">
-        <p className="text-red-600">Error: {error}</p>
+        <p className="text-red-600">
+          {t("errors.generalError", { message: error })}
+        </p>
         <Button
           onClick={() => {
             setError(null);

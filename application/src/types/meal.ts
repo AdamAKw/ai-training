@@ -14,7 +14,7 @@ export type MealWithRecipeData = {
    _id?: string;
    recipe: MealRecipePopulated | string;
    date: Date | string;
-   mealType: "breakfast" | "lunch" | "dinner" | "snack" | "other";
+   mealType: "breakfast" | "lunch" | "dinner" | "snack" | "supper" | "other";
    servings: number;
    isCompleted?: boolean;
    completedAt?: Date;

@@ -71,7 +71,6 @@ export function checkIngredientsAvailability(
   servings: number = 1
 ): Map<string, ReturnType<typeof checkIngredientAvailability>> {
   const results = new Map();
-  
   // Safety check for ingredients array
   if (!ingredients || !Array.isArray(ingredients)) {
     return results;

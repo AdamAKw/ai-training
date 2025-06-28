@@ -50,6 +50,7 @@
       "lunch": "Lunch",
       "dinner": "Obiad",
       "snack": "Przekąska",
+      "supper": "Kolacja",
       "other": "Inne"
     },
     "detail": {
@@ -60,7 +61,8 @@
       "servings": "Liczba porcji",
       "showRecipe": "Pokaż przepis",
       "shoppingListCreated": "Lista zakupów została utworzona pomyślnie",
-      "shoppingListFailed": "Nie udało się utworzyć listy zakupów"
+      "shoppingListFailed": "Nie udało się utworzyć listy zakupów",
+      "shoppingListFailedWithMessage": "Nie udało się utworzyć listy zakupów: {message}"
     },
     "form": {
       "name": "Nazwa planu posiłków",
@@ -106,6 +108,30 @@
       "mealPlans": "Plany posiłków",
       "pantry": "Spiżarnia",
       "shoppingLists": "Listy zakupów"
+    },
+    "mealPlanHeader": {
+      "planDetails": "Szczegóły planu",
+      "editPlan": "Edytuj plan",
+      "createShoppingList": "Utwórz listę zakupów",
+      "currentPlan": "Aktualny plan posiłków: {planName}"
+    },
+    "mealCard": {
+      "servings": "Liczba porcji: {count}",
+      "showRecipe": "Pokaż przepis",
+      "markCompleted": "Oznacz jako wykonane",
+      "markUncompleted": "Oznacz jako niewykonane",
+      "noImage": "Brak zdjęcia",
+      "completed": "✓ Ukończono",
+      "steps": "Kroki:",
+      "moreSteps": "... oraz {count} więcej",
+      "completedAt": "Ukończono: {date}",
+      "mealTypes": {
+        "breakfast": "Śniadanie",
+        "lunch": "Lunch",
+        "dinner": "Obiad",
+        "snack": "Przekąska",
+        "other": "Inne"
+      }
     }
   },
   "shoppingList": {
@@ -127,7 +153,8 @@
       "updateFailed": "Nie udało się zaktualizować produktu",
       "removeFailed": "Nie udało się usunąć produktu",
       "transferFailed": "Nie udało się przenieść produktów do spiżarki",
-      "deleteFailed": "Nie udało się usunąć listy zakupów"
+      "deleteFailed": "Nie udało się usunąć listy zakupów",
+      "generalError": "Błąd: {message}"
     },
     "tryAgain": "Spróbuj ponownie",
     "deleteList": "Usuń listę",
@@ -145,7 +172,8 @@
       "creating": "Tworzenie...",
       "successMessage": "Lista zakupów została pomyślnie utworzona",
       "createFailed": "Nie udało się utworzyć listy zakupów",
-      "unexpectedError": "Wystąpił nieoczekiwany błąd"
+      "unexpectedError": "Wystąpił nieoczekiwany błąd",
+      "createFailedWithMessage": "Nie udało się utworzyć listy zakupów: {message}"
     },
     "detail": {
       "customList": "Lista niestandardowa",
@@ -172,7 +200,8 @@
       "quantityInvalid": "Wprowadź prawidłową ilość",
       "addFailed": "Nie udało się dodać produktu do listy zakupów",
       "addSuccess": "Produkt został dodany do listy zakupów",
-      "unexpectedError": "Wystąpił nieoczekiwany błąd"
+      "unexpectedError": "Wystąpił nieoczekiwany błąd",
+      "addFailedWithMessage": "Nie udało się dodać produktu do listy zakupów: {message}"
     },
     "units": {
       "kg": "Kilogram",

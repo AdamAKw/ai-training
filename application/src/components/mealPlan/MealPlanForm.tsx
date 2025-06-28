@@ -241,6 +241,7 @@ export function MealPlanForm({
     { value: "lunch", label: mealTypesT("lunch") },
     { value: "dinner", label: mealTypesT("dinner") },
     { value: "snack", label: mealTypesT("snack") },
+    { value: "supper", label: mealTypesT("supper") },
     { value: "other", label: mealTypesT("other") },
   ];
 
