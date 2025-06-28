@@ -6,7 +6,7 @@ describe('Cooking App - Pantry Management', () => {
     it('should display pantry page', () => {
         cy.url().should('include', '/pantry')
         cy.get('body').should('be.visible')
-        cy.contains('Pantry').should('be.visible')
+        cy.contains('Spiżarka').should('be.visible')
     })
 
     it('should navigate to add new pantry item', () => {
@@ -18,23 +18,34 @@ describe('Cooking App - Pantry Management', () => {
     it('should create a new pantry item', () => {
         cy.visit('/pantry/new')
 
-        // Wypełniamy informacje o produkcie
-        cy.get('input[name="name"], input[id="name"]').type('Test Item')
+        // Wypełniamy wymagane informacje o produkcie
+        cy.get('input[id="name"]').should('be.visible').type('Test Produkt')
 
-        // Sprawdzamy czy są pola dla ilości
+        // Sprawdzamy i wypełniamy pole ilości
+        cy.get('input[id="quantity"]').should('be.visible').clear().type('5')
+
+        // Sprawdzamy i wypełniamy pole jednostki (Select)
         cy.get('body').then(($body) => {
-            if ($body.find('input[name="quantity"], input[id="quantity"]').length > 0) {
-                cy.get('input[name="quantity"], input[id="quantity"]').type('5')
+            // Sprawdzamy czy jest SelectTrigger dla jednostek
+            if ($body.find('button[id="unit"]').length > 0) {
+                cy.get('button[id="unit"]').click()
+                // Czekamy na pojawienie się opcji i wybieramy pierwszą dostępną
+                cy.get('[role="option"]').first().click()
             }
         })
 
-        // Sprawdzamy czy formularz ma wymagane pola
-        cy.get('form').should(($form) => {
-            const text = $form.text().toLowerCase()
-            expect(text).to.satisfy((text: string) =>
-                text.includes('pantry') || text.includes('item')
-            )
-        })
+        // Sprawdzamy czy formularz ma wszystkie wymagane pola
+        cy.get('form').should('be.visible')
+        cy.get('input[id="name"]').should('have.value', 'Test Produkt')
+        cy.get('input[id="quantity"]').should('have.value', '5')
+
+        // Próbujemy wysłać formularz
+        cy.get('button[type="submit"]').should('be.visible').click()
+
+        // Sprawdzamy czy nastąpi przekierowanie lub pojawi się komunikat o sukcesie
+        cy.url().should('satisfy', (url: string) => {
+            return url.includes('/pantry') && !url.includes('/new')
+        }, { timeout: 10000 })
     })
 
     it('should handle empty pantry list', () => {
@@ -59,12 +70,18 @@ describe('Cooking App - Pantry Management', () => {
     it('should display pantry items list', () => {
         cy.get('body').should('be.visible')
 
-        // Sprawdzamy czy są elementy spiżarni
+        // Sprawdzamy czy są elementy spiżarni lub stan pusty
         cy.get('body').should(($body) => {
-            const hasItems = $body.find('[data-testid*="pantry"], .pantry-item, .item-card').length > 0
-            const hasListItems = $body.find('li, article, section').length > 0
-            const hasContent = hasItems || hasListItems
+            // Sprawdzamy czy jest grid z produktami
+            const hasGrid = $body.find('.grid').length > 0
+            // Sprawdzamy czy są karty (Card komponenty)
+            const hasCards = $body.find('[class*="card"]').length > 0
+            // Sprawdzamy czy jest EmptyState (gdy brak produktów)
+            const hasEmptyState = $body.text().includes('pusta') || $body.text().includes('Dodaj')
+            // Sprawdzamy czy jest tekst związany ze spiżarnią
+            const hasPantryContent = $body.text().includes('spiżar') || $body.text().includes('produkt')
 
+            const hasContent = hasGrid || hasCards || hasEmptyState || hasPantryContent
             expect(hasContent).to.equal(true)
         })
     })

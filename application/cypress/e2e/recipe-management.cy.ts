@@ -6,7 +6,7 @@ describe('Cooking App - Recipe Management', () => {
     it('should display recipes page', () => {
         cy.url().should('include', '/recipes')
         cy.get('body').should('be.visible')
-        cy.contains('Recipes').should('be.visible')
+        cy.contains('Przepisy').should('be.visible')
     })
 
     it('should navigate to create new recipe', () => {
@@ -18,12 +18,42 @@ describe('Cooking App - Recipe Management', () => {
     it('should create a new recipe with basic information', () => {
         cy.visit('/recipes/new')
 
-        // Wypełniamy podstawowe informacje
-        cy.get('input[name="name"], input[id="name"]').type('Test Recipe')
-        cy.get('textarea[name="description"], textarea[id="description"]').type('Test description for Cypress')
+        // Wypełniamy podstawowe informacje - używamy nazw pól z react-hook-form
+        cy.get('input[name="name"]').should('be.visible').type('Test Przepis')
 
-        // Sprawdzamy czy formularz ma wymagane pola
-        cy.get('form').should('contain.text', 'Recipe')
+        // Sprawdzamy i wypełniamy opis
+        cy.get('textarea[name="description"]').should('be.visible').type('Testowy opis przepisu utworzony przez Cypress')
+
+        // Sprawdzamy i wypełniamy wymagane pola numeryczne
+        cy.get('input[name="prepTime"]').should('be.visible').clear().type('30')
+        cy.get('input[name="cookTime"]').should('be.visible').clear().type('45')
+        cy.get('input[name="servings"]').should('be.visible').clear().type('4')
+
+        // Sprawdzamy czy jest przynajmniej jeden składnik (powinien być domyślnie)
+        cy.get('input[name*="ingredients"]').should('have.length.greaterThan', 0)
+
+        // Wypełniamy pierwszy składnik jeśli jest pusty
+        cy.get('input[name="ingredients.0.name"]').clear().type('Test składnik')
+        cy.get('input[name="ingredients.0.quantity"]').clear().type('500')
+        cy.get('input[name="ingredients.0.unit"]').clear().type('g')
+
+        // Sprawdzamy czy jest przynajmniej jedna instrukcja
+        cy.get('textarea[name*="instructions"], input[name*="instructions"]').should('have.length.greaterThan', 0)
+
+        // Wypełniamy pierwszą instrukcję
+        cy.get('textarea[name="instructions.0.value"], input[name="instructions.0.value"]').clear().type('Testowa instrukcja przygotowania')
+
+        // Sprawdzamy czy formularz ma wszystkie wymagane elementy
+        cy.get('form').should('be.visible')
+        cy.get('input[name="name"]').should('have.value', 'Test Przepis')
+
+        // Próbujemy wysłać formularz
+        cy.get('button[type="submit"]').should('be.visible').click()
+
+        // Sprawdzamy czy nastąpi przekierowanie po sukcesie
+        cy.url().should('satisfy', (url: string) => {
+            return url.includes('/recipes') && !url.includes('/new')
+        }, { timeout: 10000 })
     })
 
     it('should handle empty recipe list', () => {
@@ -36,11 +66,12 @@ describe('Cooking App - Recipe Management', () => {
         cy.get('body').should(($body) => {
             const text = $body.text().toLowerCase()
             expect(text).to.satisfy((text: string) =>
-                text.includes('recipe') ||
-                text.includes('empty') ||
-                text.includes('no recipes') ||
-                text.includes('create') ||
-                text.includes('add')
+                text.includes('przepis') ||
+                text.includes('pusty') ||
+                text.includes('brak') ||
+                text.includes('dodaj') ||
+                text.includes('nowy') ||
+                text.includes('utwórz')
             )
         })
     })
@@ -64,12 +95,20 @@ describe('Cooking App - Recipe Search and Filtering', () => {
     it('should display recipe cards or list items', () => {
         cy.get('body').should('be.visible')
 
-        // Sprawdzamy czy są elementy reprezentujące przepisy (karty, elementy listy itp.)
+        // Sprawdzamy czy są elementy reprezentujące przepisy lub stan pusty
         cy.get('body').should(($body) => {
-            const hasCards = $body.find('[data-testid*="recipe"], .recipe-card, .recipe-item').length > 0
-            const hasListItems = $body.find('li, article, section').length > 0
-            const hasContent = hasCards || hasListItems
+            // Sprawdzamy czy jest grid z przepisami
+            const hasGrid = $body.find('.grid').length > 0
+            // Sprawdzamy czy są karty (Card komponenty)
+            const hasCards = $body.find('[class*="card"]').length > 0
+            // Sprawdzamy czy są skeletony (podczas ładowania)
+            const hasSkeletons = $body.find('[class*="skeleton"]').length > 0
+            // Sprawdzamy czy jest EmptyState (gdy brak przepisów)
+            const hasEmptyState = $body.text().includes('nie masz') || $body.text().includes('Utwórz')
+            // Sprawdzamy czy jest tekst związany z przepisami
+            const hasRecipesContent = $body.text().includes('przepis') || $body.text().includes('Przepis')
 
+            const hasContent = hasGrid || hasCards || hasSkeletons || hasEmptyState || hasRecipesContent
             expect(hasContent).to.equal(true)
         })
     })

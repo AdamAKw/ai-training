@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import Link from "next/link";
 import {
@@ -10,16 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IMealPlan } from "@/models/mealPlan";
-import { getTranslations, getFormatter } from "next-intl/server";
+import { useFormatter, useTranslations } from "next-intl";
 
 interface MealPlanCardProps {
   mealPlan: IMealPlan;
   onDelete?: (id: string) => void;
 }
 
-export async function MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
-  const t = await getTranslations("mealPlan");
-  const format = await getFormatter();
+export function MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
+  const t = useTranslations("mealPlan");
+  const format = useFormatter();
 
   // Format dates
   const startDateFormatted = format.dateTime(

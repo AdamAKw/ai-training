@@ -4,7 +4,6 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { MealPlansClient } from "@/components/mealPlan/MealPlansClient";
 import { IMealPlan } from "@/models/mealPlan";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
-export const dynamic = "force-dynamic";
 
 async function getMealPlans() {
   try {
@@ -14,7 +13,7 @@ async function getMealPlans() {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch meal plans");
+      console.error("Failed to fetch meal plans");
       return [];
     }
 
