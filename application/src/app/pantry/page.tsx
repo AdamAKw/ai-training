@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { IPantryItem } from "@/models/pantryItem";
 import { connectToDatabase } from "@/lib/db/mongoose";
@@ -26,19 +27,20 @@ async function getPantryItems(): Promise<IPantryItem[]> {
 }
 
 export default async function PantryPage() {
+  const t = await getTranslations("pantry");
   const pantryItems = await getPantryItems();
 
   return (
     <div>
       <PageHeader
-        title="Spiżarnia"
-        description="Zarządzaj produktami w swojej spiżarni"
+        title={t("title")}
+        description={t("description")}
         action={{
-          label: "Dodaj nowy produkt",
+          label: t("addNewButton"),
           href: "/pantry/new",
         }}
       />
-      <Suspense fallback={<div>Ładowanie spiżarki...</div>}>
+      <Suspense fallback={<div>{t("loading")}</div>}>
         <PantryClient initialItems={pantryItems} />
       </Suspense>
     </div>

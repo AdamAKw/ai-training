@@ -254,7 +254,7 @@ export function ShoppingList() {
               <p className="text-sm opacity-80">
                 {typeof list.mealPlan === "object"
                   ? list.mealPlan.name
-                  : "Meal Plan"}
+                  : t("mealPlan")}
               </p>
               <p className="text-sm mt-1">
                 {list.items.length} {t("items")} •{" "}

@@ -121,6 +121,7 @@
     "items": "produktów",
     "purchased": "zakupionych",
     "transferredToPantry": "Wybrane produkty zostały przeniesione do spiżarki!",
+    "mealPlan": "Plan posiłków",
     "errors": {
       "fetchFailed": "Nie udało się pobrać list zakupów",
       "updateFailed": "Nie udało się zaktualizować produktu",
@@ -172,6 +173,17 @@
       "addFailed": "Nie udało się dodać produktu do listy zakupów",
       "addSuccess": "Produkt został dodany do listy zakupów",
       "unexpectedError": "Wystąpił nieoczekiwany błąd"
+    },
+    "units": {
+      "kg": "Kilogram",
+      "g": "Gram",
+      "l": "Litr",
+      "ml": "Mililitr",
+      "szt": "Sztuka",
+      "łyżka": "Łyżka",
+      "łyżeczka": "Łyżeczka",
+      "szklanka": "Szklanka",
+      "opakowanie": "Opakowanie"
     },
     "item": {
       "removeConfirm": "Usunąć {item} z listy zakupów?",
@@ -241,6 +253,39 @@
     "deleteDialog": {
       "title": "Czy na pewno chcesz usunąć ten produkt?",
       "description": "Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki."
+    },
+    "loading": "Ładowanie spiżarki...",
+    "newItem": {
+      "title": "Dodaj nowy produkt do spiżarki",
+      "errors": {
+        "createFailed": "Nie udało się dodać produktu: {error}",
+        "createGenericFailed": "Nie udało się dodać produktu. Spróbuj ponownie później.",
+        "unknownError": "Nieznany błąd"
+      }
+    },
+    "detail": {
+      "quantity": "Ilość",
+      "category": "Kategoria",
+      "expiryDate": "Data ważności",
+      "dateAdded": "Dodano"
+    },
+    "edit": {
+      "title": "Edytuj produkt",
+      "deleteButton": "Usuń produkt",
+      "deleteDialog": {
+        "title": "Czy na pewno chcesz usunąć ten produkt?",
+        "description": "Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki.",
+        "cancel": "Anuluj",
+        "confirm": "Usuń",
+        "deleting": "Usuwanie..."
+      },
+      "errors": {
+        "updateFailed": "Nie udało się zaktualizować produktu: {error}",
+        "updateGenericFailed": "Nie udało się zaktualizować produktu. Spróbuj ponownie później.",
+        "deleteFailed": "Nie udało się usunąć produktu: {error}",
+        "deleteGenericFailed": "Nie udało się usunąć produktu. Spróbuj ponownie później.",
+        "unknownError": "Nieznany błąd"
+      }
     }
   },
   "recipes": {
