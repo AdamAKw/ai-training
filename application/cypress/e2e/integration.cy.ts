@@ -4,14 +4,14 @@ describe('Cooking App - Full User Journey', () => {
         cy.visit('/')
         cy.get('body').should('be.visible')
 
-        // 2. Przechodzimy do przepisów
-        cy.contains('Przepisy').click()
+        // 2. Przechodzimy do przepisów - używamy angielskich nazw z nawigacji
+        cy.contains('Recipes').click()
         cy.url().should('include', '/recipes')
 
         // 3. Sprawdzamy możliwość dodania przepisu
         cy.get('body').then(($body) => {
-            if ($body.find('a[href*="/recipes/new"], button').length > 0) {
-                cy.get('a[href*="/recipes/new"], button').contains(/dodaj|nowy|add|new/i).first().click()
+            if ($body.find('a[href="/recipes/new"]').length > 0) {
+                cy.get('a[href="/recipes/new"]').first().click()
                 cy.url().should('include', '/recipes/new')
 
                 // Sprawdzamy formularz
@@ -23,15 +23,15 @@ describe('Cooking App - Full User Journey', () => {
         })
 
         // 4. Przechodzimy do planów posiłków
-        cy.contains('Plany posiłków').click()
+        cy.contains('Meal Plans').click()
         cy.url().should('include', '/mealPlans')
 
         // 5. Sprawdzamy spiżarnię
-        cy.contains('Spiżarnia').click()
+        cy.contains('Pantry').click()
         cy.url().should('include', '/pantry')
 
         // 6. Sprawdzamy listę zakupów
-        cy.contains('Lista zakupów').click()
+        cy.contains('Shopping List').click()
         cy.url().should('include', '/shoppingList')
 
         // 7. Wracamy na stronę główną
@@ -49,7 +49,7 @@ describe('Cooking App - Full User Journey', () => {
 
         viewports.forEach((viewport) => {
             cy.viewport(viewport.width, viewport.height)
-            cy.visit('/')
+            cy.visit('/', { timeout: 15000 })
 
             // Sprawdzamy czy strona jest responsywna
             cy.get('body').should('be.visible')
@@ -61,7 +61,10 @@ describe('Cooking App - Full User Journey', () => {
 
     it('should handle errors gracefully', () => {
         // Test nieistniejącej strony
-        cy.visit('/nieistniejaca-strona', { failOnStatusCode: false })
+        cy.visit('/nieistniejaca-strona', {
+            failOnStatusCode: false,
+            timeout: 15000
+        })
 
         // Sprawdzamy czy jest strona 404 lub przekierowanie
         cy.get('body').should('be.visible')
