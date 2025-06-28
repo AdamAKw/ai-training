@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -121,6 +121,7 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
   // No need for state anymore since delete functionality is handled by the client component
   const [error] = useState<string | null>(null);
   const t = useTranslations("recipes.detail");
+  const format = useFormatter();
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -289,11 +290,12 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
         <CardFooter className="text-sm text-gray-500 border-t pt-4">
           <div>
             <p>
-              {t("created")}: {new Date(recipe.createdAt).toLocaleDateString()}
+              {t("created")}:{" "}
+              {format.dateTime(new Date(recipe.createdAt), "dateOnly")}
             </p>
             <p>
               {t("lastUpdated")}:{" "}
-              {new Date(recipe.updatedAt).toLocaleDateString()}
+              {format.dateTime(new Date(recipe.updatedAt), "dateOnly")}
             </p>
           </div>
         </CardFooter>

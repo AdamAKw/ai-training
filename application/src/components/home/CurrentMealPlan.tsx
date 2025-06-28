@@ -7,10 +7,12 @@ import { EmptyMealPlan } from "./EmptyMealPlan";
 import { MealPlanHeader } from "./MealPlanHeader";
 import { MealDay } from "./MealDay";
 import { IMealPlan } from "@/models/mealPlan";
+import { useFormatter } from "next-intl";
 
 export function CurrentMealPlan() {
   const { isLoading, currentMealPlan, pantryItems, toggleMealCompletion } =
     useMealPlanData();
+  const format = useFormatter();
 
   if (isLoading) {
     return <MealPlanSkeleton />;
@@ -20,7 +22,7 @@ export function CurrentMealPlan() {
     return <EmptyMealPlan />;
   }
 
-  const mealsByDate = groupMealsByDate(currentMealPlan);
+  const mealsByDate = groupMealsByDate(currentMealPlan, format);
   const sortedDates = sortDatesByChronology(Object.keys(mealsByDate));
 
   return (

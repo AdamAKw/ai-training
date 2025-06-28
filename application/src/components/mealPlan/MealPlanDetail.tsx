@@ -3,11 +3,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import { IMealPlan } from "@/models/mealPlan";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface MealPlanDetailProps {
@@ -18,13 +17,14 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
   const router = useRouter();
   const [isCreatingList, setIsCreatingList] = useState(false);
   const t = useTranslations("mealPlan");
+  const format = useFormatter();
 
   // Grupowanie posiłków według dat
   const mealsByDate = React.useMemo(() => {
     const grouped: Record<string, typeof mealPlan.meals> = {};
 
     mealPlan.meals.forEach((meal) => {
-      const dateStr = formatDate(new Date(meal.date));
+      const dateStr = format.dateTime(new Date(meal.date), "dateOnly");
       if (!grouped[dateStr]) {
         grouped[dateStr] = [];
       }
@@ -32,7 +32,7 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
     });
 
     return grouped;
-  }, [mealPlan]);
+  }, [mealPlan, format]);
 
   // Sortowanie dat (od najwcześniejszej)
   const sortedDates = React.useMemo(() => {
@@ -117,8 +117,8 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{mealPlan.name}</h1>
           <p className="text-muted-foreground">
-            {formatDate(new Date(mealPlan.startDate))} -{" "}
-            {formatDate(new Date(mealPlan.endDate))}
+            {format.dateTime(new Date(mealPlan.startDate), "dateOnly")} -{" "}
+            {format.dateTime(new Date(mealPlan.endDate), "dateOnly")}
           </p>
         </div>
         <div className="space-x-2">

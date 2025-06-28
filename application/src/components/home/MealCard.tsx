@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import {
   Card,
   CardContent,
@@ -54,6 +54,7 @@ export function MealCard({
 }: MealCardProps) {
   const [imgError, setImgError] = useState(false);
   const t = useTranslations("home.mealCard");
+  const format = useFormatter();
 
   // Function to handle image loading errors
   const handleImageError = () => {
@@ -186,7 +187,7 @@ export function MealCard({
           {isCompleted && completedAt && (
             <p className="text-xs text-muted-foreground">
               {t("completedAt", {
-                date: new Date(completedAt).toLocaleString("pl-PL"),
+                date: format.dateTime(new Date(completedAt), "dateTime"),
               })}
             </p>
           )}

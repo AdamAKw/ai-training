@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
 import { IMealPlan } from "@/models/mealPlan";
 
 interface MealPlanHeaderProps {
@@ -12,6 +11,7 @@ interface MealPlanHeaderProps {
 
 export function MealPlanHeader({ mealPlan }: MealPlanHeaderProps) {
   const t = useTranslations("home.mealPlanHeader");
+  const format = useFormatter();
 
   return (
     <div className="flex flex-col space-y-3 sm:flex-row sm:justify-between sm:space-y-0">
@@ -20,8 +20,8 @@ export function MealPlanHeader({ mealPlan }: MealPlanHeaderProps) {
           {t("currentPlan", { planName: mealPlan.name })}
         </h1>
         <p className="text-muted-foreground">
-          {formatDate(new Date(mealPlan.startDate))} -{" "}
-          {formatDate(new Date(mealPlan.endDate))}
+          {format.dateTime(new Date(mealPlan.startDate), "dateOnly")} -{" "}
+          {format.dateTime(new Date(mealPlan.endDate), "dateOnly")}
         </p>
       </div>
       <div className="space-x-2">

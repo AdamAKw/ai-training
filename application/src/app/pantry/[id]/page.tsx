@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getFormatter } from "next-intl/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { IPantryItem } from "@/models/pantryItem";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
@@ -32,20 +32,12 @@ export default async function PantryItemPage({
 }) {
   const { id } = await params;
   const t = await getTranslations("pantry.detail");
+  const format = await getFormatter();
   const pantryItem = await getPantryItem(id);
 
   if (!pantryItem) {
     notFound();
   }
-
-  // Format date for display
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("pl-PL", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
 
   return (
     <div className="container py-6">
@@ -78,7 +70,7 @@ export default async function PantryItemPage({
                   {t("expiryDate")}
                 </dt>
                 <dd className="text-lg font-medium">
-                  {formatDate(pantryItem.expiryDate)}
+                  {format.dateTime(new Date(pantryItem.expiryDate), "dateOnly")}
                 </dd>
               </div>
             )}
@@ -88,7 +80,7 @@ export default async function PantryItemPage({
                 {t("dateAdded")}
               </dt>
               <dd className="text-lg font-medium">
-                {formatDate(pantryItem.createdAt)}
+                {format.dateTime(new Date(pantryItem.createdAt), "dateOnly")}
               </dd>
             </div>
           </dl>

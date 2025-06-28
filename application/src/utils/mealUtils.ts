@@ -1,13 +1,15 @@
-import { formatDate } from "@/lib/utils";
 import { IMealPlan } from "@/models/mealPlan";
 import { GroupedMeals, MealWithRecipeData } from "@/types/meal";
 
+type FormatterType = {
+  dateTime: (date: Date, format: string) => string;
+};
 
-export function groupMealsByDate(mealPlan: IMealPlan | null): GroupedMeals {
+export function groupMealsByDate(mealPlan: IMealPlan | null, formatter: FormatterType): GroupedMeals {
   if (!mealPlan?.meals) return {};
 
   return mealPlan.meals.reduce<GroupedMeals>((grouped, meal) => {
-    const dateStr = formatDate(new Date(meal.date));
+    const dateStr = formatter.dateTime(new Date(meal.date), 'dateOnly');
     if (!grouped[dateStr]) {
       grouped[dateStr] = [];
     }
@@ -44,7 +46,7 @@ export function getRecipeDetails(meal: MealWithRecipeData) {
 
 export function sortMealsByType(meals: MealWithRecipeData[]): MealWithRecipeData[] {
   const mealTypeOrder = { breakfast: 0, lunch: 1, dinner: 2, snack: 3, other: 4 };
-  
+
   return meals.sort((a, b) => {
     return (
       mealTypeOrder[a.mealType as keyof typeof mealTypeOrder] -
@@ -68,9 +70,9 @@ export function findMealIndex(
       mDate.getTime() === mealDate.getTime() &&
       m.mealType === meal.mealType &&
       index ===
-        sortedDates
-          .slice(0, sortedDates.indexOf(date))
-          .reduce((acc, d) => acc + mealsByDate[d].length, 0) + idx
+      sortedDates
+        .slice(0, sortedDates.indexOf(date))
+        .reduce((acc, d) => acc + mealsByDate[d].length, 0) + idx
     );
   });
 }

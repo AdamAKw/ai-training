@@ -2,99 +2,127 @@
 
 import { IIngredient } from "@/models/recipe";
 import { IPantryItem } from "@/models/pantryItem";
-import { checkSequentialIngredientsAvailability, checkIngredientAvailability } from "@/lib/utils/ingredient-helpers";
+import {
+  checkSequentialIngredientsAvailability,
+  checkIngredientAvailability,
+} from "@/lib/utils/ingredient-helpers";
 import { Badge } from "@/components/ui/extended/badge-extended";
+import { useFormatter } from "next-intl";
 
 interface Recipe {
-   ingredients: IIngredient[];
-   servings: number;
-   recipeId: string;
-   recipeName: string;
+  ingredients: IIngredient[];
+  servings: number;
+  recipeId: string;
+  recipeName: string;
 }
 
 interface SequentialIngredientAvailabilityProps {
-   recipes: Recipe[];
-   pantryItems: IPantryItem[];
+  recipes: Recipe[];
+  pantryItems: IPantryItem[];
 }
 
 type AvailabilityStatus = ReturnType<typeof checkIngredientAvailability>;
 
-export function SequentialIngredientAvailability({ recipes, pantryItems }: SequentialIngredientAvailabilityProps) {
-   // Prepare data for sequential checking
-   const recipesWithIngredients = recipes.map((recipe) => ({
-      ingredients: recipe.ingredients,
-      servings: recipe.servings,
-      recipeId: recipe.recipeId,
-   }));
+export function SequentialIngredientAvailability({
+  recipes,
+  pantryItems,
+}: SequentialIngredientAvailabilityProps) {
+  const format = useFormatter();
 
-   // Get sequential availability results
-   const sequentialResults = checkSequentialIngredientsAvailability(recipesWithIngredients, pantryItems);
+  // Prepare data for sequential checking
+  const recipesWithIngredients = recipes.map((recipe) => ({
+    ingredients: recipe.ingredients,
+    servings: recipe.servings,
+    recipeId: recipe.recipeId,
+  }));
 
-   // Create a map for easy lookup of results by recipe ID
-   const resultsMap = new Map();
-   sequentialResults.forEach((result) => {
-      if (result.recipeId) {
-         resultsMap.set(result.recipeId, result.availabilityMap);
-      }
-   });
+  // Get sequential availability results
+  const sequentialResults = checkSequentialIngredientsAvailability(
+    recipesWithIngredients,
+    pantryItems
+  );
 
-   return (
-      <div className="space-y-4">
-         {recipes.map((recipe, recipeIndex) => {
-            const availabilityMap = resultsMap.get(recipe.recipeId);
+  // Create a map for easy lookup of results by recipe ID
+  const resultsMap = new Map();
+  sequentialResults.forEach((result) => {
+    if (result.recipeId) {
+      resultsMap.set(result.recipeId, result.availabilityMap);
+    }
+  });
 
-            if (!availabilityMap) return null;
+  return (
+    <div className="space-y-4">
+      {recipes.map((recipe, recipeIndex) => {
+        const availabilityMap = resultsMap.get(recipe.recipeId);
 
-            // Count how many ingredients are available vs. missing
-            const totalIngredients = recipe.ingredients.length;
-            const availableIngredients = Array.from(availabilityMap.values()).filter(
-               (item) => (item as AvailabilityStatus).available
-            ).length;
+        if (!availabilityMap) return null;
 
-            return (
-               <div key={recipe.recipeId} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                     <h4 className="font-medium text-sm">Składniki ({recipe.recipeName}):</h4>
-                     <Badge variant={availableIngredients === totalIngredients ? "success" : "warning"}>
-                        {availableIngredients}/{totalIngredients} dostępnych
-                     </Badge>
-                     {recipeIndex > 0 && (
-                        <Badge variant="outline" className="text-xs">
-                           Po poprzednich przepisach
-                        </Badge>
-                     )}
-                  </div>
+        // Count how many ingredients are available vs. missing
+        const totalIngredients = recipe.ingredients.length;
+        const availableIngredients = Array.from(
+          availabilityMap.values()
+        ).filter((item) => (item as AvailabilityStatus).available).length;
 
-                  <ul className="text-sm space-y-1">
-                     {recipe.ingredients.map((ingredient, index) => {
-                        const id = ingredient._id || ingredient.name;
-                        const status = availabilityMap.get(id);
+        return (
+          <div key={recipe.recipeId} className="space-y-2">
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-sm">
+                Składniki ({recipe.recipeName}):
+              </h4>
+              <Badge
+                variant={
+                  availableIngredients === totalIngredients
+                    ? "success"
+                    : "warning"
+                }
+              >
+                {availableIngredients}/{totalIngredients} dostępnych
+              </Badge>
+              {recipeIndex > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  Po poprzednich przepisach
+                </Badge>
+              )}
+            </div>
 
-                        if (!status) return null;
+            <ul className="text-sm space-y-1">
+              {recipe.ingredients.map((ingredient, index) => {
+                const id = ingredient._id || ingredient.name;
+                const status = availabilityMap.get(id);
 
-                        return (
-                           <li key={index} className="flex items-center gap-2">
-                              <div
-                                 className={`w-2 h-2 rounded-full ${status.available ? "bg-green-500" : "bg-red-500"}`}
-                              />
-                              <span>
-                                 {ingredient.name} ({(ingredient.quantity * recipe.servings).toFixed(1)}{" "}
-                                 {ingredient.unit})
-                                 {status.available ? (
-                                    <span className="text-green-600 ml-1">✓</span>
-                                 ) : (
-                                    <span className="text-red-600 ml-1">
-                                       (brakuje {status.missingAmount.toFixed(1)} {ingredient.unit})
-                                    </span>
-                                 )}
-                              </span>
-                           </li>
-                        );
-                     })}
-                  </ul>
-               </div>
-            );
-         })}
-      </div>
-   );
+                if (!status) return null;
+
+                return (
+                  <li key={index} className="flex items-center gap-2">
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        status.available ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    />
+                    <span>
+                      {ingredient.name} (
+                      {format.number(
+                        ingredient.quantity * recipe.servings,
+                        "decimal"
+                      )}{" "}
+                      {ingredient.unit})
+                      {status.available ? (
+                        <span className="text-green-600 ml-1">✓</span>
+                      ) : (
+                        <span className="text-red-600 ml-1">
+                          (brakuje{" "}
+                          {format.number(status.missingAmount, "decimal")}{" "}
+                          {ingredient.unit})
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
 }

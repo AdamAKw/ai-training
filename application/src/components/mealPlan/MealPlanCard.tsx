@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IMealPlan } from "@/models/mealPlan";
-import { formatDate } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getFormatter } from "next-intl/server";
 
 interface MealPlanCardProps {
   mealPlan: IMealPlan;
@@ -20,10 +19,17 @@ interface MealPlanCardProps {
 
 export async function MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
   const t = await getTranslations("mealPlan");
+  const format = await getFormatter();
 
   // Format dates
-  const startDateFormatted = formatDate(new Date(mealPlan.startDate));
-  const endDateFormatted = formatDate(new Date(mealPlan.endDate));
+  const startDateFormatted = format.dateTime(
+    new Date(mealPlan.startDate),
+    "dateOnly"
+  );
+  const endDateFormatted = format.dateTime(
+    new Date(mealPlan.endDate),
+    "dateOnly"
+  );
 
   // Count meals by type
   const mealCounts = mealPlan.meals.reduce(
