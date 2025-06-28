@@ -10,9 +10,38 @@ RUN . /etc/os-release \
     && if [ "$(dpkg --print-architecture)" = "amd64" ]; then apt-get install -y mongodb-database-tools; fi \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+# Install Cypress system dependencies
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y \
+    # Core GTK libraries
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    # Graphics and rendering
+    libgbm-dev \
+    libdrm2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    # Audio
+    libasound2 \
+    libasound2-dev \
+    # Notifications and UI
+    libnotify-dev \
+    libatk1.0-0 \
+    libcairo-gobject2 \
+    libpangocairo-1.0-0 \
+    # Security and networking
+    libnss3-dev \
+    libxss1 \
+    libcups2 \
+    # Input and testing
+    libxtst6 \
+    # X11 and display
+    xauth \
+    xvfb \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # [Optional] Uncomment if you want to install an additional version of node using nvm
 # ARG EXTRA_NODE_VERSION=10

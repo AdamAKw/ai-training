@@ -1,13 +1,58 @@
 {
-   "version": "2.0.0",
-   "tasks": [
-      {
-         "label": "Start Development Server",
-         "type": "shell",
-         "command": "npm run dev",
-         "isBackground": true,
-         "group": "test",
-         "problemMatcher": []
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Development Server",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "group": "test",
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}/application"
       }
-   ]
+    },
+    {
+      "label": "Run Cypress Tests (Headless)",
+      "type": "shell",
+      "command": "npm run cypress:run",
+      "group": "test",
+      "dependsOn": "Start Development Server",
+      "options": {
+        "cwd": "${workspaceFolder}/application"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Cypress Test Runner",
+      "type": "shell",
+      "command": "npm run cypress:open",
+      "group": "test",
+      "dependsOn": "Start Development Server",
+      "options": {
+        "cwd": "${workspaceFolder}/application"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run E2E Tests with Server",
+      "type": "shell",
+      "command": "npm run test:e2e",
+      "group": "test",
+      "options": {
+        "cwd": "${workspaceFolder}/application"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build and Start Production",
+      "type": "shell",
+      "command": "npm run build && npm run start",
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}/application"
+      },
+      "problemMatcher": []
+    }
+  ]
 }

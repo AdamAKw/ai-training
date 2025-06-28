@@ -1,0 +1,57 @@
+{
+  "recipes": [
+    {
+      "name": "Spaghetti Carbonara",
+      "ingredients": [
+        "400g spaghetti",
+        "200g pancetta",
+        "4 jajka",
+        "100g parmezan",
+        "czarny pieprz",
+        "sól"
+      ],
+      "instructions": "Klasyczne włoskie danie...",
+      "servings": 4,
+      "prepTime": 30
+    },
+    {
+      "name": "Kurczak z ryżem",
+      "ingredients": [
+        "500g piersi kurczaka",
+        "300g ryżu jaśminowego",
+        "1 cebula",
+        "2 ząbki czosnku",
+        "papryka słodka",
+        "sól, pieprz"
+      ],
+      "instructions": "Prosty obiad...",
+      "servings": 3,
+      "prepTime": 45
+    }
+  ],
+  "pantryItems": [
+    {
+      "name": "Ryż jaśminowy",
+      "quantity": "1kg",
+      "unit": "package"
+    },
+    {
+      "name": "Oliwa z oliwek",
+      "quantity": "500ml",
+      "unit": "bottle"
+    },
+    {
+      "name": "Sól",
+      "quantity": "1kg",
+      "unit": "package"
+    }
+  ],
+  "mealPlans": [
+    {
+      "name": "Plan na tydzień",
+      "startDate": "2025-06-30",
+      "endDate": "2025-07-06",
+      "meals": []
+    }
+  ]
+}
