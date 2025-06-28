@@ -23,7 +23,7 @@ interface PantryClientProps {
 export function PantryClient({ initialItems }: PantryClientProps) {
   const router = useRouter();
   const t = useTranslations("pantry");
-  const tCommon = useTranslations("common");
+  const tCommon = useTranslations();
   const [items, setItems] = useState<IPantryItem[]>(initialItems);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -152,14 +152,16 @@ export function PantryClient({ initialItems }: PantryClientProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isLoading}>
-              {tCommon("cancel")}
+              {tCommon("buttons.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDeleteItem}
               disabled={isLoading}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {isLoading ? tCommon("deleting") : tCommon("delete")}
+              {isLoading
+                ? tCommon("status.deleting")
+                : tCommon("buttons.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

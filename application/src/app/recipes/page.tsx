@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +19,7 @@ export default function RecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("recipes");
 
   useEffect(() => {
     async function fetchRecipes() {
@@ -26,27 +28,27 @@ export default function RecipesPage() {
         const response = await fetch("/api/recipes");
 
         if (!response.ok) {
-          throw new Error("Failed to fetch recipes");
+          throw new Error(t("fetchFailed"));
         }
 
         const data = await response.json();
         setRecipes(data.recipes || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError(err instanceof Error ? err.message : t("fetchFailed"));
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchRecipes();
-  }, []);
+  }, [t]);
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Recipes"
+        title={t("title")}
         action={{
-          label: "Add New Recipe",
+          label: t("addNewButton"),
           href: "/recipes/new",
         }}
       />
@@ -71,8 +73,8 @@ export default function RecipesPage() {
 
       {!isLoading && !error && recipes.length === 0 && (
         <EmptyState
-          description="You don't have any recipes yet."
-          actionLabel="Create Your First Recipe"
+          description={t("noRecipesYet")}
+          actionLabel={t("createFirstRecipe")}
           actionHref="/recipes/new"
         />
       )}

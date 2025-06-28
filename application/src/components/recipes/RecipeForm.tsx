@@ -91,7 +91,7 @@ interface RecipeFormProps {
 export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeFormProps) => {
    const [instructionInput, setInstructionInput] = useState("");
    const t = useTranslations("recipe");
-   const tCommon = useTranslations("common");
+   const tCommon = useTranslations();
 
    // Initialize the form with safe defaults
    const defaultValues = {
@@ -314,7 +314,7 @@ export const RecipeForm = ({ initialData, onSubmit, isLoading = false }: RecipeF
                         onClick={() => removeIngredient(index)}
                         disabled={isLoading || ingredientFields.length <= 1}
                      >
-                        {tCommon("remove")}
+                        {tCommon("buttons.remove")}
                      </Button>
                   </div>
                ))}

@@ -2,66 +2,71 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
 interface DeleteRecipeDialogProps {
-   recipeId: string;
-   recipeName: string;
+  recipeId: string;
+  recipeName: string;
 }
 
-export function DeleteRecipeDialog({ recipeId, recipeName }: DeleteRecipeDialogProps) {
-   const router = useRouter();
-   const [isDeleting, setIsDeleting] = useState(false);
+export function DeleteRecipeDialog({
+  recipeId,
+  recipeName,
+}: DeleteRecipeDialogProps) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const t = useTranslations("recipes.delete");
 
-   const handleDelete = async () => {
-      try {
-         setIsDeleting(true);
-         const response = await fetch(`/api/recipes/${recipeId}`, {
-            method: "DELETE",
-         });
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/recipes/${recipeId}`, {
+        method: "DELETE",
+      });
 
-         if (!response.ok) {
-            throw new Error("Failed to delete recipe");
-         }
-
-         router.push("/recipes");
-         router.refresh();
-      } catch (error) {
-         console.error("Error deleting recipe:", error);
-         setIsDeleting(false);
+      if (!response.ok) {
+        throw new Error(t("failed"));
       }
-   };
 
-   return (
-      <AlertDialog>
-         <AlertDialogTrigger asChild>
-            <Button variant="destructive">Delete Recipe</Button>
-         </AlertDialogTrigger>
-         <AlertDialogContent>
-            <AlertDialogHeader>
-               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-               <AlertDialogDescription>
-                  This will permanently delete the recipe &quot;{recipeName}&quot; and cannot be undone.
-               </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-               <AlertDialogCancel>Cancel</AlertDialogCancel>
-               <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-                  {isDeleting ? "Deleting..." : "Yes, Delete"}
-               </AlertDialogAction>
-            </AlertDialogFooter>
-         </AlertDialogContent>
-      </AlertDialog>
-   );
+      router.push("/recipes");
+      router.refresh();
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive">{t("button")}</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("title")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("description", { recipeName })}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting ? t("deleting") : t("confirm")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }

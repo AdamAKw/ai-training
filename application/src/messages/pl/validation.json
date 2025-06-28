@@ -95,47 +95,6 @@
          "expiryDate": {
             "label": "Data ważności"
          }
-      },
-      "form": {
-         "addTitle": "Dodaj nowy produkt",
-         "editTitle": "Edytuj produkt",
-         "saveButton": "Zapisz produkt"
-      },
-      "units": {
-         "kg": "Kilogram",
-         "g": "Gram",
-         "l": "Litr",
-         "ml": "Mililitr",
-         "szt": "Sztuka",
-         "łyżka": "Łyżka",
-         "łyżeczka": "Łyżeczka",
-         "szklanka": "Szklanka",
-         "opakowanie": "Opakowanie"
-      },
-      "categories": {
-         "warzywa": "Warzywa",
-         "owoce": "Owoce",
-         "mięso": "Mięso",
-         "nabiał": "Nabiał",
-         "pieczywo": "Pieczywo",
-         "przyprawy": "Przyprawy",
-         "napoje": "Napoje",
-         "mrożonki": "Mrożonki",
-         "słodycze": "Słodycze",
-         "konserwy": "Konserwy",
-         "inne": "Inne"
-      },
-      "title": "Spiżarka",
-      "description": "Zarządzaj produktami w swojej spiżarce",
-      "addNewButton": "Dodaj nowy produkt",
-      "statistics": {
-         "totalItems": "Wszystkich produktów",
-         "expiredItems": "Przeterminowane",
-         "soonExpiringItems": "Wkrótce się przeterminują"
-      },
-      "deleteDialog": {
-         "title": "Czy na pewno chcesz usunąć ten produkt?",
-         "description": "Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki."
       }
    },
    "mealPlan": {

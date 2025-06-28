@@ -113,5 +113,177 @@
       "markAsPurchased": "Oznacz jako zakupiony",
       "inPantry": "W spiżarce"
     }
+  },
+  "pantry": {
+    "item": {
+      "name": {
+        "label": "Nazwa produktu",
+        "required": "Nazwa produktu jest wymagana"
+      },
+      "quantity": {
+        "label": "Ilość",
+        "positive": "Ilość musi być większa od 0"
+      },
+      "unit": {
+        "label": "Jednostka",
+        "required": "Jednostka jest wymagana"
+      },
+      "category": {
+        "label": "Kategoria"
+      },
+      "expiryDate": {
+        "label": "Data ważności"
+      }
+    },
+    "form": {
+      "addTitle": "Dodaj nowy produkt",
+      "editTitle": "Edytuj produkt",
+      "saveButton": "Zapisz produkt"
+    },
+    "units": {
+      "kg": "Kilogram",
+      "g": "Gram",
+      "l": "Litr",
+      "ml": "Mililitr",
+      "szt": "Sztuka",
+      "łyżka": "Łyżka",
+      "łyżeczka": "Łyżeczka",
+      "szklanka": "Szklanka",
+      "opakowanie": "Opakowanie"
+    },
+    "categories": {
+      "warzywa": "Warzywa",
+      "owoce": "Owoce",
+      "mięso": "Mięso",
+      "nabiał": "Nabiał",
+      "pieczywo": "Pieczywo",
+      "przyprawy": "Przyprawy",
+      "napoje": "Napoje",
+      "mrożonki": "Mrożonki",
+      "słodycze": "Słodycze",
+      "konserwy": "Konserwy",
+      "inne": "Inne"
+    },
+    "title": "Spiżarka",
+    "description": "Zarządzaj produktami w swojej spiżarce",
+    "addNewButton": "Dodaj nowy produkt",
+    "statistics": {
+      "totalItems": "Wszystkich produktów",
+      "expiredItems": "Przeterminowane",
+      "soonExpiringItems": "Wkrótce się przeterminują"
+    },
+    "deleteDialog": {
+      "title": "Czy na pewno chcesz usunąć ten produkt?",
+      "description": "Ta akcja jest nieodwracalna. Produkt zostanie trwale usunięty z Twojej spiżarki."
+    }
+  },
+  "recipes": {
+    "title": "Przepisy",
+    "description": "Zarządzaj swoją kolekcją przepisów i odkrywaj nowe dania.",
+    "addNewButton": "Dodaj nowy przepis",
+    "noRecipesYet": "Nie masz jeszcze żadnych przepisów.",
+    "createFirstRecipe": "Utwórz swój pierwszy przepis",
+    "loading": "Ładowanie przepisów...",
+    "fetchFailed": "Nie udało się pobrać przepisów",
+    "tryAgain": "Spróbuj ponownie",
+    "card": {
+      "prep": "Przygot.",
+      "cook": "Gotowanie",
+      "minutes": "min"
+    },
+    "new": {
+      "title": "Utwórz nowy przepis",
+      "validationFailed": "Walidacja nie powiodła się",
+      "createFailed": "Nie udało się utworzyć przepisu",
+      "unexpectedError": "Wystąpił błąd"
+    },
+    "detail": {
+      "backToRecipes": "Powrót do przepisów",
+      "editRecipe": "Edytuj przepis",
+      "noImage": "Brak zdjęcia",
+      "prepTime": "Czas przygotowania",
+      "cookTime": "Czas gotowania",
+      "servings": "Porcje",
+      "description": "Opis",
+      "ingredients": "Składniki",
+      "instructions": "Instrukcje",
+      "created": "Utworzono",
+      "lastUpdated": "Ostatnia aktualizacja",
+      "minutes": "min"
+    },
+    "delete": {
+      "button": "Usuń przepis",
+      "title": "Czy na pewno?",
+      "description": "To trwale usunie przepis \"{recipeName}\" i nie może być cofnięte.",
+      "cancel": "Anuluj",
+      "confirm": "Tak, usuń",
+      "deleting": "Usuwanie...",
+      "failed": "Nie udało się usunąć przepisu"
+    },
+    "edit": {
+      "title": "Edytuj przepis",
+      "cancel": "Anuluj",
+      "returnToRecipes": "Powrót do przepisów",
+      "recipeNotFound": "Przepis nie został znaleziony",
+      "fetchFailed": "Nie udało się pobrać przepisu",
+      "updateFailed": "Nie udało się zaktualizować przepisu",
+      "validationFailed": "Walidacja nie powiodła się",
+      "unexpectedError": "Wystąpił błąd"
+    }
+  },
+  "recipe": {
+    "name": {
+      "label": "Nazwa przepisu",
+      "required": "Nazwa przepisu jest wymagana",
+      "minLength": "Nazwa przepisu musi mieć co najmniej 2 znaki"
+    },
+    "description": {
+      "label": "Opis"
+    },
+    "ingredients": {
+      "title": "Składniki",
+      "name": {
+        "label": "Nazwa składnika",
+        "required": "Nazwa składnika jest wymagana"
+      },
+      "quantity": {
+        "label": "Ilość",
+        "required": "Ilość jest wymagana",
+        "positive": "Ilość musi być dodatnia"
+      },
+      "unit": {
+        "label": "Jednostka",
+        "required": "Jednostka jest wymagana"
+      },
+      "addButton": "Dodaj składnik",
+      "atLeastOne": "Wymagany jest co najmniej jeden składnik"
+    },
+    "instructions": {
+      "title": "Instrukcje",
+      "label": "Dodaj kroki instrukcji jeden po drugim",
+      "placeholder": "Wprowadź krok instrukcji",
+      "addButton": "Dodaj",
+      "steps": "Kroki",
+      "atLeastOne": "Wymagana jest co najmniej jedna instrukcja"
+    },
+    "prepTime": {
+      "label": "Czas przygotowania (minuty)",
+      "negative": "Czas przygotowania nie może być ujemny"
+    },
+    "cookTime": {
+      "label": "Czas gotowania (minuty)",
+      "negative": "Czas gotowania nie może być ujemny"
+    },
+    "servings": {
+      "label": "Porcje",
+      "positive": "Liczba porcji musi być dodatnia"
+    },
+    "imageUrl": {
+      "label": "URL obrazu",
+      "invalid": "URL obrazu musi być prawidłowy"
+    },
+    "basicInfo": "Podstawowe informacje",
+    "saveButton": "Zapisz przepis",
+    "saving": "Zapisywanie..."
   }
 }
