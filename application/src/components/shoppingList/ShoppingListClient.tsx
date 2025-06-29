@@ -92,6 +92,23 @@ export function ShoppingListClient({
     }
   };
 
+  const handleItemAdded = async (item: {
+    ingredient: string;
+    quantity: number;
+    unit: string;
+  }) => {
+    if (!activeList) return;
+
+    const updatedList = await api.addItem(activeList._id, {
+      ...item,
+      purchased: false,
+      itemType: "pantry-restock",
+    });
+    if (!api.error) {
+      updateListInState(updatedList);
+    }
+  };
+
   if (api.error && lists.length === 0) {
     return (
       <ErrorState
@@ -122,6 +139,7 @@ export function ShoppingListClient({
             onRemoveItem={handleRemoveItem}
             onTransferToPantry={handleTransferToPantry}
             onDeleteList={handleDeleteList}
+            onItemAdded={handleItemAdded}
             loadingStates={api.loadingStates}
           />
         ) : (

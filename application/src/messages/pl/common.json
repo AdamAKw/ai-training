@@ -190,6 +190,8 @@
       "inPantryFilter": "W spiżarce",
       "allCategories": "Wszystkie kategorie",
       "noItemsMatch": "Żadne produkty nie pasują do aktualnych filtrów",
+      "tryDifferentFilter": "Spróbuj dostosować filtry, aby zobaczyć więcej produktów",
+      "noItemsInList": "Ta lista zakupów jest pusta",
       "addShoppingItem": "Dodaj produkt do listy",
       "cancel": "Anuluj",
       "deleteList": "Usuń listę",

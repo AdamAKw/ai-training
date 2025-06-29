@@ -192,6 +192,8 @@
       "inPantryFilter": "In Pantry",
       "allCategories": "All Categories",
       "noItemsMatch": "No items match the current filters",
+      "tryDifferentFilter": "Try adjusting your filters to see more items",
+      "noItemsInList": "This shopping list is empty",
       "addShoppingItem": "Add Shopping Item",
       "cancel": "Cancel",
       "deleteList": "Delete List",

@@ -12,16 +12,24 @@ import {
 import { toast } from "sonner";
 
 interface AddShoppingItemProps {
-  listId: string;
-  onItemAdded: () => void;
+  onItemAdded: (item: {
+    ingredient: string;
+    quantity: number;
+    unit: string;
+  }) => Promise<void>;
+  isLoading?: boolean;
 }
 
-export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
+export function AddShoppingItem({
+  onItemAdded,
+  isLoading = false,
+}: AddShoppingItemProps) {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [unit, setUnit] = useState("szt");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("shoppingList.addItem");
+  const tUnits = useTranslations("shoppingList.units");
 
   // Get units from translations
   const unitKeys = [
@@ -36,7 +44,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
   ];
   const getUnitDisplay = (unitKey: string) => {
     try {
-      return t(`units.${unitKey}`);
+      return tUnits(unitKey);
     } catch {
       return unitKey; // fallback to key if translation not found
     }
@@ -59,36 +67,16 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
     setIsSubmitting(true);
 
     try {
-      // Add the new item to the shopping list
-      const response = await fetch(`/api/shoppingList/${listId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          operation: "add-item",
-          item: {
-            ingredient: itemName,
-            quantity: parseFloat(quantity),
-            unit,
-            purchased: false,
-            itemType: "pantry-restock",
-          },
-        }),
+      // Call the parent handler with item data
+      await onItemAdded({
+        ingredient: itemName,
+        quantity: parseFloat(quantity),
+        unit,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || t("addFailed"));
-      }
-
-      // Reset form fields
+      // Reset form fields only on success
       setItemName("");
       setQuantity("1");
-
-      // Notify parent component that an item was added
-      onItemAdded();
-      toast.success(t("addSuccess"));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t("unexpectedError");
@@ -99,7 +87,7 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 border p-4 rounded-md">
+    <form onSubmit={handleSubmit} className="space-y-4 ">
       <h3 className="font-medium">{t("title")}</h3>
 
       <div className="flex flex-col gap-3">
@@ -142,8 +130,12 @@ export function AddShoppingItem({ listId, onItemAdded }: AddShoppingItemProps) {
         </div>
       </div>
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? t("adding") : t("addButton")}
+      <Button
+        type="submit"
+        disabled={isSubmitting || isLoading}
+        className="w-full"
+      >
+        {isSubmitting || isLoading ? t("adding") : t("addButton")}
       </Button>
     </form>
   );
