@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/layout/PageHeader";
-import { ShoppingList } from "@/components/shoppingList/ShoppingListClient";
-import { ShoppingListTest } from "@/components/shoppingList/ShoppingListClientCopy";
+import { ShoppingListClient } from "@/components/shoppingList/ShoppingListClient";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { getBaseUrl } from "@/lib/utils/url-helpers";
 import { ShoppingListSkeleton } from "@/components/shoppingList/ShoppingListSkeleton";
+import { EmptyShoppingListState } from "@/components/shoppingList/EmptyShoppingListState";
 
 export default async function ShoppingListPage() {
   const t = await getTranslations("shoppingList");
@@ -17,13 +17,15 @@ export default async function ShoppingListPage() {
         action={{ href: "/shoppingList/new", label: t("createEmptyList") }}
       />
       <Suspense fallback={<ShoppingListSkeleton />}>
-        <ShoppingListTest data={data} />
+        <ShoppingListClient
+          data={data}
+          emptyShoppingList={<EmptyShoppingListState />}
+        />
       </Suspense>
-      <div className="mt-8" />
-      <ShoppingList />
     </div>
   );
 }
+
 async function fetchShoppingLists() {
   const response = await fetch(`${getBaseUrl()}/api/shoppingList`, {
     cache: "no-store",

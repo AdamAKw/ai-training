@@ -69,7 +69,7 @@ export function ShoppingListDetail({
   const inPantryItems = list.items.filter((item) => item.inPantry).length;
 
   return (
-    <div className="bg-white rounded-md shadow-sm border p-4">
+    <div className="bg-white rounded-md border p-4">
       <div className="flex justify-between items-start mb-6">
         <div>
           <h2 className="text-2xl font-bold">{list.name}</h2>
