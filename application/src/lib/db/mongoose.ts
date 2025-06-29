@@ -9,7 +9,6 @@ let isConnected = false;
 export const connectToDatabase = async () => {
   // If already connected, return
   if (isConnected) {
-    console.log('MongoDB is already connected.');
     return;
   }
 
@@ -21,10 +20,10 @@ export const connectToDatabase = async () => {
   try {
     // Set strict query mode to prepare for future mongoose versions
     mongoose.set('strictQuery', true);
-    
+
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
-    
+
     isConnected = true;
     console.log('MongoDB connected successfully.');
   } catch (error) {

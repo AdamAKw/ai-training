@@ -159,8 +159,7 @@
     },
     "tryAgain": "Try Again",
     "deleteList": "Delete List",
-    "deleteConfirm": "Are you sure you want to delete this shopping list?",
-    "deleteConfirmDescription": "This action cannot be undone. All items in this list will be permanently removed.",
+
     "deleteSuccess": "Shopping list deleted successfully",
     "newList": {
       "title": "Create New Shopping List",
@@ -188,7 +187,10 @@
       "allCategories": "All Categories",
       "noItemsMatch": "No items match the current filters",
       "addShoppingItem": "Add Shopping Item",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "deleteList": "Delete List",
+      "deleteConfirm": "Are you sure you want to delete this shopping list?",
+      "deleteConfirmDescription": "This action cannot be undone. All items in this list will be permanently removed."
     },
     "addItem": {
       "title": "Add New Item",

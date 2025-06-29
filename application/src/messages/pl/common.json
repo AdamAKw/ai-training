@@ -36,7 +36,7 @@
     "deleteFailed": "Nie udało się usunąć planu posiłków",
     "deleteSuccess": "Plan posiłków został pomyślnie usunięty",
     "deleteError": "Nie udało się usunąć planu posiłków",
-    "deleteConfirmTitle": "Czy na pewno chcesz usunąć ten plan posiłków?",
+    "deleteConfirm": "Czy na pewno chcesz usunąć ten plan posiłków?",
     "deleteConfirmDescription": "Ta akcja jest nieodwracalna. Spowoduje trwałe usunięcie planu posiłków.",
     "mealsCount": "Liczba posiłków: {count}",
     "card": {
@@ -158,8 +158,6 @@
     },
     "tryAgain": "Spróbuj ponownie",
     "deleteList": "Usuń listę",
-    "deleteConfirm": "Czy na pewno chcesz usunąć tę listę zakupów?",
-    "deleteConfirmDescription": "Ta operacja nie może być cofnięta. Wszystkie produkty z tej listy zostaną trwale usunięte.",
     "deleteSuccess": "Lista zakupów została pomyślnie usunięta",
     "newList": {
       "title": "Utwórz nową listę zakupów",
@@ -187,7 +185,10 @@
       "allCategories": "Wszystkie kategorie",
       "noItemsMatch": "Żadne produkty nie pasują do aktualnych filtrów",
       "addShoppingItem": "Dodaj produkt do listy",
-      "cancel": "Anuluj"
+      "cancel": "Anuluj",
+      "deleteList": "Usuń listę",
+      "deleteConfirm": "Czy na pewno chcesz usunąć tę listę zakupów?",
+      "deleteConfirmDescription": "Ta operacja nie może być cofnięta. Wszystkie produkty z tej listy zostaną trwale usunięte."
     },
     "addItem": {
       "title": "Dodaj nowy produkt",
