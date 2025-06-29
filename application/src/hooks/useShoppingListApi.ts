@@ -4,16 +4,29 @@ import { ShoppingListType } from '@/components/shoppingList/ShoppingListClient';
 import { toast } from 'sonner';
 
 export function useShoppingListApi() {
-    const [isLoading, setIsLoading] = useState(false);
+    const [loadingStates, setLoadingStates] = useState<{
+        togglePurchased: boolean;
+        removeItem: boolean;
+        transferToPantry: boolean;
+        deleteList: boolean;
+    }>({
+        togglePurchased: false,
+        removeItem: false,
+        transferToPantry: false,
+        deleteList: false,
+    });
     const [error, setError] = useState<string | null>(null);
     const t = useTranslations("shoppingList");
 
     const makeApiCall = async <T>(
         url: string,
         options: RequestInit,
-        successMessage?: string
+        successMessage?: string,
+        operation?: keyof typeof loadingStates
     ): Promise<T> => {
-        setIsLoading(true);
+        if (operation) {
+            setLoadingStates(prev => ({ ...prev, [operation]: true }));
+        }
         setError(null);
 
         try {
@@ -29,17 +42,19 @@ export function useShoppingListApi() {
             const data = await response.json();
 
             if (successMessage) {
-                // TODO: Replace alert with proper toast notification
-                toast(successMessage)
+                toast.success(successMessage);
             }
 
             return data;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';
             setError(errorMessage);
+            toast.error(errorMessage);
             throw err;
         } finally {
-            setIsLoading(false);
+            if (operation) {
+                setLoadingStates(prev => ({ ...prev, [operation]: false }));
+            }
         }
     };
 
@@ -52,7 +67,7 @@ export function useShoppingListApi() {
                 purchased,
                 autoAddToPantry: false,
             }),
-        });
+        }, undefined, 'togglePurchased');
 
     const removeItem = (listId: string, itemId: string) =>
         makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
@@ -61,7 +76,7 @@ export function useShoppingListApi() {
                 operation: "remove-item",
                 itemId,
             }),
-        });
+        }, undefined, 'removeItem');
 
     const transferToPantry = (listId: string) =>
         makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
@@ -69,19 +84,19 @@ export function useShoppingListApi() {
             body: JSON.stringify({
                 operation: "transfer-to-pantry",
             }),
-        }, t("transferredToPantry"));
+        }, t("transferredToPantry"), 'transferToPantry');
 
     const deleteList = (listId: string) =>
         makeApiCall<void>(`/api/shoppingList/${listId}`, {
             method: "DELETE",
-        }, t("deleteSuccess"));
+        }, t("deleteSuccess"), 'deleteList');
 
     return {
         togglePurchased,
         removeItem,
         transferToPantry,
         deleteList,
-        isLoading,
+        loadingStates,
         error,
         setError,
     };

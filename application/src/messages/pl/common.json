@@ -181,6 +181,7 @@
     "detail": {
       "customList": "Lista niestandardowa",
       "transferToPantry": "Przenieś do spiżarki",
+      "transferringToPantry": "Przenoszenie...",
       "addItem": "Dodaj produkt",
       "hideForm": "Ukryj formularz",
       "allFilter": "Wszystkie",
@@ -192,6 +193,7 @@
       "addShoppingItem": "Dodaj produkt do listy",
       "cancel": "Anuluj",
       "deleteList": "Usuń listę",
+      "deletingList": "Usuwanie...",
       "deleteConfirm": "Czy na pewno chcesz usunąć tę listę zakupów?",
       "deleteConfirmDescription": "Ta operacja nie może być cofnięta. Wszystkie produkty z tej listy zostaną trwale usunięte."
     },
@@ -222,6 +224,10 @@
     },
     "item": {
       "removeConfirm": "Usunąć {item} z listy zakupów?",
+      "removeTitle": "Usuń element",
+      "remove": "Usuń",
+      "removing": "Usuwanie...",
+      "cancel": "Anuluj",
       "markAsNotPurchased": "Oznacz jako niezakupiony",
       "markAsPurchased": "Oznacz jako zakupiony",
       "inPantry": "W spiżarce"

@@ -25,6 +25,12 @@ interface ShoppingListDetailProps {
   onRemoveItem: (itemId: string) => Promise<void>;
   onTransferToPantry: () => Promise<void>;
   onDeleteList?: () => Promise<void>;
+  loadingStates?: {
+    togglePurchased: boolean;
+    removeItem: boolean;
+    transferToPantry: boolean;
+    deleteList: boolean;
+  };
 }
 
 export function ShoppingListDetail({
@@ -33,6 +39,12 @@ export function ShoppingListDetail({
   onRemoveItem,
   onTransferToPantry,
   onDeleteList,
+  loadingStates = {
+    togglePurchased: false,
+    removeItem: false,
+    transferToPantry: false,
+    deleteList: false,
+  },
 }: ShoppingListDetailProps) {
   const [activeFilter, setActiveFilter] = useState<
     "all" | "remaining" | "purchased" | "in-pantry"
@@ -83,9 +95,11 @@ export function ShoppingListDetail({
           <Button
             variant="outline"
             onClick={onTransferToPantry}
-            disabled={purchasedItems === 0}
+            disabled={purchasedItems === 0 || loadingStates.transferToPantry}
           >
-            {t("transferToPantry")}
+            {loadingStates.transferToPantry
+              ? t("transferringToPantry")
+              : t("transferToPantry")}
           </Button>
           <Button
             variant="outline"
@@ -96,8 +110,14 @@ export function ShoppingListDetail({
           {onDeleteList && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm">
-                  {t("deleteList")}
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={loadingStates.deleteList}
+                >
+                  {loadingStates.deleteList
+                    ? t("deletingList")
+                    : t("deleteList")}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -109,8 +129,13 @@ export function ShoppingListDetail({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={onDeleteList}>
-                    {t("deleteList")}
+                  <AlertDialogAction
+                    onClick={onDeleteList}
+                    disabled={loadingStates.deleteList}
+                  >
+                    {loadingStates.deleteList
+                      ? t("deletingList")
+                      : t("deleteList")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

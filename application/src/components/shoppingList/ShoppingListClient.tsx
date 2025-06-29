@@ -41,7 +41,6 @@ export function ShoppingListClient({
   const t = useTranslations("shoppingList");
   const api = useShoppingListApi();
 
-  // Generic function to update list state after API operations
   const updateListInState = (updatedList: ShoppingListType) => {
     setActiveList(updatedList);
     setLists(
@@ -49,7 +48,6 @@ export function ShoppingListClient({
     );
   };
 
-  // Generic function to remove list from state
   const removeListFromState = (listId: string) => {
     const updatedLists = lists.filter((list) => list._id !== listId);
     setLists(updatedLists);
@@ -59,48 +57,38 @@ export function ShoppingListClient({
   const handleTogglePurchased = async (itemId: string, purchased: boolean) => {
     if (!activeList) return;
 
-    try {
-      const updatedList = await api.togglePurchased(
-        activeList._id,
-        itemId,
-        purchased
-      );
+    const updatedList = await api.togglePurchased(
+      activeList._id,
+      itemId,
+      purchased
+    );
+    if (!api.error) {
       updateListInState(updatedList);
-    } catch {
-      // Error handling is done in the hook
     }
   };
 
   const handleRemoveItem = async (itemId: string) => {
     if (!activeList) return;
 
-    try {
-      const updatedList = await api.removeItem(activeList._id, itemId);
+    const updatedList = await api.removeItem(activeList._id, itemId);
+    if (!api.error) {
       updateListInState(updatedList);
-    } catch {
-      // Error handling is done in the hook
     }
   };
 
   const handleTransferToPantry = async () => {
     if (!activeList) return;
-
-    try {
-      const updatedList = await api.transferToPantry(activeList._id);
+    const updatedList = await api.transferToPantry(activeList._id);
+    if (!api.error) {
       updateListInState(updatedList);
-    } catch {
-      // Error handling is done in the hook
     }
   };
 
   const handleDeleteList = async () => {
     if (!activeList) return;
-
-    try {
-      await api.deleteList(activeList._id);
+    await api.deleteList(activeList._id);
+    if (!api.error) {
       removeListFromState(activeList._id);
-    } catch {
-      // Error handling is done in the hook
     }
   };
 
@@ -134,6 +122,7 @@ export function ShoppingListClient({
             onRemoveItem={handleRemoveItem}
             onTransferToPantry={handleTransferToPantry}
             onDeleteList={handleDeleteList}
+            loadingStates={api.loadingStates}
           />
         ) : (
           <div className="bg-gray-50 p-6 rounded-lg text-center">
