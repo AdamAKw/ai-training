@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -25,41 +25,18 @@ export interface ShoppingListType {
   updatedAt: string;
 }
 
-export function ShoppingList() {
-  const [lists, setLists] = useState<ShoppingListType[]>([]);
-  const [activeList, setActiveList] = useState<ShoppingListType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function ShoppingListTest({
+  data,
+}: {
+  data: Promise<ShoppingListType[]>;
+}) {
+  const [lists, setLists] = useState<ShoppingListType[]>(use(data));
+  const [activeList, setActiveList] = useState<ShoppingListType | null>(
+    lists[0] || null
+  );
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations("shoppingList");
-
-  // Fetch shopping lists on component mount
-  useEffect(() => {
-    async function fetchShoppingLists() {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/shoppingList");
-
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setLists(data);
-
-        // If there are lists and no active list is selected, select the first one
-        if (data.length > 0 && !activeList) {
-          setActiveList(data[0]);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("errors.fetchFailed"));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchShoppingLists();
-  }, [activeList, t]);
 
   // Handle toggle purchased status of an item
   const handleTogglePurchased = async (itemId: string, purchased: boolean) => {
@@ -84,7 +61,6 @@ export function ShoppingList() {
       const updatedList = await response.json();
       setActiveList(updatedList);
 
-      // Also update the lists array
       setLists(
         lists.map((list) => (list._id === updatedList._id ? updatedList : list))
       );
@@ -170,7 +146,7 @@ export function ShoppingList() {
 
       // Remove the deleted list from the lists array
       const updatedLists = lists.filter((list) => list._id !== activeList._id);
-      setLists(updatedLists);
+      // setLists(updatedLists);
 
       // Set the active list to the first remaining list or null
       setActiveList(updatedLists.length > 0 ? updatedLists[0] : null);
@@ -182,15 +158,6 @@ export function ShoppingList() {
     }
   };
 
-  // Display loading state
-  if (isLoading && lists.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p>{t("loading")}</p>
-      </div>
-    );
-  }
-
   // Display error message
   if (error && lists.length === 0) {
     return (
@@ -201,7 +168,6 @@ export function ShoppingList() {
         <Button
           onClick={() => {
             setError(null);
-            setIsLoading(true);
           }}
           className="mt-2"
         >
@@ -244,20 +210,21 @@ export function ShoppingList() {
           {lists.map((list) => (
             <div
               key={list._id}
-              className={`p-3 rounded-md cursor-pointer transition-colors ${
-                activeList?._id === list._id
-                  ? "bg-primary text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
+              className={`p-3 rounded-md cursor-pointer transition-colors  border
+                 ${
+                   activeList?._id === list._id
+                     ? "bg-gray-100 "
+                     : " bg-white hover:bg-gray-200"
+                 }`}
               onClick={() => setActiveList(list)}
             >
               <h3 className="font-medium">{list.name}</h3>
-              <p className="text-sm opacity-80">
+              <p className="text-sm text-muted-foreground">
                 {typeof list.mealPlan === "object"
                   ? list.mealPlan.name
                   : t("mealPlan")}
               </p>
-              <p className="text-sm mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {list.items.length} {t("items")} •{" "}
                 {list.items.filter((i) => i.purchased).length} {t("purchased")}
               </p>

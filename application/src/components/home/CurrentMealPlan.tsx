@@ -14,19 +14,19 @@ type CurrentMealPlanProps = {
 };
 
 export function CurrentMealPlan({
-  currentMealPlanSkeleton: CurrentMealPlanSkeleton,
-  emptyMealPlan: EmptyMealPlan,
+  currentMealPlanSkeleton,
+  emptyMealPlan,
 }: CurrentMealPlanProps) {
   const { isLoading, currentMealPlan, pantryItems, toggleMealCompletion } =
     useMealPlanData();
   const format = useFormatter();
 
   if (isLoading) {
-    return CurrentMealPlanSkeleton;
+    return currentMealPlanSkeleton;
   }
 
   if (!currentMealPlan) {
-    return EmptyMealPlan;
+    return emptyMealPlan;
   }
 
   const mealsByDate = groupMealsByDate(currentMealPlan, format);
