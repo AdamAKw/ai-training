@@ -102,6 +102,11 @@
     }
   },
   "home": {
+    "emptyMealPlan": {
+      "title": "No Current Meal Plan",
+      "description": "No meal plan found for today. Create a new plan to see it here.",
+      "actionLabel": "Create Meal Plan"
+    },
     "quickNavigation": "Quick Navigation",
     "navigation": {
       "recipes": "Recipes",

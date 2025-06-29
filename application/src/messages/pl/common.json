@@ -102,6 +102,11 @@
     }
   },
   "home": {
+    "emptyMealPlan": {
+      "title": "Brak aktualnego planu posiłków",
+      "description": "Nie znaleziono planu posiłków na dzisiejszy dzień. Utwórz nowy plan, aby zobaczyć go tutaj.",
+      "actionLabel": "Utwórz plan posiłków"
+    },
     "quickNavigation": "Szybka nawigacja",
     "navigation": {
       "recipes": "Przepisy",

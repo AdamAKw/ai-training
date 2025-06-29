@@ -1,17 +1,17 @@
-"use client";
-
 import { EmptyState } from "@/components/layout/EmptyState";
+import { getTranslations } from "next-intl/server";
 
-export function EmptyMealPlan() {
+export async function EmptyMealPlan() {
+  const t = await getTranslations("home.emptyMealPlan");
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center ">
       <h2 className="text-2xl font-semibold mb-4">
-        Brak aktualnego planu posiłków
+        {t("title")}
       </h2>
 
       <EmptyState
-        description="Nie znaleziono planu posiłków na dzisiejszy dzień. Utwórz nowy plan, aby zobaczyć go tutaj."
-        actionLabel="Utwórz plan posiłków"
+        description={t("description")}
+        actionLabel={t("actionLabel")}
         actionHref="/mealPlans/new"
       />
     </div>

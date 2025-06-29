@@ -2,24 +2,31 @@
 
 import { useMealPlanData } from "@/hooks/useMealPlanData";
 import { groupMealsByDate, sortDatesByChronology } from "@/utils/mealUtils";
-import { MealPlanSkeleton } from "./MealPlanSkeleton";
-import { EmptyMealPlan } from "./EmptyMealPlan";
 import { MealPlanHeader } from "./MealPlanHeader";
 import { MealDay } from "./MealDay";
 import { IMealPlan } from "@/models/mealPlan";
 import { useFormatter } from "next-intl";
+import { ReactNode } from "react";
 
-export function CurrentMealPlan() {
+type CurrentMealPlanProps = {
+  currentMealPlanSkeleton: ReactNode;
+  emptyMealPlan: ReactNode;
+};
+
+export function CurrentMealPlan({
+  currentMealPlanSkeleton: CurrentMealPlanSkeleton,
+  emptyMealPlan: EmptyMealPlan,
+}: CurrentMealPlanProps) {
   const { isLoading, currentMealPlan, pantryItems, toggleMealCompletion } =
     useMealPlanData();
   const format = useFormatter();
 
   if (isLoading) {
-    return <MealPlanSkeleton />;
+    return CurrentMealPlanSkeleton;
   }
 
   if (!currentMealPlan) {
-    return <EmptyMealPlan />;
+    return EmptyMealPlan;
   }
 
   const mealsByDate = groupMealsByDate(currentMealPlan, format);
