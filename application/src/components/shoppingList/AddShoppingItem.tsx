@@ -93,7 +93,6 @@ export function AddShoppingItem({
 
       // Reset form fields only on success
       form.reset();
-      toast.success(t("addSuccess"));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t("unexpectedError");
