@@ -37,6 +37,7 @@
     "deleteSuccess": "Plan posiłków został pomyślnie usunięty",
     "deleteError": "Nie udało się usunąć planu posiłków",
     "deleteConfirm": "Czy na pewno chcesz usunąć ten plan posiłków?",
+    "deleteConfirmTitle": "Czy na pewno chcesz usunąć ten plan posiłków?",
     "deleteConfirmDescription": "Ta akcja jest nieodwracalna. Spowoduje trwałe usunięcie planu posiłków.",
     "mealsCount": "Liczba posiłków: {count}",
     "card": {
