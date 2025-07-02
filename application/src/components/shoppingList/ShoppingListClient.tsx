@@ -92,6 +92,15 @@ export function ShoppingListClient({
     }
   };
 
+  const handleCopyList = async () => {
+    if (!activeList) return;
+    const newList = await api.copyList(activeList._id);
+    if (!api.error && newList) {
+      setLists([newList, ...lists]);
+      setActiveList(newList);
+    }
+  };
+
   const handleItemAdded = async (item: {
     ingredient: string;
     quantity: number;
@@ -139,6 +148,7 @@ export function ShoppingListClient({
             onRemoveItem={handleRemoveItem}
             onTransferToPantry={handleTransferToPantry}
             onDeleteList={handleDeleteList}
+            onCopyList={handleCopyList}
             onItemAdded={handleItemAdded}
             loadingStates={api.loadingStates}
           />

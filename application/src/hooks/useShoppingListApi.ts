@@ -10,12 +10,14 @@ export function useShoppingListApi() {
         transferToPantry: boolean;
         deleteList: boolean;
         addItem: boolean;
+        copyList: boolean;
     }>({
         togglePurchased: false,
         removeItem: false,
         transferToPantry: false,
         deleteList: false,
         addItem: false,
+        copyList: false,
     });
     const [error, setError] = useState<string | null>(null);
     const t = useTranslations("shoppingList");
@@ -108,12 +110,18 @@ export function useShoppingListApi() {
             }),
         }, t("addItem.addSuccess"), 'addItem');
 
+    const copyList = (listId: string) =>
+        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}/copy`, {
+            method: "POST",
+        }, t("copySuccess"), 'copyList');
+
     return {
         togglePurchased,
         removeItem,
         transferToPantry,
         deleteList,
         addItem,
+        copyList,
         loadingStates,
         error,
         setError,

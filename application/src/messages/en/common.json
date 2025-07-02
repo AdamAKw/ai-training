@@ -166,6 +166,8 @@
     "deleteList": "Delete List",
 
     "deleteSuccess": "Shopping list deleted successfully",
+    "copyList": "Copy List",
+    "copySuccess": "Shopping list copied successfully",
     "newList": {
       "title": "Create New Shopping List",
       "cardTitle": "New Shopping List",
@@ -186,6 +188,8 @@
       "transferringToPantry": "Transferring...",
       "addItem": "Add Item",
       "hideForm": "Hide Form",
+      "copyList": "Copy List",
+      "copyingList": "Copying...",
       "allFilter": "All",
       "remainingFilter": "Remaining",
       "purchasedFilter": "Purchased",

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,12 +18,14 @@ import {
 interface ShoppingListActionsProps {
   onTransferToPantry: () => Promise<void>;
   onDeleteList?: () => Promise<void>;
+  onCopyList?: () => Promise<void>;
   onToggleAddItem: () => void;
   showAddItem: boolean;
   purchasedItemsCount: number;
   loadingStates: {
     transferToPantry: boolean;
     deleteList: boolean;
+    copyList: boolean;
   };
 }
 
@@ -33,6 +36,7 @@ interface ShoppingListActionsProps {
 export function ShoppingListActions({
   onTransferToPantry,
   onDeleteList,
+  onCopyList,
   onToggleAddItem,
   showAddItem,
   purchasedItemsCount,
@@ -59,6 +63,17 @@ export function ShoppingListActions({
       >
         {showAddItem ? t("hideForm") : t("addItem")}
       </Button>
+      {onCopyList && (
+        <Button
+          variant="outline"
+          onClick={onCopyList}
+          disabled={loadingStates.copyList}
+          className="whitespace-nowrap"
+        >
+          <Copy className="h-4 w-4 mr-2" />
+          {loadingStates.copyList ? t("copyingList") : t("copyList")}
+        </Button>
+      )}
       {onDeleteList && (
         <AlertDialog>
           <AlertDialogTrigger asChild>

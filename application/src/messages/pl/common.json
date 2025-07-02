@@ -165,6 +165,8 @@
     "tryAgain": "Spróbuj ponownie",
     "deleteList": "Usuń listę",
     "deleteSuccess": "Lista zakupów została pomyślnie usunięta",
+    "copyList": "Kopiuj listę",
+    "copySuccess": "Lista zakupów została pomyślnie skopiowana",
     "newList": {
       "title": "Utwórz nową listę zakupów",
       "cardTitle": "Nowa lista zakupów",
@@ -185,6 +187,8 @@
       "transferringToPantry": "Przenoszenie...",
       "addItem": "Dodaj produkt",
       "hideForm": "Ukryj formularz",
+      "copyList": "Kopiuj listę",
+      "copyingList": "Kopiowanie...",
       "allFilter": "Wszystkie",
       "remainingFilter": "Pozostałe",
       "purchasedFilter": "Zakupione",

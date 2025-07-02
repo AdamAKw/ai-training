@@ -21,6 +21,7 @@ interface ShoppingListDetailProps {
   onRemoveItem: (itemId: string) => Promise<void>;
   onTransferToPantry: () => Promise<void>;
   onDeleteList?: () => Promise<void>;
+  onCopyList?: () => Promise<void>;
   onItemAdded?: (item: {
     ingredient: string;
     quantity: number;
@@ -32,6 +33,7 @@ interface ShoppingListDetailProps {
     transferToPantry: boolean;
     deleteList: boolean;
     addItem: boolean;
+    copyList: boolean;
   };
 }
 
@@ -41,6 +43,7 @@ export function ShoppingListDetail({
   onRemoveItem,
   onTransferToPantry,
   onDeleteList,
+  onCopyList,
   onItemAdded,
   loadingStates = {
     togglePurchased: false,
@@ -48,6 +51,7 @@ export function ShoppingListDetail({
     transferToPantry: false,
     deleteList: false,
     addItem: false,
+    copyList: false,
   },
 }: ShoppingListDetailProps) {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -86,12 +90,14 @@ export function ShoppingListDetail({
         <ShoppingListActions
           onTransferToPantry={onTransferToPantry}
           onDeleteList={onDeleteList}
+          onCopyList={onCopyList}
           onToggleAddItem={() => setShowAddItem(!showAddItem)}
           showAddItem={showAddItem}
           purchasedItemsCount={itemCounts.purchased}
           loadingStates={{
             transferToPantry: loadingStates.transferToPantry,
             deleteList: loadingStates.deleteList,
+            copyList: loadingStates.copyList,
           }}
         />
       </div>
