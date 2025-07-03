@@ -75,6 +75,9 @@ export async function POST(request: NextRequest) {
         // Skip if no recipe or servings
         if (!meal.recipe || !meal.servings) continue;
 
+        // Skip completed meals - they don't need ingredients for shopping list
+        if (meal.isCompleted) continue;
+
         const recipeData: unknown = meal.recipe;
 
         // Only process the recipe if it's a populated object with ingredients
