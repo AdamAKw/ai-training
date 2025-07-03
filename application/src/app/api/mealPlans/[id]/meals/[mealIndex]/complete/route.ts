@@ -64,9 +64,15 @@ export async function POST(
     // Remove ingredients from pantry based on recipe and meal servings
     const removedIngredients = removeIngredientsFromPantry(recipe.ingredients, pantryItems, meal.servings);
 
-    // Save updated pantry items
+    // Save updated pantry items and delete items with zero quantity
     for (const pantryItem of pantryItems) {
-      await pantryItem.save();
+      if (pantryItem.quantity <= 0) {
+        // Delete pantry item if quantity is zero or negative
+        await PantryItem.findByIdAndDelete(pantryItem._id);
+      } else {
+        // Save updated pantry item
+        await pantryItem.save();
+      }
     }
 
     // Mark meal as completed
