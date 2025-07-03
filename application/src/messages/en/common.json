@@ -180,7 +180,10 @@
       "successMessage": "Shopping list created successfully",
       "createFailed": "Failed to create shopping list",
       "unexpectedError": "An unexpected error occurred",
-      "createFailedWithMessage": "Failed to create shopping list: {message}"
+      "createFailedWithMessage": "Failed to create shopping list: {message}",
+      "generatedListName": "Shopping List - {planName}",
+      "basedOnMealPlan": "Based on meal plan: {planName}",
+      "mealPlanInfo": "This shopping list will include all ingredients from your meal plan that are not already in your pantry."
     },
     "detail": {
       "customList": "Custom List",

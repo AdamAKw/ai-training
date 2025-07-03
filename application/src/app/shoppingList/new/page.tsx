@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,38 @@ import { toast } from "sonner";
 
 export default function NewShoppingListPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("shoppingList.newList");
   const [listName, setListName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mealPlanId, setMealPlanId] = useState<string | null>(null);
+  const [mealPlanName, setMealPlanName] = useState<string>("");
+
+  const fetchMealPlanData = useCallback(
+    async (mealPlanId: string) => {
+      try {
+        const response = await fetch(`/api/mealPlans/${mealPlanId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const mealPlan = data.mealPlan;
+          setMealPlanName(mealPlan.name);
+          setListName(t("generatedListName", { planName: mealPlan.name }));
+        }
+      } catch (error) {
+        console.error("Error fetching meal plan:", error);
+      }
+    },
+    [t]
+  );
+
+  // Get meal plan ID from URL parameters and fetch meal plan data
+  useEffect(() => {
+    const mealPlanIdParam = searchParams.get("mealPlanId");
+    if (mealPlanIdParam) {
+      setMealPlanId(mealPlanIdParam);
+      fetchMealPlanData(mealPlanIdParam);
+    }
+  }, [searchParams, fetchMealPlanData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +55,18 @@ export default function NewShoppingListPage() {
     setIsSubmitting(true);
 
     try {
+      const requestBody = {
+        name: listName,
+        items: [], // Will be populated by the API if mealPlan is provided
+        ...(mealPlanId && { mealPlan: mealPlanId }), // Add meal plan ID if present
+      };
+
       const response = await fetch("/api/shoppingList", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: listName,
-          items: [], // Start with empty items
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -42,7 +74,7 @@ export default function NewShoppingListPage() {
         throw new Error(errorData.error || t("createFailed"));
       }
 
-      await response.json(); // Parsujemy odpowiedź ale nie potrzebujemy jej przypisywać
+      await response.json(); // Parse response but don't need to assign it
       toast.success(t("successMessage"));
       router.push("/shoppingList");
     } catch (error) {
@@ -67,6 +99,11 @@ export default function NewShoppingListPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t("cardTitle")}</CardTitle>
+          {mealPlanId && mealPlanName && (
+            <p className="text-sm text-muted-foreground">
+              {t("basedOnMealPlan", { planName: mealPlanName })}
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -82,6 +119,12 @@ export default function NewShoppingListPage() {
                 required
               />
             </div>
+
+            {mealPlanId && (
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <p className="text-sm text-blue-800">{t("mealPlanInfo")}</p>
+              </div>
+            )}
 
             <div className="pt-4">
               <Button type="submit" className="w-full" disabled={isSubmitting}>

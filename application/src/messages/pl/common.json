@@ -179,7 +179,10 @@
       "successMessage": "Lista zakupów została pomyślnie utworzona",
       "createFailed": "Nie udało się utworzyć listy zakupów",
       "unexpectedError": "Wystąpił nieoczekiwany błąd",
-      "createFailedWithMessage": "Nie udało się utworzyć listy zakupów: {message}"
+      "createFailedWithMessage": "Nie udało się utworzyć listy zakupów: {message}",
+      "generatedListName": "Lista zakupów - {planName}",
+      "basedOnMealPlan": "Oparta na planie posiłków: {planName}",
+      "mealPlanInfo": "Ta lista zakupów będzie zawierała wszystkie składniki z Twojego planu posiłków, których nie ma w spiżarce."
     },
     "detail": {
       "customList": "Lista niestandardowa",

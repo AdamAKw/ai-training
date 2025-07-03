@@ -139,21 +139,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Compare with pantry items and mark items that are already in pantry
+    // Compare with pantry items and calculate missing quantities
     const pantryItems = await PantryItem.find();
     const itemsWithPantryStatus = body.items.map((item: IShoppingListItem) => {
       const matchingPantryItem = pantryItems.find(
         (pantryItem) =>
           pantryItem.name.toLowerCase() === item.ingredient.toLowerCase() &&
-          pantryItem.unit.toLowerCase() === item.unit.toLowerCase() &&
-          pantryItem.quantity >= item.quantity
+          pantryItem.unit.toLowerCase() === item.unit.toLowerCase()
       );
 
-      return {
-        ...item,
-        inPantry: !!matchingPantryItem,
-      };
-    });
+      if (matchingPantryItem) {
+        // Calculate missing quantity
+        const missingQuantity = item.quantity - matchingPantryItem.quantity;
+
+        if (missingQuantity <= 0) {
+          // Item is fully available in pantry
+          return {
+            ...item,
+            quantity: 0,
+            inPantry: true,
+          };
+        } else {
+          // Item is partially available - only add missing quantity
+          return {
+            ...item,
+            quantity: Math.ceil(missingQuantity * 100) / 100, // Round up to 2 decimal places
+            inPantry: false,
+          };
+        }
+      } else {
+        // Item not found in pantry
+        return {
+          ...item,
+          inPantry: false,
+        };
+      }
+    }).filter((item: IShoppingListItem) => item.quantity > 0); // Filter out items with 0 quantity
 
     // Create new shopping list
     const shoppingList = new ShoppingList({
