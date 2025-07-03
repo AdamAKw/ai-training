@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
           if (isRecipeType(recipeData)) {
             const recipeName = recipeData.name;
-            const servingRatio = meal.servings / recipeData.servings;
+            const servingsMultiplier = meal.servings; // Simply use the number of servings from meal plan
 
             // Process each ingredient
             for (const ingredient of recipeData.ingredients) {
@@ -104,12 +104,12 @@ export async function POST(request: NextRequest) {
 
               if (ingredients[key]) {
                 // Add quantities if ingredient already exists with same unit
-                ingredients[key].quantity += ingredient.quantity * servingRatio;
+                ingredients[key].quantity += ingredient.quantity * servingsMultiplier;
               } else {
                 // Add new ingredient
                 ingredients[key] = {
                   name: ingredient.name,
-                  quantity: ingredient.quantity * servingRatio,
+                  quantity: ingredient.quantity * servingsMultiplier,
                   unit: ingredient.unit,
                   recipe: recipeName
                 };
