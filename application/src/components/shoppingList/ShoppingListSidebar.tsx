@@ -143,9 +143,11 @@ function ShoppingListCard({
         <div className="flex-1">
           <h3 className="font-medium">{list.name}</h3>
           <p className="text-sm text-muted-foreground">
-            {typeof list.mealPlan === "object"
+            {typeof list.mealPlan === "object" && list.mealPlan
               ? list.mealPlan.name
-              : t("mealPlan")}
+              : typeof list.mealPlan === "string"
+              ? t("mealPlan")
+              : t("detail.customList")}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
             {list.items.length} {t("items")} • {purchasedItemsCount}{" "}

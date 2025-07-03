@@ -67,7 +67,9 @@ export function ShoppingListDetail({
 
   // Get meal plan name for header
   const mealPlanName =
-    typeof list.mealPlan === "object" ? list.mealPlan.name : undefined;
+    typeof list.mealPlan === "object" && list.mealPlan
+      ? list.mealPlan.name
+      : undefined;
 
   return (
     <div className="bg-white rounded-md border p-4 shadow-sm">

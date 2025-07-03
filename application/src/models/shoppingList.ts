@@ -8,7 +8,7 @@ export interface IShoppingListItem {
   unit: string;
   purchased: boolean;
   inPantry?: boolean; // Flag to indicate if item is already in the pantry
-  recipe?: mongoose.Types.ObjectId; // Reference to recipe that requires this ingredient
+  recipe?: string; // Name of the recipe that requires this ingredient
   itemType?: 'meal-plan' | 'pantry-restock'; // Type of shopping item
 }
 
@@ -44,7 +44,7 @@ const ShoppingListItemSchemaMongoose = new Schema<IShoppingListItem>({
   unit: { type: String, required: true },
   purchased: { type: Boolean, default: false },
   inPantry: { type: Boolean, default: false },
-  recipe: { type: Schema.Types.ObjectId, ref: 'Recipe' },
+  recipe: { type: String }, // Changed from ObjectId to String to store recipe name
   itemType: { type: String, enum: ['meal-plan', 'pantry-restock'], default: 'meal-plan' }
 });
 
@@ -53,12 +53,12 @@ const ShoppingListSchemaMongoose = new Schema<IShoppingList>(
     name: { type: String, required: true },
     mealPlan: { type: Schema.Types.ObjectId, ref: 'MealPlan', required: false },
     items: { type: [ShoppingListItemSchemaMongoose], required: true }
-  }, 
+  },
   { timestamps: true }
 );
 
 // Create or retrieve the model
-export const ShoppingList: Model<IShoppingList> = mongoose.models.ShoppingList || 
+export const ShoppingList: Model<IShoppingList> = mongoose.models.ShoppingList ||
   mongoose.model<IShoppingList>('ShoppingList', ShoppingListSchemaMongoose);
 
 export default ShoppingList;

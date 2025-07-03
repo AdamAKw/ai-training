@@ -19,7 +19,7 @@ export interface ShoppingListItemType {
 export interface ShoppingListType {
   _id: string;
   name: string;
-  mealPlan: string | { _id: string; name: string };
+  mealPlan: string | { _id: string; name: string } | null;
   items: ShoppingListItemType[];
   createdAt: string;
   updatedAt: string;
