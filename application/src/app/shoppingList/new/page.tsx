@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
-export default function NewShoppingListPage() {
+function NewShoppingListPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("shoppingList.newList");
@@ -135,5 +136,38 @@ export default function NewShoppingListPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="container py-10 max-w-2xl">
+      <div className="mb-6">
+        <Skeleton className="h-10 w-32" />
+      </div>
+      <Skeleton className="h-10 w-80 mb-6" />
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-48" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-12 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default function NewShoppingListPage() {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <NewShoppingListPageContent />
+    </Suspense>
   );
 }
