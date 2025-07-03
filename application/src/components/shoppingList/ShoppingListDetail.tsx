@@ -8,7 +8,6 @@ import { ShoppingListItem } from "./ShoppingListItem";
 import { AddShoppingItem } from "./AddShoppingItem";
 import { FilterBar } from "./FilterBar";
 import { CategoryFilter } from "./CategoryFilter";
-import { ShoppingListActions } from "./ShoppingListActions";
 import { ShoppingListHeader } from "./ShoppingListHeader";
 import {
   useShoppingListFilters,
@@ -19,9 +18,6 @@ interface ShoppingListDetailProps {
   list: ShoppingListType;
   onTogglePurchased: (itemId: string, purchased: boolean) => Promise<void>;
   onRemoveItem: (itemId: string) => Promise<void>;
-  onTransferToPantry: () => Promise<void>;
-  onDeleteList?: () => Promise<void>;
-  onCopyList?: () => Promise<void>;
   onItemAdded?: (item: {
     ingredient: string;
     quantity: number;
@@ -30,10 +26,7 @@ interface ShoppingListDetailProps {
   loadingStates?: {
     togglePurchased: boolean;
     removeItem: boolean;
-    transferToPantry: boolean;
-    deleteList: boolean;
     addItem: boolean;
-    copyList: boolean;
   };
 }
 
@@ -41,17 +34,11 @@ export function ShoppingListDetail({
   list,
   onTogglePurchased,
   onRemoveItem,
-  onTransferToPantry,
-  onDeleteList,
-  onCopyList,
   onItemAdded,
   loadingStates = {
     togglePurchased: false,
     removeItem: false,
-    transferToPantry: false,
-    deleteList: false,
     addItem: false,
-    copyList: false,
   },
 }: ShoppingListDetailProps) {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -87,19 +74,6 @@ export function ShoppingListDetail({
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
         <ShoppingListHeader listName={list.name} mealPlanName={mealPlanName} />
-        <ShoppingListActions
-          onTransferToPantry={onTransferToPantry}
-          onDeleteList={onDeleteList}
-          onCopyList={onCopyList}
-          onToggleAddItem={() => setShowAddItem(!showAddItem)}
-          showAddItem={showAddItem}
-          purchasedItemsCount={itemCounts.purchased}
-          loadingStates={{
-            transferToPantry: loadingStates.transferToPantry,
-            deleteList: loadingStates.deleteList,
-            copyList: loadingStates.copyList,
-          }}
-        />
       </div>
 
       {/* Filter Section */}

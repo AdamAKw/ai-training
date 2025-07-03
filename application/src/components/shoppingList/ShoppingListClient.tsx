@@ -76,28 +76,25 @@ export function ShoppingListClient({
     }
   };
 
-  const handleTransferToPantry = async () => {
-    if (!activeList) return;
-    const updatedList = await api.transferToPantry(activeList._id);
-    if (!api.error) {
-      updateListInState(updatedList);
-    }
-  };
-
-  const handleDeleteList = async () => {
-    if (!activeList) return;
-    await api.deleteList(activeList._id);
-    if (!api.error) {
-      removeListFromState(activeList._id);
-    }
-  };
-
-  const handleCopyList = async () => {
-    if (!activeList) return;
-    const newList = await api.copyList(activeList._id);
+  const handleCopyList = async (listId: string) => {
+    const newList = await api.copyList(listId);
     if (!api.error && newList) {
       setLists([newList, ...lists]);
       setActiveList(newList);
+    }
+  };
+
+  const handleDeleteList = async (listId: string) => {
+    await api.deleteList(listId);
+    if (!api.error) {
+      removeListFromState(listId);
+    }
+  };
+
+  const handleTransferToPantry = async (listId: string) => {
+    const updatedList = await api.transferToPantry(listId);
+    if (!api.error) {
+      updateListInState(updatedList);
     }
   };
 
@@ -138,6 +135,10 @@ export function ShoppingListClient({
         lists={lists}
         activeList={activeList}
         onSelectList={setActiveList}
+        onCopyList={handleCopyList}
+        onDeleteList={handleDeleteList}
+        onTransferToPantry={handleTransferToPantry}
+        loadingStates={api.loadingStates}
       />
 
       <div className="lg:col-span-2">
@@ -146,9 +147,6 @@ export function ShoppingListClient({
             list={activeList}
             onTogglePurchased={handleTogglePurchased}
             onRemoveItem={handleRemoveItem}
-            onTransferToPantry={handleTransferToPantry}
-            onDeleteList={handleDeleteList}
-            onCopyList={handleCopyList}
             onItemAdded={handleItemAdded}
             loadingStates={api.loadingStates}
           />
