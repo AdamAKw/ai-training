@@ -19,17 +19,17 @@ export async function GET(
         { status: 400 }
       );
     }
-
+    
     await connectToDatabase();
     const pantryItem = await PantryItem.findById(id);
-
+    
     if (!pantryItem) {
       return NextResponse.json(
         { error: 'Pantry item not found' },
         { status: 404 }
       );
     }
-
+    
     return NextResponse.json({ pantryItem }, { status: 200 });
   } catch (error) {
     console.error('Error fetching pantry item:', error);
@@ -42,7 +42,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+ { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -53,51 +53,34 @@ export async function PUT(
         { status: 400 }
       );
     }
-
+    
     await connectToDatabase();
     const body = await request.json();
-
+    
     // Validate request body
     const validatedData = PantryItemValidation.safeParse(body);
-
+    
     if (!validatedData.success) {
       return NextResponse.json(
         { error: 'Invalid pantry item data', issues: validatedData.error.issues },
         { status: 400 }
       );
     }
-
-    // If quantity is 0 or negative, delete the item instead of updating
-    if (validatedData.data.quantity <= 0) {
-      const deletedPantryItem = await PantryItem.findByIdAndDelete(id);
-
-      if (!deletedPantryItem) {
-        return NextResponse.json(
-          { error: 'Pantry item not found' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        message: 'Pantry item deleted due to zero quantity',
-        deleted: true
-      }, { status: 200 });
-    }
-
+    
     // Update pantry item
     const updatedPantryItem = await PantryItem.findByIdAndUpdate(
       id,
       validatedData.data,
       { new: true, runValidators: true }
     );
-
+    
     if (!updatedPantryItem) {
       return NextResponse.json(
         { error: 'Pantry item not found' },
         { status: 404 }
       );
     }
-
+    
     return NextResponse.json({ pantryItem: updatedPantryItem }, { status: 200 });
   } catch (error) {
     console.error('Error updating pantry item:', error);
@@ -121,17 +104,17 @@ export async function DELETE(
         { status: 400 }
       );
     }
-
+    
     await connectToDatabase();
     const deletedPantryItem = await PantryItem.findByIdAndDelete(id);
-
+    
     if (!deletedPantryItem) {
       return NextResponse.json(
         { error: 'Pantry item not found' },
         { status: 404 }
       );
     }
-
+    
     return NextResponse.json(
       { message: 'Pantry item deleted successfully' },
       { status: 200 }
