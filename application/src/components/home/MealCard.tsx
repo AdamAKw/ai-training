@@ -16,6 +16,7 @@ import { IMealPlan } from "@/models/mealPlan";
 import { IIngredient } from "@/models/recipe";
 import { IPantryItem } from "@/models/pantryItem";
 import { IngredientAvailabilityWithHistory } from "@/components/recipes/IngredientAvailabilityWithHistory";
+import { SimpleIngredientList } from "@/components/recipes/SimpleIngredientList";
 
 type MealCardProps = {
   recipeId: string;
@@ -125,15 +126,23 @@ export function MealCard({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Ingredient Availability */}
+        {/* Ingredient List */}
         <div>
-          <IngredientAvailabilityWithHistory
-            ingredients={recipeIngredients}
-            pantryItems={pantryItems}
-            servings={servings}
-            previousMeals={previousMeals}
-          />
+          {isCompleted ? (
+            <SimpleIngredientList
+              ingredients={recipeIngredients}
+              servings={servings}
+            />
+          ) : (
+            <IngredientAvailabilityWithHistory
+              ingredients={recipeIngredients}
+              pantryItems={pantryItems}
+              servings={servings}
+              previousMeals={previousMeals}
+            />
+          )}
         </div>
+
         {/* Instructions (first 2 only) */}
         {recipeInstructions &&
           Array.isArray(recipeInstructions) &&

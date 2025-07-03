@@ -120,14 +120,12 @@ export function getPreviousMeals(
       const mealIndex = findMealIndex(currentMealPlan, meal, sortedDates, mealsByDate, date, idx);
       allMealsInOrder.push({ meal, mealIndex });
     });
-  });
-
-  // Filter meals that come before the target meal
+  });  // Filter meals that come before the target meal and are NOT completed
   const mealsBeforeTarget = allMealsInOrder.filter(
-    ({ mealIndex }) => mealIndex < targetMealIndex && mealIndex >= 0
+    ({ mealIndex, meal }) => mealIndex < targetMealIndex && mealIndex >= 0 && !meal.isCompleted
   );
 
-  // Extract relevant data for each previous meal
+  // Extract relevant data for each previous uncompleted meal
   mealsBeforeTarget.forEach(({ meal }) => {
     const { recipeId, recipeName, recipeIngredients } = getRecipeDetails(meal);
 
