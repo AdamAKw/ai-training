@@ -1,4 +1,5 @@
 import { IMealPlan } from "@/models/mealPlan";
+import { IIngredient } from "@/models/recipe";
 import { GroupedMeals, MealWithRecipeData } from "@/types/meal";
 
 type FormatterType = {
@@ -75,4 +76,71 @@ export function findMealIndex(
         .reduce((acc, d) => acc + mealsByDate[d].length, 0) + idx
     );
   });
+}
+
+/**
+ * Collects all previous meals before a given meal in chronological order
+ * @param currentMealPlan The meal plan
+ * @param targetMealIndex The index of the target meal
+ * @param sortedDates Array of dates in chronological order
+ * @param mealsByDate Grouped meals by date
+ * @returns Array of previous meals with their ingredients and completion status
+ */
+export function getPreviousMeals(
+  currentMealPlan: IMealPlan,
+  targetMealIndex: number,
+  sortedDates: string[],
+  mealsByDate: GroupedMeals
+): Array<{
+  ingredients: IIngredient[];
+  servings: number;
+  isCompleted: boolean;
+  recipeId: string;
+  recipeName: string;
+}> {
+  const previousMeals: Array<{
+    ingredients: IIngredient[];
+    servings: number;
+    isCompleted: boolean;
+    recipeId: string;
+    recipeName: string;
+  }> = [];
+
+  // Get all meals in chronological order
+  const allMealsInOrder: Array<{
+    meal: MealWithRecipeData;
+    mealIndex: number;
+  }> = [];
+
+  sortedDates.forEach((date) => {
+    const mealsForDate = mealsByDate[date];
+    const sortedMealsForDate = sortMealsByType(mealsForDate);
+
+    sortedMealsForDate.forEach((meal, idx) => {
+      const mealIndex = findMealIndex(currentMealPlan, meal, sortedDates, mealsByDate, date, idx);
+      allMealsInOrder.push({ meal, mealIndex });
+    });
+  });
+
+  // Filter meals that come before the target meal
+  const mealsBeforeTarget = allMealsInOrder.filter(
+    ({ mealIndex }) => mealIndex < targetMealIndex && mealIndex >= 0
+  );
+
+  // Extract relevant data for each previous meal
+  mealsBeforeTarget.forEach(({ meal }) => {
+    const { recipeId, recipeName, recipeIngredients } = getRecipeDetails(meal);
+
+    if (recipeIngredients && Array.isArray(recipeIngredients)) {
+      previousMeals.push({
+        ingredients: recipeIngredients,
+        servings: meal.servings,
+        isCompleted: meal.isCompleted || false,
+        recipeId,
+        recipeName,
+      });
+    }
+  });
+
+  return previousMeals;
 }

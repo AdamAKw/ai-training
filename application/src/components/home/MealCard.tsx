@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { IMealPlan } from "@/models/mealPlan";
 import { IIngredient } from "@/models/recipe";
 import { IPantryItem } from "@/models/pantryItem";
-import { IngredientAvailability } from "@/components/recipes/IngredientAvailability";
+import { IngredientAvailabilityWithHistory } from "@/components/recipes/IngredientAvailabilityWithHistory";
 
 type MealCardProps = {
   recipeId: string;
@@ -35,6 +35,13 @@ type MealCardProps = {
     isCurrentlyCompleted: boolean
   ) => Promise<void>;
   pantryItems: IPantryItem[];
+  previousMeals: Array<{
+    ingredients: IIngredient[];
+    servings: number;
+    isCompleted: boolean;
+    recipeId: string;
+    recipeName: string;
+  }>;
 };
 
 export function MealCard({
@@ -51,6 +58,7 @@ export function MealCard({
   currentMealPlan,
   onMealStatusChange,
   pantryItems,
+  previousMeals,
 }: MealCardProps) {
   const [imgError, setImgError] = useState(false);
   const t = useTranslations("home.mealCard");
@@ -119,10 +127,11 @@ export function MealCard({
       <CardContent className="space-y-4">
         {/* Ingredient Availability */}
         <div>
-          <IngredientAvailability
+          <IngredientAvailabilityWithHistory
             ingredients={recipeIngredients}
             pantryItems={pantryItems}
             servings={servings}
+            previousMeals={previousMeals}
           />
         </div>
         {/* Instructions (first 2 only) */}

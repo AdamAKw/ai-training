@@ -11,10 +11,10 @@ export function isMatchingIngredient(ingredient: IIngredient, pantryItem: IPantr
   // Normalize names for case-insensitive comparison
   const normalizedIngredientName = ingredient.name.toLowerCase().trim();
   const normalizedPantryItemName = pantryItem.name.toLowerCase().trim();
-  
+
   // If units differ, we can't compare quantities directly
   const sameUnit = ingredient.unit.toLowerCase() === pantryItem.unit.toLowerCase();
-  
+
   // Basic matching by name (could be improved with fuzzy matching or synonyms)
   return normalizedIngredientName === normalizedPantryItemName && sameUnit;
 }
@@ -26,17 +26,17 @@ export function isMatchingIngredient(ingredient: IIngredient, pantryItem: IPantr
  * @returns Object with availability status and amount info
  */
 export function checkIngredientAvailability(
-  ingredient: IIngredient, 
+  ingredient: IIngredient,
   pantryItems: IPantryItem[] | WorkingPantryItem[]
-): { 
-  available: boolean; 
-  availableAmount: number; 
-  missingAmount: number; 
+): {
+  available: boolean;
+  availableAmount: number;
+  missingAmount: number;
   matchingItem?: IPantryItem | WorkingPantryItem;
 } {
   // Find matching pantry items (could be more than one with same name/unit)
   const matchingItems = pantryItems.filter(item => isMatchingIngredient(ingredient, item));
-  
+
   if (matchingItems.length === 0) {
     return {
       available: false,
@@ -44,12 +44,12 @@ export function checkIngredientAvailability(
       missingAmount: ingredient.quantity,
     };
   }
-  
+
   // Sum up available quantities from all matching items
   const totalAvailableAmount = matchingItems.reduce((sum, item) => sum + item.quantity, 0);
   const neededAmount = ingredient.quantity;
   const missingAmount = Math.max(0, neededAmount - totalAvailableAmount);
-  
+
   return {
     available: totalAvailableAmount >= neededAmount,
     availableAmount: totalAvailableAmount,
@@ -66,7 +66,7 @@ export function checkIngredientAvailability(
  * @returns Map of ingredient IDs to availability status
  */
 export function checkIngredientsAvailability(
-  ingredients: IIngredient[], 
+  ingredients: IIngredient[],
   pantryItems: IPantryItem[] | WorkingPantryItem[],
   servings: number = 1
 ): Map<string, ReturnType<typeof checkIngredientAvailability>> {
@@ -75,25 +75,25 @@ export function checkIngredientsAvailability(
   if (!ingredients || !Array.isArray(ingredients)) {
     return results;
   }
-  
+
   ingredients.forEach(ingredient => {
     // Skip invalid ingredients
     if (!ingredient || typeof ingredient !== 'object' || !ingredient.name) {
       return;
     }
-    
+
     // Adjust ingredient quantity based on servings
     const adjustedIngredient = {
       ...ingredient,
       quantity: ingredient.quantity * servings
     };
-    
+
     results.set(
-      ingredient._id || ingredient.name, 
+      ingredient._id || ingredient.name,
       checkIngredientAvailability(adjustedIngredient, pantryItems)
     );
   });
-  
+
   return results;
 }
 
@@ -130,8 +130,8 @@ function createWorkingPantryItems(pantryItems: IPantryItem[]): WorkingPantryItem
  * @param servings Number of servings to adjust quantities for
  */
 function reserveIngredientsFromPantry(
-  ingredients: IIngredient[], 
-  pantryItems: WorkingPantryItem[], 
+  ingredients: IIngredient[],
+  pantryItems: WorkingPantryItem[],
   servings: number = 1
 ): void {
   if (!ingredients || !Array.isArray(ingredients)) {
@@ -150,10 +150,10 @@ function reserveIngredientsFromPantry(
 
     // Find matching pantry items and reserve from them
     const matchingItems = pantryItems.filter(item => isMatchingIngredient(ingredient, item));
-    
+
     for (const pantryItem of matchingItems) {
       if (remainingNeeded <= 0) break;
-      
+
       const canTake = Math.min(pantryItem.quantity, remainingNeeded);
       pantryItem.quantity -= canTake;
       remainingNeeded -= canTake;
@@ -190,7 +190,7 @@ export function checkSequentialIngredientsAvailability(
   recipesWithIngredients.forEach(({ ingredients, servings, recipeId }) => {
     // Check availability for this recipe with current pantry state
     const availabilityMap = checkIngredientsAvailability(ingredients, workingPantryItems, servings);
-    
+
     // Store the results
     results.push({
       recipeId,
@@ -204,7 +204,7 @@ export function checkSequentialIngredientsAvailability(
       const status = availabilityMap.get(id);
       return status?.available;
     });
-    
+
     reserveIngredientsFromPantry(availableIngredients, workingPantryItems, servings);
   });
 
@@ -219,8 +219,8 @@ export function checkSequentialIngredientsAvailability(
  * @returns Array of removed ingredients with pantry item IDs for restoration
  */
 export function removeIngredientsFromPantry(
-  ingredients: IIngredient[], 
-  pantryItems: IPantryItem[], 
+  ingredients: IIngredient[],
+  pantryItems: IPantryItem[],
   servings: number = 1
 ): Array<{
   ingredientName: string;
@@ -251,12 +251,12 @@ export function removeIngredientsFromPantry(
 
     // Find matching pantry items and remove from them
     const matchingItems = pantryItems.filter(item => isMatchingIngredient(ingredient, item));
-    
+
     for (const pantryItem of matchingItems) {
       if (remainingNeeded <= 0) break;
-      
+
       const canTake = Math.min(pantryItem.quantity, remainingNeeded);
-      
+
       // Record what we're removing for potential restoration
       removedIngredients.push({
         ingredientName: ingredient.name,
@@ -264,7 +264,7 @@ export function removeIngredientsFromPantry(
         unit: ingredient.unit,
         pantryItemId: pantryItem._id?.toString() || ''
       });
-      
+
       // Update pantry item quantity
       pantryItem.quantity -= canTake;
       remainingNeeded -= canTake;
@@ -272,4 +272,37 @@ export function removeIngredientsFromPantry(
   });
 
   return removedIngredients;
+}
+
+/**
+ * Check ingredients availability considering previous meals' consumption
+ * @param ingredients Current recipe ingredients
+ * @param pantryItems Available pantry items
+ * @param servings Number of servings for current recipe
+ * @param previousMeals Array of previous meals with their ingredients and completion status
+ * @returns Map of ingredient IDs to availability status
+ */
+export function checkIngredientsAvailabilityWithHistory(
+  ingredients: IIngredient[],
+  pantryItems: IPantryItem[],
+  servings: number = 1,
+  previousMeals: Array<{
+    ingredients: IIngredient[];
+    servings: number;
+    isCompleted: boolean;
+  }> = []
+): Map<string, ReturnType<typeof checkIngredientAvailability>> {
+  // Create a working copy of pantry items
+  const workingPantryItems = createWorkingPantryItems(pantryItems);
+
+  // Reserve ingredients for ALL previous meals in chronological order
+  // This simulates sequential consumption regardless of completion status
+  previousMeals.forEach(({ ingredients: prevIngredients, servings: prevServings }) => {
+    // Reserve ingredients for all previous meals, simulating that they will be prepared
+    // in chronological order regardless of current completion status
+    reserveIngredientsFromPantry(prevIngredients, workingPantryItems, prevServings);
+  });
+
+  // Check availability for current recipe with remaining pantry items
+  return checkIngredientsAvailability(ingredients, workingPantryItems, servings);
 }
