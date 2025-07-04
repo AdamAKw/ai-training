@@ -11,24 +11,24 @@ type NewShoppingListPageClientProps = {
 export default function NewShoppingListPageClient({
   data,
 }: NewShoppingListPageClientProps) {
-  const dataa = use(data);
-  console.log(dataa);
+  const mealData = use(data);
+  console.log(mealData);
   const t = useTranslations("shoppingList.newList");
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t("cardTitle")}</CardTitle>
-        {dataa.mealPlanId && dataa.mealPlanName && (
+        {mealData.mealPlanId && mealData.mealPlanName && (
           <p className="text-sm text-muted-foreground">
-            {t("basedOnMealPlan", { planName: dataa.mealPlanName })}
+            {t("basedOnMealPlan", { planName: mealData.mealPlanName })}
           </p>
         )}
       </CardHeader>
       <CardContent>
         <NewShoppingListPageForm
-          listName={dataa.listName}
-          mealPlanId={dataa.mealPlanId}
+          listName={mealData.listName}
+          mealPlanId={mealData.mealPlanId}
         />
       </CardContent>
     </Card>
