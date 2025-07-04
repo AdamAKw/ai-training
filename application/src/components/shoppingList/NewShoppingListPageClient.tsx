@@ -12,7 +12,6 @@ export default function NewShoppingListPageClient({
   data,
 }: NewShoppingListPageClientProps) {
   const mealData = use(data);
-  console.log(mealData);
   const t = useTranslations("shoppingList.newList");
 
   return (
