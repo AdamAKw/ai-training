@@ -1,11 +1,9 @@
-import { PageHeaderSkeleton } from "../layout/PageHeader";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 export default function LoadingSkeleton() {
   return (
     <div>
-      <PageHeaderSkeleton/>
       <Card>
         <CardHeader>
           <Skeleton className="h-8 w-48" />
