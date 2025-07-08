@@ -6,24 +6,21 @@ import { MealPlanHeader } from "./MealPlanHeader";
 import { MealDay } from "./MealDay";
 import { IMealPlan } from "@/models/mealPlan";
 import { useFormatter } from "next-intl";
-import { ReactNode } from "react";
+import { ReactNode, use } from "react";
+import { CurrentMealResponse } from "@/app/page";
 
 type CurrentMealPlanProps = {
-  currentMealPlanSkeleton: ReactNode;
+  data: Promise<CurrentMealResponse>;
   emptyMealPlan: ReactNode;
 };
 
 export function CurrentMealPlan({
-  currentMealPlanSkeleton,
+  data,
   emptyMealPlan,
 }: CurrentMealPlanProps) {
-  const { isLoading, currentMealPlan, pantryItems, toggleMealCompletion } =
-    useMealPlanData();
+  const { currentMealPlan, pantryItems, toggleMealCompletion } =
+    useMealPlanData(use(data));
   const format = useFormatter();
-
-  if (isLoading) {
-    return currentMealPlanSkeleton;
-  }
 
   if (!currentMealPlan) {
     return emptyMealPlan;

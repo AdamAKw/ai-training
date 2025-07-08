@@ -10,7 +10,9 @@ async function loadData(mealPlanId: string): Promise<LoadDataReturnType> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/mealPlans/${mealPlanId}`
-    );
+    , {
+      cache: "no-store",
+    });
     if (response.ok) {
       const data = await response.json();
       const mealPlan = data.mealPlan;
