@@ -8,15 +8,12 @@ import { IPantryItem } from "@/models/pantryItem";
 import { Suspense } from "react";
 
 export default async function Home() {
-  const data =  getData();
+  const data = getData();
 
   return (
     <div className="space-y-6">
       <Suspense fallback={<MealPlanSkeleton />}>
-        <CurrentMealPlan
-          data={data}
-          emptyMealPlan={<EmptyMealPlan />}
-        />
+        <CurrentMealPlan data={data} emptyMealPlan={<EmptyMealPlan />} />
       </Suspense>
       <div className="mt-8">
         <QuickNavigation />
@@ -34,7 +31,6 @@ async function getData(): Promise<CurrentMealResponse> {
   try {
     // Get current date
     const today = new Date();
-
     // Fetch meal plans
     const mealPlansResponse = await fetch(`${getBaseUrl()}/api/mealPlans`, {
       cache: "no-store",
@@ -54,9 +50,12 @@ async function getData(): Promise<CurrentMealResponse> {
 
     // If we found a current plan, fetch its detailed data to ensure we have all recipe details
     if (currentPlan?._id) {
-      const detailResponse = await fetch(`${getBaseUrl()}/api/mealPlans/${currentPlan._id}`, {
-        cache: "no-store",
-      });
+      const detailResponse = await fetch(
+        `${getBaseUrl()}/api/mealPlans/${currentPlan._id}`,
+        {
+          cache: "no-store",
+        }
+      );
       if (detailResponse.ok) {
         const detailData = await detailResponse.json();
         currentPlan = detailData.mealPlan;
