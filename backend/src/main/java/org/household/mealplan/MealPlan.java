@@ -2,6 +2,7 @@ package org.household.mealplan;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import io.quarkus.panache.common.Sort;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
@@ -65,7 +66,7 @@ public class MealPlan extends PanacheMongoEntity {
      * Find all meal plans ordered by start date (newest first)
      */
     public static List<MealPlan> findAllOrderedByStartDate() {
-        return find("order by startDate desc").list();
+        return findAll(Sort.by("startDate").descending()).list();
     }
 
     /**
@@ -132,25 +133,19 @@ public class MealPlan extends PanacheMongoEntity {
      * Enum for meal types
      */
     public enum MealType {
-        BREAKFAST("breakfast"),
-        LUNCH("lunch"),
-        DINNER("dinner"),
-        SNACK("snack"),
-        OTHER("other");
-
-        private final String value;
-
-        MealType(String value) {
-            this.value = value;
-        }
+        breakfast,
+        lunch,
+        dinner,
+        snack,
+        other;
 
         public String getValue() {
-            return value;
+            return this.name();
         }
 
         public static MealType fromString(String value) {
             for (MealType type : MealType.values()) {
-                if (type.value.equalsIgnoreCase(value)) {
+                if (type.name().equalsIgnoreCase(value)) {
                     return type;
                 }
             }

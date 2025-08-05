@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface DeleteRecipeDialogProps {
   recipeId: string;
@@ -31,10 +32,12 @@ export function DeleteRecipeDialog({
 
   const handleDelete = async () => {
     try {
-      setIsDeleting(true);
-      const response = await fetch(`/api/recipes/${recipeId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/recipes/${recipeId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(t("failed"));

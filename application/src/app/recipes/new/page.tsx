@@ -6,6 +6,7 @@ import {
   RecipeForm,
   type RecipeFormValues,
 } from "@/components/recipes/RecipeForm";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 // Interface for Zod validation errors
 interface ValidationIssue {
@@ -27,7 +28,7 @@ export default function NewRecipePage() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/recipes", {
+      const response = await fetch(`${getApiBaseUrl()}/api/recipes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

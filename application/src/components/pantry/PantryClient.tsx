@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface PantryClientProps {
   initialItems: IPantryItem[];
@@ -35,11 +36,11 @@ export function PantryClient({ initialItems }: PantryClientProps) {
   const refreshPantryItems = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/pantry");
+      const response = await fetch(`${getApiBaseUrl()}/api/pantry`);
       const data = await response.json();
       setItems(data.pantryItems);
     } catch (error) {
-      console.error("Błąd podczas pobierania produktów:", error);
+      console.error("Error fetching pantry items:", error);
     } finally {
       setIsLoading(false);
     }
@@ -62,9 +63,12 @@ export function PantryClient({ initialItems }: PantryClientProps) {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/pantry/${itemToDelete}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/pantry/${itemToDelete}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         // Filter out the deleted item from the state

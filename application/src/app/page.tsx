@@ -2,7 +2,7 @@ import { CurrentMealPlan } from "@/components/home/CurrentMealPlan";
 import { EmptyMealPlan } from "@/components/home/EmptyMealPlan";
 import { MealPlanSkeleton } from "@/components/home/MealPlanSkeleton";
 import QuickNavigation from "@/components/home/quickNavigation";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import { IMealPlan } from "@/models/mealPlan";
 import { IPantryItem } from "@/models/pantryItem";
 import { Suspense } from "react";
@@ -32,7 +32,7 @@ async function getData(): Promise<CurrentMealResponse> {
     // Get current date
     const today = new Date();
     // Fetch meal plans
-    const mealPlansResponse = await fetch(`${getBaseUrl()}/api/mealPlans`, {
+    const mealPlansResponse = await fetch(`${getApiBaseUrl()}/api/mealPlans`, {
       cache: "no-store",
     });
     const mealPlansData = await mealPlansResponse.json();
@@ -40,9 +40,9 @@ async function getData(): Promise<CurrentMealResponse> {
     if (!mealPlansResponse.ok) {
       throw new Error(mealPlansData.error || "Failed to fetch meal plans");
     }
-
+    console.log(mealPlansData);
     // Find a meal plan that includes today's date
-    let currentPlan = mealPlansData.mealPlans.find((plan: IMealPlan) => {
+    let currentPlan = mealPlansData.data.mealPlans.find((plan: IMealPlan) => {
       const startDate = new Date(plan.startDate);
       const endDate = new Date(plan.endDate);
       return today >= startDate && today <= endDate;
@@ -51,7 +51,7 @@ async function getData(): Promise<CurrentMealResponse> {
     // If we found a current plan, fetch its detailed data to ensure we have all recipe details
     if (currentPlan?._id) {
       const detailResponse = await fetch(
-        `${getBaseUrl()}/api/mealPlans/${currentPlan._id}`,
+        `${getApiBaseUrl()}/api/mealPlans/${currentPlan._id}`,
         {
           cache: "no-store",
         }
@@ -63,7 +63,7 @@ async function getData(): Promise<CurrentMealResponse> {
     }
 
     // Fetch pantry items
-    const pantryResponse = await fetch(`${getBaseUrl()}/api/pantry`, {
+    const pantryResponse = await fetch(`${getApiBaseUrl()}/api/pantry`, {
       cache: "no-store",
     });
     const pantryData = await pantryResponse.json();

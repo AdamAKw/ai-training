@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { ShoppingListClient } from "@/components/shoppingList/ShoppingListClient";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import { ShoppingListSkeleton } from "@/components/shoppingList/ShoppingListSkeleton";
 import { EmptyShoppingListState } from "@/components/shoppingList/EmptyShoppingListState";
 
@@ -27,7 +27,7 @@ export default async function ShoppingListPage() {
 }
 
 async function fetchShoppingLists() {
-  const response = await fetch(`${getBaseUrl()}/api/shoppingList`, {
+  const response = await fetch(`${getApiBaseUrl()}/api/shoppingList`, {
     cache: "no-store",
   });
   return await response.json();

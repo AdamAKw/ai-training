@@ -1,3 +1,4 @@
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import { PageHeader } from "@/components/layout/PageHeader";
 import NewShoppingListPageClient from "@/components/shoppingList/NewShoppingListPageClient";
 import LoadingSkeleton from "@/components/shoppingList/NewShoppingListPageSkeleton";
@@ -9,10 +10,11 @@ async function loadData(mealPlanId: string): Promise<LoadDataReturnType> {
   const t = await getTranslations("shoppingList.newList");
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/mealPlans/${mealPlanId}`
-    , {
-      cache: "no-store",
-    });
+      `${getApiBaseUrl()}/api/mealPlans/${mealPlanId}`,
+      {
+        cache: "no-store",
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       const mealPlan = data.mealPlan;

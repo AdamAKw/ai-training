@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class RecipeResource {
+
+    private static final Logger LOG = Logger.getLogger(RecipeResource.class);
 
     @Inject
     RecipeService recipeService;
@@ -33,6 +36,7 @@ public class RecipeResource {
             List<Recipe> recipes = recipeService.getAllRecipes();
             return Response.ok(ApiResponse.success("recipes", recipes)).build();
         } catch (Exception e) {
+            LOG.error("Failed to fetch recipes", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch recipes", 500))
                     .build();
@@ -51,10 +55,12 @@ public class RecipeResource {
                     .entity(ApiResponse.success("recipe", createdRecipe))
                     .build();
         } catch (ValidationException e) {
+            LOG.warnf("Validation error creating recipe: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid recipe data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
+            LOG.error("Failed to create recipe", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to create recipe", 500))
                     .build();
@@ -84,6 +90,7 @@ public class RecipeResource {
 
             return Response.ok(ApiResponse.success("recipe", recipe)).build();
         } catch (Exception e) {
+            LOG.error("Failed to fetch recipe", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch recipe", 500))
                     .build();
@@ -113,10 +120,12 @@ public class RecipeResource {
 
             return Response.ok(ApiResponse.success("recipe", updatedRecipe)).build();
         } catch (ValidationException e) {
+            LOG.warnf("Validation error updating recipe: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid recipe data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
+            LOG.error("Failed to update recipe", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to update recipe", 500))
                     .build();
@@ -146,6 +155,7 @@ public class RecipeResource {
 
             return Response.ok(ApiResponse.success("message", "Recipe deleted successfully")).build();
         } catch (Exception e) {
+            LOG.error("Failed to delete recipe", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to delete recipe", 500))
                     .build();
@@ -169,6 +179,7 @@ public class RecipeResource {
             List<Recipe> recipes = recipeService.searchRecipesByName(name);
             return Response.ok(ApiResponse.success("recipes", recipes)).build();
         } catch (Exception e) {
+            LOG.error("Failed to search recipes", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to search recipes", 500))
                     .build();

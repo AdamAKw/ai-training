@@ -8,6 +8,7 @@ import { IMealPlan } from "@/models/mealPlan";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface MealPlanDetailProps {
   mealPlan: IMealPlan;
@@ -71,15 +72,14 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
       setIsCreatingList(true);
 
       // Call the API to create a shopping list based on the meal plan
-      const response = await fetch(`/api/shoppingList`, {
+      const response = await fetch(`${getApiBaseUrl()}/api/shoppingList`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: `${mealPlan.name} - Shopping List`,
-          mealPlan: mealPlan._id,
-          items: [], // The server will populate items from the meal plan recipes
+          mealPlanId: mealPlan._id,
+          name: `Shopping List for ${mealPlan.name}`,
         }),
       });
 

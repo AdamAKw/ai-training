@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import PantryForm, { PantryFormData } from "@/components/pantry/PantryForm";
 
 export default function NewPantryItemPage() {
@@ -13,7 +14,7 @@ export default function NewPantryItemPage() {
   const handleSubmit = async (formData: PantryFormData) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/pantry", {
+      const response = await fetch(`${getApiBaseUrl()}/api/pantry`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@ package org.household.pantry;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import io.quarkus.panache.common.Sort;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -76,7 +77,7 @@ public class PantryItem extends PanacheMongoEntity {
      * Find all pantry items ordered by creation date (newest first)
      */
     public static List<PantryItem> findAllOrderedByCreatedAt() {
-        return find("order by createdAt desc").list();
+        return findAll(Sort.by("createdAt").descending()).list();
     }
 
     /**

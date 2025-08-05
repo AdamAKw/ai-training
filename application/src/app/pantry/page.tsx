@@ -4,13 +4,13 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { IPantryItem } from "@/models/pantryItem";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import PantryClient from "@/components/pantry/PantryClient";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 // Fetch pantry items from database
 async function getPantryItems(): Promise<IPantryItem[]> {
   try {
     await connectToDatabase();
-    const response = await fetch(`${getBaseUrl()}/api/pantry`, {
+    const response = await fetch(`${getApiBaseUrl()}/api/pantry`, {
       cache: "no-store",
     });
 

@@ -8,7 +8,9 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
+import org.jboss.logging.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,8 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ShoppingListResource {
+
+    private static final Logger LOG = Logger.getLogger(ShoppingListResource.class);
 
     @Inject
     ShoppingListService shoppingListService;
@@ -44,9 +48,25 @@ public class ShoppingListResource {
      * Create a new shopping list (either from scratch or from meal plan)
      */
     @POST
-    public Response createShoppingList(@Valid ShoppingList shoppingList) {
+    public Response createShoppingList(CreateShoppingListRequest request) {
         try {
-            ShoppingList createdList = shoppingListService.createShoppingList(shoppingList);
+            ShoppingList createdList;
+
+            if (request.mealPlanId != null && ObjectId.isValid(request.mealPlanId)) {
+                // Create from meal plan
+                createdList = shoppingListService.createShoppingListFromMealPlan(
+                        new ObjectId(request.mealPlanId),
+                        request.name);
+            } else {
+                // Create from scratch
+                ShoppingList shoppingList = new ShoppingList();
+                shoppingList.name = request.name;
+                shoppingList.description = request.description;
+                shoppingList.items = request.items != null ? request.items : new ArrayList<>();
+
+                createdList = shoppingListService.createShoppingList(shoppingList);
+            }
+
             return Response.status(Response.Status.CREATED)
                     .entity(ApiResponse.success("shoppingList", createdList))
                     .build();
@@ -157,12 +177,12 @@ public class ShoppingListResource {
     }
 
     /**
-     * DELETE /api/shoppingList/{id}
-     * Delete a shopping list
+     * PATCH /api/shoppingList/{id}
+     * Update shopping list with partial data (for compatibility with Next.js)
      */
-    @DELETE
+    @PATCH
     @Path("/{id}")
-    public Response deleteShoppingList(@PathParam("id") String id) {
+    public Response patchShoppingList(@PathParam("id") String id, PatchShoppingListRequest request) {
         try {
             if (!ObjectId.isValid(id)) {
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -170,143 +190,54 @@ public class ShoppingListResource {
                         .build();
             }
 
-            boolean deleted = shoppingListService.deleteShoppingList(new ObjectId(id));
-            if (!deleted) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Shopping list not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("message", "Shopping list deleted successfully")).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to delete shopping list", 500))
-                    .build();
-        }
-    }
-
-    /**
-     * POST /api/shoppingList/{id}/complete
-     * Complete shopping list and optionally add items to pantry
-     */
-    @POST
-    @Path("/{id}/complete")
-    public Response completeShoppingList(
-            @PathParam("id") String id,
-            @QueryParam("addToPantry") @DefaultValue("true") boolean addToPantry) {
-        try {
-            if (!ObjectId.isValid(id)) {
+            if (request.itemIndex != null) {
+                // Toggle item purchased status
+                shoppingListService.toggleItemPurchased(new ObjectId(id), request.itemIndex);
+                return Response.ok(ApiResponse.success("message", "Item status toggled successfully")).build();
+            } else if (request.isCompleted != null && request.isCompleted) {
+                // Complete shopping list
+                boolean addToPantry = request.addToPantry != null ? request.addToPantry : true;
+                shoppingListService.completeShoppingList(new ObjectId(id), addToPantry);
+                return Response.ok(ApiResponse.success("message", "Shopping list completed successfully")).build();
+            } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid shopping list ID format", 400))
+                        .entity(ApiResponse.error("Invalid patch request", 400))
                         .build();
             }
-
-            shoppingListService.completeShoppingList(
-                    new ObjectId(id), addToPantry);
-
-            return Response.ok(ApiResponse.success("message", "Shopping list completed successfully")).build();
         } catch (ValidationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to complete shopping list", 500))
+                    .entity(ApiResponse.error("Failed to update shopping list", 500))
                     .build();
         }
     }
 
     /**
-     * POST /api/shoppingList/{id}/items/{itemIndex}/toggle
-     * Toggle item purchased status
+     * Request class for creating shopping list
      */
-    @POST
-    @Path("/{id}/items/{itemIndex}/toggle")
-    public Response toggleItemPurchased(@PathParam("id") String id, @PathParam("itemIndex") int itemIndex) {
-        try {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid shopping list ID format", 400))
-                        .build();
-            }
-
-            if (itemIndex < 0) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid item index", 400))
-                        .build();
-            }
-
-            shoppingListService.toggleItemPurchased(
-                    new ObjectId(id), itemIndex);
-
-            return Response.ok(ApiResponse.success("message", "Item status toggled successfully")).build();
-        } catch (ValidationException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
-                    .build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to toggle item status", 500))
-                    .build();
-        }
+    public static class CreateShoppingListRequest {
+        public String name;
+        public String description;
+        public String mealPlanId; // Optional - if provided, create from meal plan
+        public List<ShoppingList.ShoppingListItem> items; // Optional - for manual creation
     }
 
     /**
-     * GET /api/shoppingList/pending
-     * Get all pending (uncompleted) shopping lists
+     * Request class for copying shopping list
      */
-    @GET
-    @Path("/pending")
-    public Response getPendingShoppingLists() {
-        try {
-            List<ShoppingList> pendingLists = shoppingListService.findPendingShoppingLists();
-            return Response.ok(ApiResponse.success("shoppingLists", pendingLists)).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch pending shopping lists", 500))
-                    .build();
-        }
+    public static class CopyShoppingListRequest {
+        public String name;
     }
 
     /**
-     * GET /api/shoppingList/completed
-     * Get all completed shopping lists
+     * Request class for patching shopping list
      */
-    @GET
-    @Path("/completed")
-    public Response getCompletedShoppingLists() {
-        try {
-            List<ShoppingList> completedLists = shoppingListService.findCompletedShoppingLists();
-            return Response.ok(ApiResponse.success("shoppingLists", completedLists)).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch completed shopping lists", 500))
-                    .build();
-        }
-    }
-
-    /**
-     * GET /api/shoppingList/byMealPlan/{mealPlanId}
-     * Get shopping lists by meal plan ID
-     */
-    @GET
-    @Path("/byMealPlan/{mealPlanId}")
-    public Response getShoppingListsByMealPlan(@PathParam("mealPlanId") String mealPlanId) {
-        try {
-            if (!ObjectId.isValid(mealPlanId)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
-            }
-
-            List<ShoppingList> shoppingLists = shoppingListService.findShoppingListsByMealPlan(
-                    new ObjectId(mealPlanId));
-
-            return Response.ok(ApiResponse.success("shoppingLists", shoppingLists)).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch shopping lists by meal plan", 500))
-                    .build();
-        }
+    public static class PatchShoppingListRequest {
+        public Integer itemIndex; // For toggling item purchased status
+        public Boolean isCompleted; // For marking as completed
+        public Boolean addToPantry; // Whether to add completed items to pantry
     }
 }

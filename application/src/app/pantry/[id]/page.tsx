@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 import { getTranslations, getFormatter } from "next-intl/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { IPantryItem } from "@/models/pantryItem";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 // Fetch pantry item from database
 async function getPantryItem(id: string): Promise<IPantryItem | null> {
   try {
     await connectToDatabase();
-    const response = await fetch(`${getBaseUrl()}/api/pantry/${id}`, {
+    const response = await fetch(`${getApiBaseUrl()}/api/pantry/${id}`, {
       cache: "no-store",
     });
 

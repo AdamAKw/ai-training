@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { MealPlanList } from "@/components/mealPlan/MealPlanList";
 import { IMealPlan } from "@/models/mealPlan";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface MealPlansClientProps {
   initialMealPlans: IMealPlan[];
@@ -16,7 +17,7 @@ export function MealPlansClient({ initialMealPlans }: MealPlansClientProps) {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/mealPlans/${id}`, {
+      const res = await fetch(`${getApiBaseUrl()}/api/mealPlans/${id}`, {
         method: "DELETE",
       });
 

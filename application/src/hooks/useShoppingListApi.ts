@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ShoppingListType } from '@/components/shoppingList/ShoppingListClient';
 import { toast } from 'sonner';
+import { getApiBaseUrl } from '@/lib/utils/url-helpers';
 
 export function useShoppingListApi() {
     const [loadingStates, setLoadingStates] = useState<{
@@ -63,7 +64,7 @@ export function useShoppingListApi() {
     };
 
     const togglePurchased = (listId: string, itemId: string, purchased: boolean) =>
-        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
+        makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
             method: "PATCH",
             body: JSON.stringify({
                 operation: "toggle-purchased",
@@ -74,7 +75,7 @@ export function useShoppingListApi() {
         }, undefined, 'togglePurchased');
 
     const removeItem = (listId: string, itemId: string) =>
-        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
+        makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
             method: "PATCH",
             body: JSON.stringify({
                 operation: "remove-item",
@@ -83,7 +84,7 @@ export function useShoppingListApi() {
         }, undefined, 'removeItem');
 
     const transferToPantry = (listId: string) =>
-        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
+        makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
             method: "PATCH",
             body: JSON.stringify({
                 operation: "transfer-to-pantry",
@@ -91,7 +92,7 @@ export function useShoppingListApi() {
         }, t("transferredToPantry"), 'transferToPantry');
 
     const deleteList = (listId: string) =>
-        makeApiCall<void>(`/api/shoppingList/${listId}`, {
+        makeApiCall<void>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
             method: "DELETE",
         }, t("deleteSuccess"), 'deleteList');
 
@@ -102,7 +103,7 @@ export function useShoppingListApi() {
         purchased: boolean;
         itemType: string;
     }) =>
-        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}`, {
+        makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
             method: "PATCH",
             body: JSON.stringify({
                 operation: "add-item",
@@ -111,9 +112,61 @@ export function useShoppingListApi() {
         }, t("addItem.addSuccess"), 'addItem');
 
     const copyList = (listId: string) =>
-        makeApiCall<ShoppingListType>(`/api/shoppingList/${listId}/copy`, {
+        makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}/copy`, {
             method: "POST",
         }, t("copySuccess"), 'copyList');
+
+    const fetchShoppingList = (listId: string): Promise<ShoppingListType> => {
+        return makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
+            method: 'GET',
+        });
+    };
+
+    const updateShoppingList = (listId: string, updates: Partial<ShoppingListType>): Promise<ShoppingListType> => {
+        return makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updates),
+        });
+    };
+
+    const toggleItemPurchased = (listId: string, itemIndex: number): Promise<ShoppingListType> => {
+        return makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ itemIndex }),
+        });
+    };
+
+    const deleteShoppingList = async (listId: string): Promise<void> => {
+        return makeApiCall<void>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
+            method: 'DELETE',
+        });
+    };
+
+    const markAsCompleted = (listId: string, addToPantry: boolean = true): Promise<ShoppingListType> => {
+        return makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ isCompleted: true, addToPantry }),
+        });
+    };
+
+    const copyShoppingList = async (listId: string, newName: string): Promise<ShoppingListType> => {
+        return makeApiCall<ShoppingListType>(`${getApiBaseUrl()}/api/shoppingList/${listId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName }),
+        });
+    };
 
     return {
         togglePurchased,
@@ -122,6 +175,12 @@ export function useShoppingListApi() {
         deleteList,
         addItem,
         copyList,
+        fetchShoppingList,
+        updateShoppingList,
+        toggleItemPurchased,
+        deleteShoppingList,
+        markAsCompleted,
+        copyShoppingList,
         loadingStates,
         error,
         setError,

@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MealPlanDetail } from "@/components/mealPlan/MealPlanDetail";
 import { IMealPlan } from "@/models/mealPlan";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 export const dynamic = "force-dynamic";
 async function getMealPlan(id: string): Promise<IMealPlan | null> {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/mealPlans/${id}`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/mealPlans/${id}`, {
       cache: "no-store",
     });
 

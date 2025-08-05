@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 export const dynamic = "force-dynamic";
 async function getMealPlan(id: string) {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/mealPlans/${id}`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/mealPlans/${id}`, {
       cache: "no-store",
     });
 
@@ -22,7 +22,7 @@ async function getMealPlan(id: string) {
 
 async function getRecipes() {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/recipes`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/recipes`, {
       cache: "no-store",
     });
 

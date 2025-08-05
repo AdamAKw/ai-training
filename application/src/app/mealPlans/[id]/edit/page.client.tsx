@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { MealPlanForm } from "@/components/mealPlan/MealPlanForm";
 import { IMealPlan } from "@/models/mealPlan";
 import { IRecipe } from "@/models/recipe";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface EditMealPlanClientProps {
   mealPlan: IMealPlan;
@@ -34,11 +35,14 @@ export default function EditMealPlanClient({
   }) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch(`/api/mealPlans/${mealPlan._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${getApiBaseUrl()}/api/mealPlans/${mealPlan._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();

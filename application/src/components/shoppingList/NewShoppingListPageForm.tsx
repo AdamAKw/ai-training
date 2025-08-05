@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 type NewShoppingListPageFormProps = {
   listName: string;
@@ -36,7 +37,7 @@ export default function NewShoppingListPageForm({
         ...(mealPlanId && { mealPlan: mealPlanId }), // Add meal plan ID if present
       };
 
-      const response = await fetch("/api/shoppingList", {
+      const response = await fetch(`${getApiBaseUrl()}/api/shoppingList`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

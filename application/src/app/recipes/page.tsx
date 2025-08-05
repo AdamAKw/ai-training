@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RecipeCard } from "@/components/recipes/RecipeCard";
 import { EmptyState } from "@/components/layout/EmptyState";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface Recipe {
   _id: string;
@@ -22,10 +23,9 @@ export default function RecipesPage() {
   const t = useTranslations("recipes");
 
   useEffect(() => {
-    async function fetchRecipes() {
+    const fetchRecipes = async () => {
       try {
-        setIsLoading(true);
-        const response = await fetch("/api/recipes");
+        const response = await fetch(`${getApiBaseUrl()}/api/recipes`);
 
         if (!response.ok) {
           throw new Error(t("fetchFailed"));
@@ -38,7 +38,7 @@ export default function RecipesPage() {
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     fetchRecipes();
   }, [t]);

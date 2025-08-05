@@ -1,5 +1,6 @@
 package org.household.recipe;
 
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.bson.types.ObjectId;
@@ -18,7 +19,7 @@ public class RecipeService {
      * Get all recipes ordered by creation date (newest first)
      */
     public List<Recipe> getAllRecipes() {
-        return Recipe.find("order by createdAt desc").list();
+        return Recipe.findAll(Sort.by("createdAt").descending()).list();
     }
 
     /**

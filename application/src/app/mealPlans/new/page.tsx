@@ -1,9 +1,9 @@
-import { getBaseUrl } from "@/lib/utils/url-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import ClientPage from "./page.client";
 
 async function getRecipes() {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/recipes`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/recipes`, {
       cache: "no-store",
     });
 

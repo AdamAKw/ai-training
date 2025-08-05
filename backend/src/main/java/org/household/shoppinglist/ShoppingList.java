@@ -2,6 +2,7 @@ package org.household.shoppinglist;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import io.quarkus.panache.common.Sort;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
@@ -78,7 +79,7 @@ public class ShoppingList extends PanacheMongoEntity {
      * Find all shopping lists ordered by creation date (newest first)
      */
     public static List<ShoppingList> findAllOrderedByCreatedAt() {
-        return find("order by createdAt desc").list();
+        return findAll(Sort.by("createdAt").descending()).list();
     }
 
     /**

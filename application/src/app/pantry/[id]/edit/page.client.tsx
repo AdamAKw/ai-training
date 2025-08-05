@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import { IPantryItem } from "@/models/pantryItem";
 import PantryForm, { PantryFormData } from "@/components/pantry/PantryForm";
 import {
@@ -21,7 +22,7 @@ interface EditPantryClientProps {
   pantryItem: IPantryItem;
 }
 
-export default function EditPantryClient({
+export default function EditPantryItemClient({
   pantryItem,
 }: EditPantryClientProps) {
   const router = useRouter();
@@ -32,29 +33,26 @@ export default function EditPantryClient({
   const handleUpdate = async (formData: PantryFormData) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/pantry/${pantryItem._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/pantry/${pantryItem._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      if (response.ok) {
-        router.push("/pantry");
-        router.refresh();
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        console.error("Błąd podczas aktualizacji produktu:", errorData);
-        alert(
-          t("errors.updateFailed", {
-            error: errorData.error || t("errors.unknownError"),
-          })
-        );
+        throw new Error(errorData.error || "Failed to update pantry item");
       }
+
+      router.push("/pantry");
+      router.refresh();
     } catch (error) {
-      console.error("Błąd podczas aktualizacji produktu:", error);
-      alert(t("errors.updateGenericFailed"));
+      console.error("Error updating pantry item:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -63,25 +61,21 @@ export default function EditPantryClient({
   const handleDelete = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/pantry/${pantryItem._id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${getApiBaseUrl()}/api/pantry/${pantryItem._id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-      if (response.ok) {
-        router.push("/pantry");
-        router.refresh();
-      } else {
-        const errorData = await response.json();
-        console.error("Błąd podczas usuwania produktu:", errorData);
-        alert(
-          t("errors.deleteFailed", {
-            error: errorData.error || t("errors.unknownError"),
-          })
-        );
+      if (!response.ok) {
+        throw new Error("Failed to delete pantry item");
       }
+
+      router.push("/pantry");
+      router.refresh();
     } catch (error) {
-      console.error("Błąd podczas usuwania produktu:", error);
-      alert(t("errors.deleteGenericFailed"));
+      console.error("Error deleting pantry item:", error);
     } finally {
       setIsSubmitting(false);
       setIsDeleteDialogOpen(false);

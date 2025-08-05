@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 // Interface for Zod validation errors
 interface ValidationIssue {
@@ -32,9 +33,7 @@ export default function EditRecipePage() {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        if (!id) return;
-        setIsLoading(true);
-        const response = await fetch(`/api/recipes/${id}`);
+        const response = await fetch(`${getApiBaseUrl()}/api/recipes/${id}`);
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -45,8 +44,9 @@ export default function EditRecipePage() {
 
         const data = await response.json();
         setRecipe(data.recipe);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("unexpectedError"));
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+        setError("Failed to load recipe");
       } finally {
         setIsLoading(false);
       }
@@ -60,7 +60,7 @@ export default function EditRecipePage() {
       setIsSaving(true);
       setError(null);
 
-      const response = await fetch(`/api/recipes/${id}`, {
+      const response = await fetch(`${getApiBaseUrl()}/api/recipes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
