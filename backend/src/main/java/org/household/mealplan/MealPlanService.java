@@ -55,6 +55,9 @@ public class MealPlanService {
     /**
      * Update an existing meal plan
      */
+
+    // TODO In MongoDB, a transaction is only possible on a replicaset, więc tutaj
+    // to nie działa, trzeba albo wywalić transactional albo dodać replica set jakoś
     @Transactional
     public MealPlan updateMealPlan(ObjectId id, MealPlan updatedMealPlan) throws ValidationException {
         MealPlan existingMealPlan = MealPlan.findById(id);
