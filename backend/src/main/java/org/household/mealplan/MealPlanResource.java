@@ -5,10 +5,11 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
+
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
-import org.jboss.logging.Logger;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,9 +21,8 @@ import java.util.List;
 @Path("/api/mealPlans")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Slf4j
 public class MealPlanResource {
-
-    private static final Logger LOG = Logger.getLogger(MealPlanResource.class);
 
     @Inject
     MealPlanService mealPlanService;
@@ -32,12 +32,18 @@ public class MealPlanResource {
      * Fetch all meal plans
      */
     @GET
-    public Response getAllMealPlans() {
+    public Response getAllMealPlans(@QueryParam("date") LocalDate date) {
+        if (date != null) {
+            List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
+            return Response.ok(ApiResponse.success("mealPlans", plans)).build();
+        }
+
         try {
+
             List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
             return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
         } catch (Exception e) {
-            LOG.error("Failed to fetch meal plans", e);
+            log.error("Failed to fetch meal plans", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch meal plans", 500))
                     .build();
@@ -56,12 +62,12 @@ public class MealPlanResource {
                     .entity(ApiResponse.success("mealPlan", createdMealPlan))
                     .build();
         } catch (ValidationException e) {
-            LOG.warnf("Validation error creating meal plan: %s", e.getMessage());
+            log.warn("Validation error creating meal plan: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Failed to create meal plan", e);
+            log.error("Failed to create meal plan", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to create meal plan", 500))
                     .build();
@@ -91,7 +97,7 @@ public class MealPlanResource {
 
             return Response.ok(ApiResponse.success("mealPlan", mealPlan)).build();
         } catch (Exception e) {
-            LOG.error("Failed to fetch meal plan", e);
+            log.error("Failed to fetch meal plan", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch meal plan", 500))
                     .build();
@@ -121,12 +127,12 @@ public class MealPlanResource {
 
             return Response.ok(ApiResponse.success("mealPlan", updatedMealPlan)).build();
         } catch (ValidationException e) {
-            LOG.warnf("Validation error updating meal plan: %s", e.getMessage());
+            log.warn("Validation error updating meal plan: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Failed to update meal plan", e);
+            log.error("Failed to update meal plan", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to update meal plan", 500))
                     .build();
@@ -156,7 +162,7 @@ public class MealPlanResource {
 
             return Response.ok(ApiResponse.success("message", "Meal plan deleted successfully")).build();
         } catch (Exception e) {
-            LOG.error("Failed to delete meal plan", e);
+            log.error("Failed to delete meal plan", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to delete meal plan", 500))
                     .build();
@@ -174,7 +180,7 @@ public class MealPlanResource {
             List<MealPlan> activeMealPlans = mealPlanService.findActiveMealPlans();
             return Response.ok(ApiResponse.success("mealPlans", activeMealPlans)).build();
         } catch (Exception e) {
-            LOG.error("Failed to fetch active meal plans", e);
+            log.error("Failed to fetch active meal plans", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch active meal plans", 500))
                     .build();
@@ -203,7 +209,7 @@ public class MealPlanResource {
             List<MealPlan> mealPlans = mealPlanService.findMealPlansByDateRange(startDate, endDate);
             return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
         } catch (Exception e) {
-            LOG.error("Failed to search meal plans by date range", e);
+            log.error("Failed to search meal plans by date range", e);
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid date format or search failed", 400))
                     .build();
@@ -234,12 +240,12 @@ public class MealPlanResource {
 
             return Response.ok(ApiResponse.success("message", "Meal marked as completed")).build();
         } catch (ValidationException e) {
-            LOG.warnf("Validation error completing meal: %s", e.getMessage());
+            log.warn("Validation error completing meal: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Failed to complete meal", e);
+            log.error("Failed to complete meal", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to complete meal", 500))
                     .build();
@@ -272,12 +278,12 @@ public class MealPlanResource {
                     .ok(ApiResponse.success("message", "Meal marked as uncompleted and ingredients restored to pantry"))
                     .build();
         } catch (ValidationException e) {
-            LOG.warnf("Validation error uncompleting meal: %s", e.getMessage());
+            log.warn("Validation error uncompleting meal: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Failed to uncomplete meal", e);
+            log.error("Failed to uncomplete meal", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to uncomplete meal", 500))
                     .build();

@@ -32,7 +32,6 @@ public class MealPlanService {
     /**
      * Create a new meal plan
      */
-    @Transactional
     public MealPlan createMealPlan(MealPlan mealPlan) throws ValidationException {
         validateMealPlan(mealPlan);
 
@@ -242,5 +241,10 @@ public class MealPlanService {
                 throw new ValidationException("Meal type is required for all meals");
             }
         }
+    }
+
+    public List<MealPlan> findMealPlansIncludeDate(LocalDate date) {
+        return MealPlan.findMealPlansIncludeDate(date);
+
     }
 }

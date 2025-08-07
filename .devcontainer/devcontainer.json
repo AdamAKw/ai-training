@@ -21,7 +21,8 @@
         "redhat.vscode-quarkus",
         "vscjava.vscode-java-pack",
         "vscjava.vscode-maven",
-        "vscjava.vscode-gradle"
+        "vscjava.vscode-gradle",
+        "redhat.vscode-xml"
       ]
     }
   },

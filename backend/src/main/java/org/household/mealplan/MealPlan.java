@@ -5,6 +5,8 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.panache.common.Sort;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.extern.slf4j.Slf4j;
+
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ import java.util.List;
  * Equivalent to the Next.js MealPlan model
  */
 @MongoEntity(collection = "mealplans")
+@Slf4j
 public class MealPlan extends PanacheMongoEntity {
 
     @NotBlank(message = "Meal plan name must be at least 2 characters")
@@ -75,6 +78,11 @@ public class MealPlan extends PanacheMongoEntity {
     public static List<MealPlan> findActiveMealPlans() {
         LocalDate today = LocalDate.now();
         return find("startDate <= ?1 and endDate >= ?1", today).list();
+    }
+
+    public static List<MealPlan> findMealPlansIncludeDate(LocalDate date) {
+        log.info(date.toString());
+        return find("startDate <= ?1 and endDate >= ?1", date).list();
     }
 
     /**
@@ -180,4 +188,5 @@ public class MealPlan extends PanacheMongoEntity {
             this.pantryItemId = pantryItemId;
         }
     }
+
 }
