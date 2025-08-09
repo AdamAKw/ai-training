@@ -27,18 +27,13 @@ public class MealPlanResource {
     @Inject
     MealPlanService mealPlanService;
 
-    /**
-     * GET /api/mealPlans
-     * Fetch all meal plans
-     */
     @GET
     public Response getAllMealPlans(@QueryParam("date") LocalDate date) {
-        if (date != null) {
-            List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
-            return Response.ok(ApiResponse.success("mealPlans", plans)).build();
-        }
-
         try {
+            if (date != null) {
+                List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
+                return Response.ok(ApiResponse.success("mealPlans", plans)).build();
+            }
 
             List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
             return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();

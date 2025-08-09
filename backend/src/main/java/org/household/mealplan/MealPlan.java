@@ -22,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class MealPlan extends PanacheMongoEntity {
 
-    @NotBlank(message = "Meal plan name must be at least 2 characters")
-    @Size(min = 2, message = "Meal plan name must be at least 2 characters")
+    @NotBlank(message = "{test}")
+    @Size(min = 2, message = "{test}")
     public String name;
 
     @NotNull(message = "Start date is required")
