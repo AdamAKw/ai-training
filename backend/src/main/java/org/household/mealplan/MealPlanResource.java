@@ -14,10 +14,6 @@ import org.household.common.ValidationException;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * REST Resource for MealPlan management
- * Equivalent to Next.js /api/mealPlans endpoints
- */
 @Path("/api/mealPlans")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

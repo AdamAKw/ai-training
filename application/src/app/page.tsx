@@ -6,7 +6,7 @@ import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 import { IMealPlan } from "@/models/mealPlan";
 import { IPantryItem } from "@/models/pantryItem";
 import { Suspense } from "react";
-
+import { LocalDate } from "@js-joda/core";
 export default async function Home() {
   const data = getData();
 
@@ -27,49 +27,43 @@ export type CurrentMealResponse = {
   pantryItems: IPantryItem[];
 };
 
+async function getPresentMealPlan() {
+  const date = LocalDate.now();
+  const url = new URL(`${getApiBaseUrl()}/api/mealPlans`);
+  url.searchParams.set("date", date.toString());
+  return fetch(url, {
+    cache: "no-store",
+  });
+}
+
+async function getPantry() {
+  return fetch(`${getApiBaseUrl()}/api/pantry`, {
+    cache: "no-store",
+  });
+}
+
 async function getData(): Promise<CurrentMealResponse> {
   try {
-    // Get current date
-    const today = new Date();
-    // Fetch meal plans
-    const mealPlansResponse = await fetch(`${getApiBaseUrl()}/api/mealPlans`, {
-      cache: "no-store",
-    });
-    const mealPlansData = await mealPlansResponse.json();
+    const [mealPlansResponse, pantryResponse] = await Promise.all([
+      getPresentMealPlan(),
+      getPantry(),
+    ]);
+    const [mealPlansData, pantryData] = await Promise.all([
+      mealPlansResponse.json(),
+      pantryResponse.json(),
+    ]);
 
     if (!mealPlansResponse.ok) {
       throw new Error(mealPlansData.error || "Failed to fetch meal plans");
     }
-    console.log(mealPlansData);
-    // Find a meal plan that includes today's date
-    let currentPlan = mealPlansData.data.mealPlans.find((plan: IMealPlan) => {
-      const startDate = new Date(plan.startDate);
-      const endDate = new Date(plan.endDate);
-      return today >= startDate && today <= endDate;
-    });
-
-    // If we found a current plan, fetch its detailed data to ensure we have all recipe details
-    if (currentPlan?._id) {
-      const detailResponse = await fetch(
-        `${getApiBaseUrl()}/api/mealPlans/${currentPlan._id}`,
-        {
-          cache: "no-store",
-        }
-      );
-      if (detailResponse.ok) {
-        const detailData = await detailResponse.json();
-        currentPlan = detailData.mealPlan;
-      }
-    }
-
-    // Fetch pantry items
-    const pantryResponse = await fetch(`${getApiBaseUrl()}/api/pantry`, {
-      cache: "no-store",
-    });
-    const pantryData = await pantryResponse.json();
-
+    
     if (!pantryResponse.ok) {
       throw new Error(pantryData.error || "Failed to fetch pantry items");
+    }
+
+    let currentPlan = null;
+    if (mealPlansData.data.mealPlans?.length) {
+      currentPlan = mealPlansData.data.mealPlans[0];
     }
 
     return {
