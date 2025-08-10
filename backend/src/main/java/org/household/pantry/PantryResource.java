@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
+
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
@@ -19,6 +21,7 @@ import java.util.List;
 @Path("/api/pantry")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Slf4j
 public class PantryResource {
 
     private static final Logger LOG = Logger.getLogger(PantryResource.class);
@@ -34,6 +37,7 @@ public class PantryResource {
     public Response getAllPantryItems() {
         try {
             List<PantryItem> pantryItems = pantryService.getAllPantryItems();
+
             return Response.ok(ApiResponse.success("pantryItems", pantryItems)).build();
         } catch (Exception e) {
             LOG.error("Error fetching all pantry items", e);

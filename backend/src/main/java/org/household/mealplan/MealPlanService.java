@@ -32,7 +32,7 @@ public class MealPlanService {
     /**
      * Create a new meal plan
      */
-        @Transactional
+    @Transactional
     public MealPlan createMealPlan(MealPlan mealPlan) throws ValidationException {
         validateMealPlan(mealPlan);
 
@@ -56,7 +56,6 @@ public class MealPlanService {
     /**
      * Update an existing meal plan
      */
-
 
     @Transactional
     public MealPlan updateMealPlan(ObjectId id, MealPlan updatedMealPlan) throws ValidationException {
@@ -113,7 +112,8 @@ public class MealPlanService {
      */
     @Transactional
     public MealPlan completeMeal(ObjectId mealPlanId, int mealIndex) throws ValidationException {
-        MealPlan mealPlan = MealPlan.findById(mealPlanId);
+        MealPlan mealPlan = MealPlan.<MealPlan>findByIdOptional(mealPlanId)
+                .orElseThrow(() -> new ValidationException("Meal plan not found"));
         if (mealPlan == null) {
             throw new ValidationException("Meal plan not found");
         }

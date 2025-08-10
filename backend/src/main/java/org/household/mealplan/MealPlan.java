@@ -81,7 +81,6 @@ public class MealPlan extends PanacheMongoEntity {
     }
 
     public static List<MealPlan> findMealPlansIncludeDate(LocalDate date) {
-        log.info(date.toString());
         return find("startDate <= ?1 and endDate >= ?1", date).list();
     }
 

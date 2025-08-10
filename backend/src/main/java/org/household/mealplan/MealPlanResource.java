@@ -28,11 +28,13 @@ public class MealPlanResource {
         try {
             if (date != null) {
                 List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
+
                 return Response.ok(ApiResponse.success("mealPlans", plans)).build();
             }
 
             List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
             return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
+
         } catch (Exception e) {
             log.error("Failed to fetch meal plans", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

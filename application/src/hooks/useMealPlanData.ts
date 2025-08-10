@@ -11,14 +11,12 @@ export function useMealPlanData(data: CurrentMealResponse) {
    const [pantryItems, setPantryItems] = useState<IPantryItem[]>(data.pantryItems);
 
 
-   // Function to toggle meal completion status
    const toggleMealCompletion = useCallback(async (mealPlanId: string, mealIndex: number, isCurrentlyCompleted: boolean) => {
       if (!mealPlanId) return;
 
       try {
          const method = isCurrentlyCompleted ? "DELETE" : "POST";
          const url = `${getApiBaseUrl()}/api/mealPlans/${mealPlanId}/meals/${mealIndex}/complete`;
-
          const response = await fetch(url, {
             method,
             headers: {
@@ -31,15 +29,13 @@ export function useMealPlanData(data: CurrentMealResponse) {
          }
 
          // Refresh the meal plan data
-         const detailResponse = await fetch(`${getApiBaseUrl()}/api/mealPlans/${mealPlanId}`);
+         const [detailResponse, pantryResponse] = await Promise.all( [getMealPlanById(mealPlanId), getPantry()]);
+         const [detailData, pantryData] = await Promise.all([detailResponse.json(),pantryResponse.json()]);
+
          if (detailResponse.ok) {
-            const detailData = await detailResponse.json();
             setCurrentMealPlan(detailData.mealPlan);
          }
 
-         // Refresh pantry data to reflect changes
-         const pantryResponse = await fetch(`${getApiBaseUrl()}/api/pantry`);
-         const pantryData = await pantryResponse.json();
          if (pantryResponse.ok) {
             setPantryItems(pantryData.pantryItems || []);
          }
@@ -53,4 +49,13 @@ export function useMealPlanData(data: CurrentMealResponse) {
       pantryItems,
       toggleMealCompletion,
    };
+}
+async function getMealPlanById(mealPlanId: string) {
+   return fetch(`${getApiBaseUrl()}/api/mealPlans/${mealPlanId}`);
+}
+
+async function getPantry() {
+  return fetch(`${getApiBaseUrl()}/api/pantry`, {
+    cache: "no-store",
+  });
 }
