@@ -56,7 +56,7 @@ export function MealDay({
           // Calculate meal index in the full meal plan for API calls
           const mealIndex = findMealIndex(
             currentMealPlan,
-            meal,
+            meal,  
             sortedDates,
             mealsByDate,
             date,

@@ -29,7 +29,7 @@ type MealCardProps = {
   isCompleted: boolean;
   completedAt?: Date;
   mealIndex: number;
-  currentMealPlan: IMealPlan & { _id: string };
+  currentMealPlan: IMealPlan & { id: string };
   onMealStatusChange: (
     mealPlanId: string,
     mealIndex: number,
@@ -185,7 +185,7 @@ export function MealCard({
               size="sm"
               className="flex-1"
               onClick={() =>
-                onMealStatusChange(currentMealPlan._id, mealIndex, isCompleted)
+                onMealStatusChange(currentMealPlan.id, mealIndex, isCompleted)
               }
               disabled={mealIndex === -1}
             >

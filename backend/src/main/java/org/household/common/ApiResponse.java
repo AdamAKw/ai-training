@@ -2,6 +2,9 @@ package org.household.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +13,8 @@ import java.util.Map;
  * Equivalent to Next.js api-helpers createSuccessResponse/createErrorResponse
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@Setter
 public class ApiResponse {
 
     private boolean success;
@@ -60,46 +65,5 @@ public class ApiResponse {
         ApiResponse response = error(message, statusCode);
         response.validationIssues = validationIssues;
         return response;
-    }
-
-    // Getters and setters
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-
-    public Integer getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(Integer statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public List<ValidationIssue> getValidationIssues() {
-        return validationIssues;
-    }
-
-    public void setValidationIssues(List<ValidationIssue> validationIssues) {
-        this.validationIssues = validationIssues;
     }
 }

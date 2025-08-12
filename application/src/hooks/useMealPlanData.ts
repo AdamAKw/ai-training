@@ -29,15 +29,14 @@ export function useMealPlanData(data: CurrentMealResponse) {
          }
 
          // Refresh the meal plan data
-         const [detailResponse, pantryResponse] = await Promise.all( [getMealPlanById(mealPlanId), getPantry()]);
-         const [detailData, pantryData] = await Promise.all([detailResponse.json(),pantryResponse.json()]);
-
+         const [detailResponse, pantryResponse] = await Promise.all([getMealPlanById(mealPlanId), getPantry()]);
+         const [detailData, pantryData] = await Promise.all([detailResponse.json(), pantryResponse.json()]);
          if (detailResponse.ok) {
-            setCurrentMealPlan(detailData.mealPlan);
+            setCurrentMealPlan(detailData.data.mealPlan);
          }
 
          if (pantryResponse.ok) {
-            setPantryItems(pantryData.pantryItems || []);
+            setPantryItems(pantryData.data.pantryItems || []);
          }
       } catch (error) {
          console.error("Error toggling meal completion:", error);
@@ -55,7 +54,7 @@ async function getMealPlanById(mealPlanId: string) {
 }
 
 async function getPantry() {
-  return fetch(`${getApiBaseUrl()}/api/pantry`, {
-    cache: "no-store",
-  });
+   return fetch(`${getApiBaseUrl()}/api/pantry`, {
+      cache: "no-store",
+   });
 }

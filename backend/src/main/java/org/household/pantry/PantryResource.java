@@ -10,29 +10,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
-import org.jboss.logging.Logger;
 
 import java.util.List;
 
-/**
- * REST Resource for PantryItem management
- * Equivalent to Next.js /api/pantry endpoints
- */
 @Path("/api/pantry")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Slf4j
 public class PantryResource {
 
-    private static final Logger LOG = Logger.getLogger(PantryResource.class);
 
     @Inject
     PantryService pantryService;
 
-    /**
-     * GET /api/pantry
-     * Fetch all pantry items
-     */
+
     @GET
     public Response getAllPantryItems() {
         try {
@@ -40,17 +31,14 @@ public class PantryResource {
 
             return Response.ok(ApiResponse.success("pantryItems", pantryItems)).build();
         } catch (Exception e) {
-            LOG.error("Error fetching all pantry items", e);
+            log.error("Error fetching all pantry items", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch pantry items", 500))
                     .build();
         }
     }
 
-    /**
-     * POST /api/pantry
-     * Create a new pantry item
-     */
+
     @POST
     public Response createPantryItem(@Valid PantryItem pantryItem) {
         try {
@@ -63,17 +51,14 @@ public class PantryResource {
                     .entity(ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Error creating pantry item", e);
+            log.error("Error creating pantry item", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to create pantry item", 500))
                     .build();
         }
     }
 
-    /**
-     * GET /api/pantry/{id}
-     * Fetch a specific pantry item by ID
-     */
+
     @GET
     @Path("/{id}")
     public Response getPantryItemById(@PathParam("id") String id) {
@@ -93,17 +78,14 @@ public class PantryResource {
 
             return Response.ok(ApiResponse.success("pantryItem", pantryItem)).build();
         } catch (Exception e) {
-            LOG.error("Error fetching pantry item by ID", e);
+            log.error("Error fetching pantry item by ID", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch pantry item", 500))
                     .build();
         }
     }
 
-    /**
-     * PUT /api/pantry/{id}
-     * Update an existing pantry item
-     */
+
     @PUT
     @Path("/{id}")
     public Response updatePantryItem(@PathParam("id") String id, @Valid PantryItem pantryItem) {
@@ -127,17 +109,13 @@ public class PantryResource {
                     .entity(ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
-            LOG.error("Error updating pantry item", e);
+            log.error("Error updating pantry item", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to update pantry item", 500))
                     .build();
         }
     }
 
-    /**
-     * DELETE /api/pantry/{id}
-     * Delete a pantry item
-     */
     @DELETE
     @Path("/{id}")
     public Response deletePantryItem(@PathParam("id") String id) {
@@ -157,17 +135,14 @@ public class PantryResource {
 
             return Response.ok(ApiResponse.success("message", "Pantry item deleted successfully")).build();
         } catch (Exception e) {
-            LOG.error("Error deleting pantry item", e);
+            log.error("Error deleting pantry item", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to delete pantry item", 500))
                     .build();
         }
     }
 
-    /**
-     * GET /api/pantry/search
-     * Search pantry items by name
-     */
+
     @GET
     @Path("/search")
     public Response searchPantryItems(@QueryParam("name") String name) {
@@ -181,7 +156,7 @@ public class PantryResource {
             List<PantryItem> items = pantryService.searchPantryItemsByName(name);
             return Response.ok(ApiResponse.success("pantryItems", items)).build();
         } catch (Exception e) {
-            LOG.error("Error searching pantry items", e);
+            log.error("Error searching pantry items", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to search pantry items", 500))
                     .build();
@@ -205,7 +180,7 @@ public class PantryResource {
             List<PantryItem> items = pantryService.getItemsExpiringSoon(days);
             return Response.ok(ApiResponse.success("pantryItems", items)).build();
         } catch (Exception e) {
-            LOG.error("Error fetching expiring items", e);
+            log.error("Error fetching expiring items", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to fetch expiring items", 500))
                     .build();

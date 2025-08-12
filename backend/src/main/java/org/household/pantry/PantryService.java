@@ -65,7 +65,7 @@ public class PantryService {
         existingItem.expiryDate = updatedItem.expiryDate;
 
         existingItem.preUpdate();
-        existingItem.persist();
+        existingItem.update();
 
         return existingItem;
     }
@@ -114,7 +114,7 @@ public class PantryService {
         PantryItem item = PantryItem.findByNameAndUnit(ingredientName, unit);
         if (item != null && item.reduceQuantity(quantity)) {
             item.preUpdate();
-            item.persist();
+            item.update();
             return true;
         }
         return false;
@@ -130,7 +130,7 @@ public class PantryService {
         if (item != null) {
             item.increaseQuantity(quantity);
             item.preUpdate();
-            item.persist();
+            item.update();
             return true;
         }
         return false;

@@ -73,7 +73,7 @@ public class MealPlanService {
         existingMealPlan.meals = updatedMealPlan.meals;
 
         existingMealPlan.preUpdate();
-        existingMealPlan.persist();
+        existingMealPlan.update();
 
         return existingMealPlan;
     }
@@ -159,7 +159,7 @@ public class MealPlanService {
         meal.markAsCompleted(removedIngredients);
 
         mealPlan.preUpdate();
-        mealPlan.persist();
+        mealPlan.update();
 
         return mealPlan;
     }
@@ -197,7 +197,7 @@ public class MealPlanService {
         meal.markAsUncompleted();
 
         mealPlan.preUpdate();
-        mealPlan.persist();
+        mealPlan.update();
 
         return mealPlan;
     }
