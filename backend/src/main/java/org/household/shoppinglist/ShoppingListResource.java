@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
-import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ShoppingListResource {
-
-    private static final Logger LOG = Logger.getLogger(ShoppingListResource.class);
 
     @Inject
     ShoppingListService shoppingListService;
