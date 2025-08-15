@@ -7,7 +7,7 @@ import { ShoppingListSidebar } from "./ShoppingListSidebar";
 import { ErrorState } from "../layout/ErrorState";
 import { useShoppingListApi } from "@/hooks/useShoppingListApi";
 export interface ShoppingListItemType {
-  _id: string;
+  id: string;
   ingredient: string;
   quantity: number;
   unit: string;
@@ -17,9 +17,9 @@ export interface ShoppingListItemType {
 }
 
 export interface ShoppingListType {
-  _id: string;
+  id: string;
   name: string;
-  mealPlan: string | { _id: string; name: string } | null;
+  mealPlan: string | { id: string; name: string } | null;
   items: ShoppingListItemType[];
   createdAt: string;
   updatedAt: string;
@@ -44,12 +44,12 @@ export function ShoppingListClient({
   const updateListInState = (updatedList: ShoppingListType) => {
     setActiveList(updatedList);
     setLists(
-      lists.map((list) => (list._id === updatedList._id ? updatedList : list))
+      lists.map((list) => (list.id === updatedList.id ? updatedList : list))
     );
   };
 
   const removeListFromState = (listId: string) => {
-    const updatedLists = lists.filter((list) => list._id !== listId);
+    const updatedLists = lists.filter((list) => list.id !== listId);
     setLists(updatedLists);
     setActiveList(updatedLists.length > 0 ? updatedLists[0] : null);
   };
@@ -58,7 +58,7 @@ export function ShoppingListClient({
     if (!activeList) return;
 
     const updatedList = await api.togglePurchased(
-      activeList._id,
+      activeList.id,
       itemId,
       purchased
     );
@@ -70,7 +70,7 @@ export function ShoppingListClient({
   const handleRemoveItem = async (itemId: string) => {
     if (!activeList) return;
 
-    const updatedList = await api.removeItem(activeList._id, itemId);
+    const updatedList = await api.removeItem(activeList.id, itemId);
     if (!api.error) {
       updateListInState(updatedList);
     }
@@ -105,7 +105,7 @@ export function ShoppingListClient({
   }) => {
     if (!activeList) return;
 
-    const updatedList = await api.addItem(activeList._id, {
+    const updatedList = await api.addItem(activeList.id, {
       ...item,
       purchased: false,
       itemType: "pantry-restock",

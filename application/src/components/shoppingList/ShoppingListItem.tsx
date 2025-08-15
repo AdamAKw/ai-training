@@ -34,7 +34,7 @@ export function ShoppingListItem({
   const handleTogglePurchased = async () => {
     try {
       setIsUpdating(true);
-      await onTogglePurchased(item._id, !item.purchased);
+      await onTogglePurchased(item.id, !item.purchased);
     } finally {
       setIsUpdating(false);
     }
@@ -43,7 +43,7 @@ export function ShoppingListItem({
   const handleRemoveItem = async () => {
     try {
       setIsUpdating(true);
-      await onRemoveItem(item._id);
+      await onRemoveItem(item.id);
     } finally {
       setIsUpdating(false);
     }

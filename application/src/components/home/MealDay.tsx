@@ -15,7 +15,7 @@ import {
 interface MealDayProps {
   date: string;
   meals: MealWithRecipeData[];
-  currentMealPlan: IMealPlan & { _id: string };
+  currentMealPlan: IMealPlan & { id: string };
   pantryItems: IPantryItem[];
   sortedDates: string[];
   mealsByDate: GroupedMeals;

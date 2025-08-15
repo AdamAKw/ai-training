@@ -88,8 +88,8 @@ export function MealPlanForm({
     if (initialData?.meals && initialData.meals.length > 0) {
       const formattedMeals = initialData.meals.map((meal) => ({
         recipe:
-          typeof meal.recipe === "object" && meal.recipe._id
-            ? meal.recipe._id.toString()
+          typeof meal.recipe === "object" && meal.recipe.id
+            ? meal.recipe.id.toString()
             : meal.recipe.toString(),
         date: new Date(meal.date),
         mealType: meal.mealType,
@@ -255,7 +255,7 @@ export function MealPlanForm({
       <Card>
         <CardHeader>
           <CardTitle>
-            {initialData?._id ? t("editTitle") : t("createTitle")}
+            {initialData?.id ? t("editTitle") : t("createTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -399,8 +399,8 @@ export function MealPlanForm({
                             <SelectContent>
                               {recipes.map((recipe) => (
                                 <SelectItem
-                                  key={recipe._id as string}
-                                  value={recipe._id as string}
+                                  key={recipe.id as string}
+                                  value={recipe.id as string}
                                 >
                                   {recipe.name}
                                 </SelectItem>

@@ -102,7 +102,7 @@ interface Ingredient {
 export interface RecipeDetailProps {
   id: string;
   recipe: {
-    _id: string;
+    id: string;
     name: string;
     description: string;
     ingredients: Ingredient[];

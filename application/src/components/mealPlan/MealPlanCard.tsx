@@ -89,18 +89,18 @@ export function MealPlanCard({ mealPlan, onDelete }: MealPlanCardProps) {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" asChild>
-          <Link href={`/mealPlans/${mealPlan._id}`}>{t("card.details")}</Link>
+          <Link href={`/mealPlans/${mealPlan.id}`}>{t("card.details")}</Link>
         </Button>
         <div className="space-x-2">
           <Button variant="outline" asChild>
-            <Link href={`/mealPlans/${mealPlan._id}/edit`}>
+            <Link href={`/mealPlans/${mealPlan.id}/edit`}>
               {t("card.edit")}
             </Link>
           </Button>
           {onDelete && (
             <Button
               variant="destructive"
-              onClick={() => onDelete(mealPlan._id as string)}
+              onClick={() => onDelete(mealPlan.id as string)}
             >
               {t("card.delete")}
             </Button>

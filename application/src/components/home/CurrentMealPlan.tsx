@@ -34,7 +34,7 @@ export function CurrentMealPlan({
       <MealPlanHeader
         mealPlan={
           currentMealPlan as IMealPlan & {
-            _id: string;
+            id: string;
           }
         }
       />
@@ -47,7 +47,7 @@ export function CurrentMealPlan({
             meals={mealsByDate[date]}
             currentMealPlan={
               currentMealPlan as IMealPlan & {
-                _id: string;
+                id: string;
               }
             }
             pantryItems={pantryItems}

@@ -1,7 +1,7 @@
 import { IIngredient } from "@/models/recipe";
 
 export type MealRecipePopulated = {
-   _id: string;
+   id: string;
    name: string;
    imageUrl?: string;
    ingredients: IIngredient[];
@@ -11,7 +11,7 @@ export type MealRecipePopulated = {
 };
 
 export type MealWithRecipeData = {
-   _id?: string;
+   id?: string;
    recipe: MealRecipePopulated | string;
    date: Date | string;
    mealType: "breakfast" | "lunch" | "dinner" | "snack" | "supper" | "other";

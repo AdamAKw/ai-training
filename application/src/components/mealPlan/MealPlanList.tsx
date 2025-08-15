@@ -55,7 +55,7 @@ export function MealPlanList({ mealPlans, onDelete }: MealPlanListProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mealPlans.map((mealPlan) => (
           <MealPlanCard
-            key={mealPlan._id as string}
+            key={mealPlan.id as string}
             mealPlan={mealPlan}
             onDelete={handleDeleteClick}
           />

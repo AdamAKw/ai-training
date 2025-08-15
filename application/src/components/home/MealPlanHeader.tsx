@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IMealPlan } from "@/models/mealPlan";
 
 interface MealPlanHeaderProps {
-  mealPlan: IMealPlan & { _id: string };
+  mealPlan: IMealPlan & { id: string };
 }
 
 export function MealPlanHeader({ mealPlan }: MealPlanHeaderProps) {
@@ -26,13 +26,13 @@ export function MealPlanHeader({ mealPlan }: MealPlanHeaderProps) {
       </div>
       <div className="space-x-2">
         <Button variant="outline" asChild>
-          <Link href={`/mealPlans/${mealPlan._id}`}>{t("planDetails")}</Link>
+          <Link href={`/mealPlans/${mealPlan.id}`}>{t("planDetails")}</Link>
         </Button>
         <Button variant="outline" asChild>
-          <Link href={`/mealPlans/${mealPlan._id}/edit`}>{t("editPlan")}</Link>
+          <Link href={`/mealPlans/${mealPlan.id}/edit`}>{t("editPlan")}</Link>
         </Button>
         <Button variant="default" asChild>
-          <Link href={`/shoppingList/new?mealPlanId=${mealPlan._id}`}>
+          <Link href={`/shoppingList/new?mealPlanId=${mealPlan.id}`}>
             {t("createShoppingList")}
           </Link>
         </Button>

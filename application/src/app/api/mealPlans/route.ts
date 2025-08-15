@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       await mealPlan.save();
       
       // Zwracamy nowy plan z wypełnionymi danymi przepisów
-      const populatedMealPlan = await MealPlan.findById(mealPlan._id).populate({
+      const populatedMealPlan = await MealPlan.findById(mealPlan.id).populate({
         path: 'meals.recipe',
         select: 'name prepTime cookTime imageUrl'
       });

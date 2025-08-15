@@ -37,7 +37,7 @@ interface IngredientType {
 }
 
 interface RecipeType {
-  _id: { toString(): string };
+  id: { toString(): string };
   name: string;
   ingredients: IngredientType[];
   servings: number;
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
             const possibleRecipe = obj as Partial<RecipeType & { name: string }>;
             return (
-              !!possibleRecipe._id &&
+              !!possibleRecipe.id &&
               Array.isArray(possibleRecipe.ingredients) &&
               typeof possibleRecipe.servings === 'number' &&
               typeof possibleRecipe.name === 'string'

@@ -89,7 +89,7 @@ export function checkIngredientsAvailability(
     };
 
     results.set(
-      ingredient._id || ingredient.name,
+      ingredient.id || ingredient.name,
       checkIngredientAvailability(adjustedIngredient, pantryItems)
     );
   });
@@ -104,7 +104,7 @@ type WorkingPantryItem = {
   unit: string;
   category?: string;
   expiryDate?: Date;
-  _id?: string;
+  id?: string;
 };
 
 /**
@@ -119,7 +119,7 @@ function createWorkingPantryItems(pantryItems: IPantryItem[]): WorkingPantryItem
     unit: item.unit,
     category: item.category,
     expiryDate: item.expiryDate,
-    _id: item._id?.toString()
+    id: item.id?.toString()
   }));
 }
 
@@ -200,7 +200,7 @@ export function checkSequentialIngredientsAvailability(
     // Reserve the ingredients from the working pantry for next iterations
     // Only reserve ingredients that are actually available
     const availableIngredients = ingredients.filter(ingredient => {
-      const id = ingredient._id || ingredient.name;
+      const id = ingredient.id || ingredient.name;
       const status = availabilityMap.get(id);
       return status?.available;
     });
@@ -262,7 +262,7 @@ export function removeIngredientsFromPantry(
         ingredientName: ingredient.name,
         quantity: canTake,
         unit: ingredient.unit,
-        pantryItemId: pantryItem._id?.toString() || ''
+        pantryItemId: pantryItem.id?.toString() || ''
       });
 
       // Update pantry item quantity

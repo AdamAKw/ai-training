@@ -48,7 +48,7 @@ export function PantryClient({ initialItems }: PantryClientProps) {
 
   // Handle edit pantry item
   const handleEditItem = (item: IPantryItem) => {
-    router.push(`/pantry/${item._id}/edit`);
+    router.push(`/pantry/${item.id}/edit`);
   };
 
   // Handle delete pantry item (open confirmation dialog)
@@ -72,7 +72,7 @@ export function PantryClient({ initialItems }: PantryClientProps) {
 
       if (response.ok) {
         // Filter out the deleted item from the state
-        setItems(items.filter((item) => (item._id as string) !== itemToDelete));
+        setItems(items.filter((item) => (item.id as string) !== itemToDelete));
         setIsDeleteDialogOpen(false);
         setItemToDelete(null);
       } else {

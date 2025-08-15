@@ -99,7 +99,7 @@ export function ShoppingListDetail({
         {filteredItems.length > 0 ? (
           filteredItems.map((item) => (
             <ShoppingListItem
-              key={item._id}
+              key={item.id}
               item={item}
               onTogglePurchased={onTogglePurchased}
               onRemoveItem={onRemoveItem}

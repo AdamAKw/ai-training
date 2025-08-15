@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/layout/EmptyState";
 import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 interface Recipe {
-  _id: string;
+  id: string;
   name: string;
   description: string;
   prepTime: number;

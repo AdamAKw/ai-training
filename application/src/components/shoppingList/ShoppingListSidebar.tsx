@@ -68,9 +68,9 @@ export function ShoppingListSidebar({
       <div className="space-y-2">
         {lists.map((list) => (
           <ShoppingListCard
-            key={list._id}
+            key={list.id}
             list={list}
-            isActive={activeList?._id === list._id}
+            isActive={activeList?.id === list.id}
             onClick={() => onSelectList(list)}
             onCopyList={onCopyList}
             onDeleteList={onDeleteList}
@@ -115,19 +115,19 @@ function ShoppingListCard({
 
   const handleCopyList = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await onCopyList(list._id);
+    await onCopyList(list.id);
     setIsDropdownOpen(false);
   };
 
   const handleDeleteList = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await onDeleteList(list._id);
+    await onDeleteList(list.id);
     setIsDropdownOpen(false);
   };
 
   const handleTransferToPantry = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await onTransferToPantry(list._id);
+    await onTransferToPantry(list.id);
     setIsDropdownOpen(false);
   };
 

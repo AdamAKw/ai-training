@@ -45,7 +45,7 @@ export function IngredientAvailability({
 
       <ul className="text-sm space-y-1">
         {ingredients.map((ingredient, index) => {
-          const id = ingredient._id || ingredient.name;
+          const id = ingredient.id || ingredient.name;
           const status = availabilityMap.get(id);
 
           if (!status) return null;

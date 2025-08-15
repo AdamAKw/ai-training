@@ -3,7 +3,7 @@ import { useMemo } from "react";
 export type FilterType = "all" | "remaining" | "purchased" | "in-pantry";
 
 interface ShoppingListItem {
-    _id: string;
+    id: string;
     ingredient: string;
     quantity: number;
     unit: string;

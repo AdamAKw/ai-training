@@ -29,7 +29,7 @@ export function sortDatesByChronology(dates: string[]): string[] {
 
 export function getRecipeDetails(meal: MealWithRecipeData) {
   const recipeObject = typeof meal.recipe === "object" ? meal.recipe : null;
-  const recipeId = recipeObject && "_id" in recipeObject ? String(recipeObject._id) : String(meal.recipe);
+  const recipeId = recipeObject && "id" in recipeObject ? String(recipeObject.id) : String(meal.recipe);
   const recipeName = recipeObject && "name" in recipeObject ? String(recipeObject.name) : "Brak nazwy przepisu";
   const recipeImage = recipeObject && "imageUrl" in recipeObject ? String(recipeObject.imageUrl) : null;
 

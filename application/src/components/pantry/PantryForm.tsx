@@ -135,7 +135,7 @@ export function PantryForm({
       <Card>
         <CardHeader>
           <CardTitle>
-            {initialData?._id
+            {initialData?.id
               ? t("pantry.form.editTitle")
               : t("pantry.form.addTitle")}
           </CardTitle>

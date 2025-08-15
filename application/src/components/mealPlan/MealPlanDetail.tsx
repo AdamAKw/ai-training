@@ -78,7 +78,7 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          mealPlanId: mealPlan._id,
+          mealPlanId: mealPlan.id,
           name: `Shopping List for ${mealPlan.name}`,
         }),
       });
@@ -91,7 +91,7 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
       const newList = await response.json();
 
       toast.success(t("detail.shoppingListCreated"));
-      router.push(`/shoppingList?listId=${newList._id}`);
+      router.push(`/shoppingList?listId=${newList.id}`);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : t("detail.shoppingListFailed");
@@ -123,7 +123,7 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
         </div>
         <div className="space-x-2">
           <Button variant="outline" asChild>
-            <Link href={`/mealPlans/${mealPlan._id}/edit`}>
+            <Link href={`/mealPlans/${mealPlan.id}/edit`}>
               {t("detail.editPlan")}
             </Link>
           </Button>
@@ -149,8 +149,8 @@ export function MealPlanDetail({ mealPlan }: MealPlanDetailProps) {
                 const recipeObject =
                   typeof meal.recipe === "object" ? meal.recipe : null;
                 const recipeId =
-                  recipeObject && "_id" in recipeObject
-                    ? String(recipeObject._id)
+                  recipeObject && "id" in recipeObject
+                    ? String(recipeObject.id)
                     : String(meal.recipe);
                 const recipeName =
                   recipeObject && "name" in recipeObject

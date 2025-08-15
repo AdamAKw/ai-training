@@ -148,7 +148,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       // Find the item in the shopping list using type assertion
       const items = shoppingList.items as unknown as Array<ShoppingListItemDocument>;
       const itemIndex = items.findIndex(item => 
-        item._id.toString() === itemId
+        item.id.toString() === itemId
       );
       
       if (itemIndex === -1) {
@@ -179,13 +179,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       // Remove the item from the shopping list
       const items = shoppingList.items as unknown as Array<ShoppingListItemDocument>;
       shoppingList.items = items.filter(item => 
-        item._id.toString() !== itemId
+        item.id.toString() !== itemId
       ) as unknown as typeof shoppingList.items;
     } else if (body.operation === 'transfer-to-pantry') {
       // Get the selected items or all purchased items
       const items = shoppingList.items as unknown as Array<ShoppingListItemDocument>;
       const itemsToTransfer = body.itemIds
-        ? items.filter(item => body.itemIds?.includes(item._id.toString()))
+        ? items.filter(item => body.itemIds?.includes(item.id.toString()))
         : items.filter(item => item.purchased);
       
       // Add all selected items to pantry
@@ -206,7 +206,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       // Mark all transferred items as purchased
       if (body.itemIds) {
         shoppingList.items = items.map(item => {
-          if (body.itemIds?.includes(item._id.toString())) {
+          if (body.itemIds?.includes(item.id.toString())) {
             // Create a new object with the purchased property set to true
             return { ...item, purchased: true };
           }
