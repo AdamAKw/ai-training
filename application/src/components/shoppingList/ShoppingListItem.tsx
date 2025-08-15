@@ -30,7 +30,6 @@ export function ShoppingListItem({
 }: ShoppingListItemProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const t = useTranslations("shoppingList.item");
-
   const handleTogglePurchased = async () => {
     try {
       setIsUpdating(true);

@@ -30,5 +30,6 @@ async function fetchShoppingLists() {
   const response = await fetch(`${getApiBaseUrl()}/api/shoppingList`, {
     cache: "no-store",
   });
-  return await response.json();
+  const { data } = await response.json();
+  return data.shoppingLists;
 }

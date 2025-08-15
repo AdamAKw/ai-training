@@ -124,7 +124,7 @@ public class ShoppingListService {
         existingList.items = updatedShoppingList.items;
 
         existingList.preUpdate();
-        existingList.persist();
+        existingList.update();
 
         return existingList;
     }
@@ -189,7 +189,7 @@ public class ShoppingListService {
         }
 
         shoppingList.preUpdate();
-        shoppingList.persist();
+        shoppingList.update();
 
         return shoppingList;
     }
@@ -219,7 +219,7 @@ public class ShoppingListService {
         }
 
         shoppingList.preUpdate();
-        shoppingList.persist();
+        shoppingList.update();
 
         return shoppingList;
     }
@@ -268,5 +268,217 @@ public class ShoppingListService {
                 }
             }
         }
+    }
+
+    /**
+     * Toggle item purchased status by item ID
+     */
+    @Transactional
+    public ShoppingList toggleItemPurchasedById(ObjectId shoppingListId, String itemId, boolean purchased,
+            boolean autoAddToPantry) throws ValidationException {
+        ShoppingList shoppingList = ShoppingList.findById(shoppingListId);
+        if (shoppingList == null) {
+            throw new ValidationException("Shopping list not found");
+        }
+
+        // Find item by comparing toString() of the ObjectId
+        ShoppingList.ShoppingListItem targetItem = null;
+        for (ShoppingList.ShoppingListItem item : shoppingList.items) {
+            // Generate item ID based on item properties (similar to MongoDB ObjectId
+            // generation)
+            String generatedId = generateItemId(item);
+            if (generatedId.equals(itemId)) {
+                targetItem = item;
+                break;
+            }
+        }
+
+        if (targetItem == null) {
+            throw new ValidationException("Item not found in shopping list");
+        }
+
+        // Update the item's purchased status
+        targetItem.isPurchased = purchased;
+
+        // If purchased is true and autoAddToPantry flag is set, add item to pantry
+        if (purchased && autoAddToPantry) {
+            boolean increased = pantryService.increaseIngredientQuantity(
+                    targetItem.name,
+                    targetItem.unit,
+                    targetItem.quantity);
+
+            if (!increased) {
+                // Create new pantry item if doesn't exist
+                var pantryItem = new org.household.pantry.PantryItem();
+                pantryItem.name = targetItem.name;
+                pantryItem.quantity = targetItem.quantity;
+                pantryItem.unit = targetItem.unit;
+                pantryItem.category = targetItem.category;
+
+                try {
+                    pantryService.createPantryItem(pantryItem);
+                } catch (ValidationException e) {
+                    System.err.println("Failed to add item to pantry: " + e.getMessage());
+                }
+            }
+        }
+
+        shoppingList.preUpdate();
+        shoppingList.update();
+
+        return shoppingList;
+    }
+
+    /**
+     * Remove item from shopping list by item ID
+     */
+    @Transactional
+    public ShoppingList removeItemById(ObjectId shoppingListId, String itemId) throws ValidationException {
+        ShoppingList shoppingList = ShoppingList.findById(shoppingListId);
+        if (shoppingList == null) {
+            throw new ValidationException("Shopping list not found");
+        }
+
+        // Remove item by comparing generated IDs
+        boolean removed = shoppingList.items.removeIf(item -> {
+            String generatedId = generateItemId(item);
+            return generatedId.equals(itemId);
+        });
+
+        if (!removed) {
+            throw new ValidationException("Item not found in shopping list");
+        }
+
+        shoppingList.preUpdate();
+        shoppingList.update();
+
+        return shoppingList;
+    }
+
+    /**
+     * Transfer items to pantry
+     */
+    @Transactional
+    public ShoppingList transferItemsToPantry(ObjectId shoppingListId, List<String> itemIds)
+            throws ValidationException {
+        ShoppingList shoppingList = ShoppingList.findById(shoppingListId);
+        if (shoppingList == null) {
+            throw new ValidationException("Shopping list not found");
+        }
+
+        // Determine which items to transfer
+        List<ShoppingList.ShoppingListItem> itemsToTransfer = new ArrayList<>();
+
+        if (itemIds != null && !itemIds.isEmpty()) {
+            // Transfer specific items
+            for (ShoppingList.ShoppingListItem item : shoppingList.items) {
+                String generatedId = generateItemId(item);
+                if (itemIds.contains(generatedId)) {
+                    itemsToTransfer.add(item);
+                }
+            }
+        } else {
+            // Transfer all purchased items
+            for (ShoppingList.ShoppingListItem item : shoppingList.items) {
+                if (item.isPurchased) {
+                    itemsToTransfer.add(item);
+                }
+            }
+        }
+
+        // Add all selected items to pantry
+        for (ShoppingList.ShoppingListItem item : itemsToTransfer) {
+            boolean increased = pantryService.increaseIngredientQuantity(
+                    item.name,
+                    item.unit,
+                    item.quantity);
+
+            if (!increased) {
+                // Create new pantry item if doesn't exist
+                var pantryItem = new org.household.pantry.PantryItem();
+                pantryItem.name = item.name;
+                pantryItem.quantity = item.quantity;
+                pantryItem.unit = item.unit;
+                pantryItem.category = item.category;
+
+                try {
+                    pantryService.createPantryItem(pantryItem);
+                } catch (ValidationException e) {
+                    System.err.println("Failed to add item to pantry: " + e.getMessage());
+                }
+            }
+        }
+
+        // Mark all transferred items as purchased if they were transferred by ID
+        // selection
+        if (itemIds != null && !itemIds.isEmpty()) {
+            for (ShoppingList.ShoppingListItem item : shoppingList.items) {
+                String generatedId = generateItemId(item);
+                if (itemIds.contains(generatedId)) {
+                    item.isPurchased = true;
+                }
+            }
+        }
+
+        shoppingList.preUpdate();
+        shoppingList.update();
+
+        return shoppingList;
+    }
+
+    /**
+     * Add item to shopping list
+     */
+    @Transactional
+    public ShoppingList addItemToShoppingList(ObjectId shoppingListId,
+            org.household.shoppinglist.ShoppingListResource.AddItemData itemData) throws ValidationException {
+        ShoppingList shoppingList = ShoppingList.findById(shoppingListId);
+        if (shoppingList == null) {
+            throw new ValidationException("Shopping list not found");
+        }
+
+        // Check if item is in pantry (could be used for inPantry field if added to
+        // ShoppingListItem)
+        List<org.household.pantry.PantryItem> pantryItems = pantryService.getAllPantryItems();
+        for (org.household.pantry.PantryItem pantryItem : pantryItems) {
+            if (pantryItem.name.toLowerCase().equals(itemData.ingredient.toLowerCase()) &&
+                    pantryItem.unit.toLowerCase().equals(itemData.unit.toLowerCase()) &&
+                    pantryItem.quantity >= itemData.quantity) {
+                // Item is available in pantry with sufficient quantity
+                break;
+            }
+        }
+
+        // Create new shopping list item
+        ShoppingList.ShoppingListItem newItem = new ShoppingList.ShoppingListItem();
+        newItem.name = itemData.ingredient;
+        newItem.quantity = itemData.quantity;
+        newItem.unit = itemData.unit;
+        newItem.category = itemData.category;
+        newItem.notes = itemData.notes;
+        newItem.isPurchased = false;
+        // Note: inPantry is not a field in the current ShoppingListItem, but we could
+        // add it if needed
+
+        // Add the new item
+        shoppingList.items.add(newItem);
+
+        shoppingList.preUpdate();
+        shoppingList.update();
+
+        return shoppingList;
+    }
+
+    /**
+     * Generate a unique ID for a shopping list item based on its properties
+     * This simulates the item ID generation since we don't have actual ObjectIds
+     * for items
+     */
+    private String generateItemId(ShoppingList.ShoppingListItem item) {
+        // Use a combination of properties to create a unique identifier
+        String combined = item.name + "|" + item.quantity + "|" + item.unit + "|" +
+                (item.category != null ? item.category : "") + "|" +
+                (item.notes != null ? item.notes : "");
+        return String.valueOf(Math.abs(combined.hashCode()));
     }
 }

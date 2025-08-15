@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.slf4j.Slf4j;
+
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
@@ -19,6 +21,7 @@ import java.util.List;
 @Path("/api/shoppingList")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Slf4j
 public class ShoppingListResource {
 
     @Inject
@@ -175,7 +178,7 @@ public class ShoppingListResource {
 
     /**
      * PATCH /api/shoppingList/{id}
-     * Update shopping list with partial data (for compatibility with Next.js)
+     * Update shopping list with various operations (for compatibility with Next.js)
      */
     @PATCH
     @Path("/{id}")
@@ -187,18 +190,53 @@ public class ShoppingListResource {
                         .build();
             }
 
-            if (request.itemIndex != null) {
-                // Toggle item purchased status
-                shoppingListService.toggleItemPurchased(new ObjectId(id), request.itemIndex);
+            ObjectId shoppingListId = new ObjectId(id);
+
+            // Handle different operations
+            if ("toggle-purchased".equals(request.operation)) {
+                ShoppingList updatedList = shoppingListService.toggleItemPurchasedById(
+                        shoppingListId,
+                        request.itemId,
+                        request.purchased != null ? request.purchased : true,
+                        request.autoAddToPantry != null ? request.autoAddToPantry : false);
+                return Response.ok(ApiResponse.success("shoppingList", updatedList)).build();
+
+            } else if ("remove-item".equals(request.operation)) {
+                ShoppingList updatedList = shoppingListService.removeItemById(shoppingListId, request.itemId);
+                return Response.ok(ApiResponse.success("shoppingList", updatedList)).build();
+
+            } else if ("transfer-to-pantry".equals(request.operation)) {
+                ShoppingList updatedList = shoppingListService.transferItemsToPantry(
+                        shoppingListId,
+                        request.itemIds);
+                return Response.ok(ApiResponse.success("shoppingList", updatedList)).build();
+
+            } else if ("add-item".equals(request.operation)) {
+                if (request.item == null || request.item.ingredient == null || request.item.quantity == null
+                        || request.item.unit == null) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity(ApiResponse.error("Invalid item data - ingredient, quantity, and unit are required",
+                                    400))
+                            .build();
+                }
+
+                ShoppingList updatedList = shoppingListService.addItemToShoppingList(shoppingListId, request.item);
+                return Response.ok(ApiResponse.success("shoppingList", updatedList)).build();
+
+            } else if (request.itemIndex != null) {
+                // Legacy support: Toggle item purchased status by index
+                shoppingListService.toggleItemPurchased(shoppingListId, request.itemIndex);
                 return Response.ok(ApiResponse.success("message", "Item status toggled successfully")).build();
+
             } else if (request.isCompleted != null && request.isCompleted) {
-                // Complete shopping list
+                // Legacy support: Complete shopping list
                 boolean addToPantry = request.addToPantry != null ? request.addToPantry : true;
-                shoppingListService.completeShoppingList(new ObjectId(id), addToPantry);
+                shoppingListService.completeShoppingList(shoppingListId, addToPantry);
                 return Response.ok(ApiResponse.success("message", "Shopping list completed successfully")).build();
+
             } else {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid patch request", 400))
+                        .entity(ApiResponse.error("Invalid patch request - operation is required", 400))
                         .build();
             }
         } catch (ValidationException e) {
@@ -206,6 +244,7 @@ public class ShoppingListResource {
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
                     .build();
         } catch (Exception e) {
+            log.error("Error", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(ApiResponse.error("Failed to update shopping list", 500))
                     .build();
@@ -233,8 +272,37 @@ public class ShoppingListResource {
      * Request class for patching shopping list
      */
     public static class PatchShoppingListRequest {
+        public String operation; // The operation to perform
+
+        // For toggle-purchased operation
+        public String itemId; // Item ID for specific operations
+        public Boolean purchased; // New purchased status
+        public Boolean autoAddToPantry; // Whether to auto-add to pantry when purchased
+
+        // For remove-item operation
+        // Uses itemId from above
+
+        // For transfer-to-pantry operation
+        public List<String> itemIds; // List of item IDs to transfer (optional, if null transfers all purchased
+                                     // items)
+
+        // For add-item operation
+        public AddItemData item; // The item to add
+
+        // Legacy fields for backward compatibility
         public Integer itemIndex; // For toggling item purchased status
         public Boolean isCompleted; // For marking as completed
         public Boolean addToPantry; // Whether to add completed items to pantry
+    }
+
+    /**
+     * Request class for adding items to shopping list
+     */
+    public static class AddItemData {
+        public String ingredient;
+        public Double quantity;
+        public String unit;
+        public String category;
+        public String notes;
     }
 }
