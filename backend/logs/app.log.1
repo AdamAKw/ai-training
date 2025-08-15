@@ -1,9 +1,251 @@
-2025-08-05 19:16:13,471 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.quarkus] (Quarkus Main Thread) backend 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.25.0) started in 0.735s. Listening on: http://localhost:8080
-2025-08-05 19:16:13,472 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
-2025-08-05 19:16:13,473 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cdi, compose, mongodb-client, mongodb-panache, narayana-jta, resteasy, resteasy-jackson, smallrye-context-propagation, vertx]
-2025-08-05 19:16:13,473 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-7) Live reload total time: 1.046s 
-2025-08-05 19:16:13,486 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [org.mon.dri.client] (executor-thread-1) MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.5.1"}, "os": {"type": "Linux", "name": "Linux", "architecture": "amd64", "version": "6.14.0-27-generic"}, "platform": "Java/Eclipse Adoptium/21.0.8+9-LTS", "env": {"container": {"runtime": "docker"}}} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=true}, retryWrites=false, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@dec09be, com.mongodb.Jep395RecordCodecProvider@4c1efcc1, com.mongodb.KotlinCodecProvider@328f9b8d]}, ProvidersCodecRegistry{codecProviders=[org.bson.codecs.pojo.PojoCodecProvider@9db1053]}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[db:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
-2025-08-05 19:16:13,494 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='6892587da5447c91308a143e', description='null'}-db:27017) Monitor thread successfully connected to server with description ServerDescription{address=db:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2645272, minRoundTripTimeNanos=0}
-2025-08-05 19:16:13,506 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [org.mon.dri.cluster] (executor-thread-1) Waiting for server to become available for operation with ID 102. Remaining time: 29999 ms. Selector: ReadPreferenceServerSelector{readPreference=primary}, topology description: {type=UNKNOWN, servers=[{address=db:27017, type=UNKNOWN, state=CONNECTING}].
-2025-08-05 19:18:58,712 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-9) Restarting quarkus due to changes in MealPlan$RemovedIngredient.class, MealPlan$MealType.class, MealPlan.class, MealPlan$MealPlanItem.class.
-2025-08-05 19:18:58,724 fb01a4a7f580 /usr/local/sdkman/candidates/java/21.0.8-tem/bin/java[377926] INFO  [io.quarkus] (Quarkus Main Thread) backend stopped in 0.011s
+2025-08-15 11:21:27,814 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [io.quarkus] (Quarkus Main Thread) backend 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.25.0) started in 5.342s. Listening on: http://localhost:8080
+2025-08-15 11:21:27,824 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2025-08-15 11:21:27,825 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cdi, compose, hibernate-validator, mongodb-client, mongodb-panache, narayana-jta, resteasy, resteasy-jackson, smallrye-context-propagation, vertx]
+2025-08-15 11:21:33,204 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.client] (executor-thread-2) MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.5.1"}, "os": {"type": "Linux", "name": "Linux", "architecture": "amd64", "version": "6.14.0-28-generic"}, "platform": "Java/Eclipse Adoptium/21.0.8+9-LTS"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=true}, retryWrites=false, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@7697e5b0, com.mongodb.Jep395RecordCodecProvider@55964503, com.mongodb.KotlinCodecProvider@37fd65b6]}, ProvidersCodecRegistry{codecProviders=[org.bson.codecs.pojo.PojoCodecProvider@be2f53b]}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2025-08-15 11:21:33,247 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=57623761, minRoundTripTimeNanos=0, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000001, setVersion=1, topologyVersion=TopologyVersion{processId=689efb0a9ab6f681af532e86, counter=6}, lastWriteDate=Fri Aug 15 11:21:31 CEST 2025, lastUpdateTimeNanos=4598228094416}
+2025-08-15 11:23:59,477 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown", "$clusterTime": {"clusterTime": {"$timestamp": {"t": 1755249831, "i": 1}}, "signature": {"hash": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "subType": "00"}}, "keyId": 0}}, "operationTime": {"$timestamp": {"t": 1755249831, "i": 1}}}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:24:09,490 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1317496, minRoundTripTimeNanos=0, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000002, setVersion=1, topologyVersion=TopologyVersion{processId=689efcb4a6251df520b75ea8, counter=6}, lastWriteDate=Fri Aug 15 11:24:05 CEST 2025, lastUpdateTimeNanos=4754478439157}
+2025-08-15 11:29:55,884 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown", "$clusterTime": {"clusterTime": {"$timestamp": {"t": 1755250185, "i": 1}}, "signature": {"hash": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "subType": "00"}}, "keyId": 0}}, "operationTime": {"$timestamp": {"t": 1755250185, "i": 1}}}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:30:05,894 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 11:30:25,899 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1211262, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689efe2c1fde9d5a5fcbdcdd, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=5130886984962}
+2025-08-15 11:31:20,692 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown"}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:31:30,699 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:809)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:857)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:517)
+	at com.mongodb.internal.connection.InternalStreamConnection.sendAndReceiveInternal(InternalStreamConnection.java:448)
+	at com.mongodb.internal.connection.InternalStreamConnection.lambda$sendAndReceive$0(InternalStreamConnection.java:375)
+	at com.mongodb.internal.connection.InternalStreamConnection.sendAndReceive(InternalStreamConnection.java:378)
+	at com.mongodb.internal.connection.CommandHelper.sendAndReceive(CommandHelper.java:100)
+	at com.mongodb.internal.connection.CommandHelper.executeCommand(CommandHelper.java:49)
+	at com.mongodb.internal.connection.InternalStreamConnectionInitializer.initializeConnectionDescription(InternalStreamConnectionInitializer.java:144)
+	at com.mongodb.internal.connection.InternalStreamConnectionInitializer.startHandshake(InternalStreamConnectionInitializer.java:79)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:235)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:182)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:824)
+	... 11 more
+
+2025-08-15 11:31:40,703 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1122525, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689efe733d9c5939b7a135d3, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=5205691483174}
+2025-08-15 11:34:06,267 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown"}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:34:16,272 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 11:35:06,280 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1353313, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689eff437536fe3ab3316dae, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=5411267935859}
+2025-08-15 11:36:23,187 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown"}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:36:33,192 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 11:36:53,197 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1046787, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689effb3146c73bbc7f8422b, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=5518184872140}
+2025-08-15 11:38:19,550 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_OTHER, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1031883, minRoundTripTimeNanos=776672, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=1, topologyVersion=TopologyVersion{processId=689effb3146c73bbc7f8422b, counter=1}, lastWriteDate=Fri Aug 15 11:38:19 CEST 2025, lastUpdateTimeNanos=5604537904633}
+2025-08-15 11:38:19,569 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_SECONDARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1031883, minRoundTripTimeNanos=776672, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=1, topologyVersion=TopologyVersion{processId=689effb3146c73bbc7f8422b, counter=3}, lastWriteDate=Fri Aug 15 11:38:19 CEST 2025, lastUpdateTimeNanos=5604557368106}
+2025-08-15 11:38:19,572 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_SECONDARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1031883, minRoundTripTimeNanos=776672, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000001, setVersion=1, topologyVersion=TopologyVersion{processId=689effb3146c73bbc7f8422b, counter=4}, lastWriteDate=Fri Aug 15 11:38:19 CEST 2025, lastUpdateTimeNanos=5604560414371}
+2025-08-15 11:38:19,663 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1031883, minRoundTripTimeNanos=776672, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000001, setVersion=1, topologyVersion=TopologyVersion{processId=689effb3146c73bbc7f8422b, counter=6}, lastWriteDate=Fri Aug 15 11:38:19 CEST 2025, lastUpdateTimeNanos=5604650603660}
+2025-08-15 11:44:41,076 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown", "$clusterTime": {"clusterTime": {"$timestamp": {"t": 1755251079, "i": 1}}, "signature": {"hash": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "subType": "00"}}, "keyId": 0}}, "operationTime": {"$timestamp": {"t": 1755251079, "i": 1}}}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 11:44:51,082 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 11:45:01,085 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:809)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:857)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:517)
+	at com.mongodb.internal.connection.InternalStreamConnection.sendAndReceiveInternal(InternalStreamConnection.java:448)
+	at com.mongodb.internal.connection.InternalStreamConnection.lambda$sendAndReceive$0(InternalStreamConnection.java:375)
+	at com.mongodb.internal.connection.InternalStreamConnection.sendAndReceive(InternalStreamConnection.java:378)
+	at com.mongodb.internal.connection.CommandHelper.sendAndReceive(CommandHelper.java:100)
+	at com.mongodb.internal.connection.CommandHelper.executeCommand(CommandHelper.java:49)
+	at com.mongodb.internal.connection.InternalStreamConnectionInitializer.initializeConnectionDescription(InternalStreamConnectionInitializer.java:144)
+	at com.mongodb.internal.connection.InternalStreamConnectionInitializer.startHandshake(InternalStreamConnectionInitializer.java:79)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:235)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:182)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:824)
+	... 11 more
+
+2025-08-15 11:45:11,089 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1130355, minRoundTripTimeNanos=0, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000001, setVersion=1, topologyVersion=TopologyVersion{processId=689f019c47a6fdf0dcf23f61, counter=6}, lastWriteDate=Fri Aug 15 11:45:04 CEST 2025, lastUpdateTimeNanos=6016076680622}
+2025-08-15 12:05:11,839 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown", "$clusterTime": {"clusterTime": {"$timestamp": {"t": 1755252304, "i": 1}}, "signature": {"hash": {"$binary": {"base64": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=", "subType": "00"}}, "keyId": 0}}, "operationTime": {"$timestamp": {"t": 1755252304, "i": 1}}}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 12:05:21,844 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 12:05:31,850 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1744249, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689f0662f9f0373798bea3dc, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=7236837549777}
+2025-08-15 12:07:09,677 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown"}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 12:07:19,687 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_GHOST, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1293497, minRoundTripTimeNanos=0, setName='null', canonicalAddress=null, hosts=[], passives=[], arbiters=[], primary='null', tagSet=TagSet{[]}, electionId=null, setVersion=null, topologyVersion=TopologyVersion{processId=689f06d401277efb8ee748d1, counter=0}, lastWriteDate=null, lastUpdateTimeNanos=7344675144645}
+2025-08-15 12:12:32,376 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoNodeIsRecoveringException: Command failed with error 11600 (InterruptedAtShutdown): 'interrupted at shutdown' on server localhost:27017. The full response is {"ok": 0.0, "errmsg": "interrupted at shutdown", "code": 11600, "codeName": "InterruptedAtShutdown"}
+	at com.mongodb.internal.connection.ProtocolHelper.createSpecialException(ProtocolHelper.java:264)
+	at com.mongodb.internal.connection.ProtocolHelper.getCommandFailureException(ProtocolHelper.java:206)
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:520)
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:469)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:249)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+
+2025-08-15 12:12:42,378 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Exception in monitor thread while connecting to server localhost:27017: com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.lambda$open$0(SocketStream.java:85)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:85)
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:233)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.lookupServerDescription(DefaultServerMonitor.java:219)
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitor.run(DefaultServerMonitor.java:176)
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:76)
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:104)
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:79)
+	... 3 more
+
+2025-08-15 12:13:02,385 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [org.mon.dri.cluster] (cluster-ClusterId{value='689efc1ce43172cf76aa3f77', description='null'}-localhost:27017) Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=REPLICA_SET_PRIMARY, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=3333605, minRoundTripTimeNanos=0, setName='dbrs', canonicalAddress=db:27017, hosts=[db:27017], passives=[], arbiters=[], primary='db:27017', tagSet=TagSet{[]}, electionId=7fffffff0000000000000001, setVersion=1, topologyVersion=TopologyVersion{processId=689f082530098b379d5ff270, counter=6}, lastWriteDate=Fri Aug 15 12:12:55 CEST 2025, lastUpdateTimeNanos=7687372862000}
+2025-08-15 12:14:05,647 adam-ux305ua /home/adam/.sdkman/candidates/java/21.0.8-tem/bin/java[86135] INFO  [io.quarkus] (Shutdown thread) backend stopped in 0.031s

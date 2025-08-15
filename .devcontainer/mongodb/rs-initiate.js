@@ -1,3 +1,4 @@
+print("Hello from init script");
 rs.initiate({
   _id: "dbrs",
   members: [
@@ -6,4 +7,4 @@ rs.initiate({
       host: "db:27017"
     }
   ]
-})
+});
