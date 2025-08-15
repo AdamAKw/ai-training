@@ -14,8 +14,9 @@ async function getRecipe(id: string) {
       }
       throw new Error("Failed to fetch recipe");
     }
-
-    return await response.json();
+    const {data} =await response.json();
+    console.log(data)
+    return data.recipe;
   } catch (error) {
     console.error("Error fetching recipe:", error);
     throw error;
@@ -33,10 +34,10 @@ export default async function RecipeDetailPage({
   const recipeData = await getRecipe(id).catch(() => null);
 
   // If recipe not found, return 404
-  if (!recipeData || !recipeData.recipe) {
+  if (!recipeData) {
     notFound();
   }
 
   // Render the client component with the recipe data
-  return <RecipeDetail id={id} recipe={recipeData.recipe} />;
+  return <RecipeDetail id={id} recipe={recipeData} />;
 }

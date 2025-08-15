@@ -34,7 +34,7 @@ export default function EditPantryItemClient({
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `${getApiBaseUrl()}/api/pantry/${pantryItem._id}`,
+        `${getApiBaseUrl()}/api/pantry/${pantryItem.id}`,
         {
           method: "PUT",
           headers: {
@@ -62,7 +62,7 @@ export default function EditPantryItemClient({
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `${getApiBaseUrl()}/api/pantry/${pantryItem._id}`,
+        `${getApiBaseUrl()}/api/pantry/${pantryItem.id}`,
         {
           method: "DELETE",
         }

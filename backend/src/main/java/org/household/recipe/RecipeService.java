@@ -70,7 +70,7 @@ public class RecipeService {
         existingRecipe.tags = updatedRecipe.tags != null ? updatedRecipe.tags : List.of();
 
         existingRecipe.preUpdate();
-        existingRecipe.persist();
+        existingRecipe.update();
 
         return existingRecipe;
     }

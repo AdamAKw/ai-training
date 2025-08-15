@@ -27,13 +27,12 @@ export function MealPlansClient({ initialMealPlans }: MealPlansClientProps) {
       }
 
       // Aktualizuj stan, usuwając plan
-      setMealPlans(mealPlans.filter((plan) => plan._id !== id));
+      setMealPlans(mealPlans.filter((plan) => plan.id !== id));
       toast.success(t("deleteSuccess"));
     } catch (error) {
       console.error("Error deleting meal plan:", error);
       toast.error(t("deleteError"));
     }
   };
-
   return <MealPlanList mealPlans={mealPlans} onDelete={handleDelete} />;
 }

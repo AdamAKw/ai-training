@@ -17,8 +17,9 @@ async function getPantryItem(id: string): Promise<IPantryItem | null> {
       throw new Error("Failed to fetch pantry item");
     }
 
-    const { pantryItem } = await response.json();
-    return pantryItem;
+    const { data } = await response.json();
+    console.log(data);
+    return data.pantryItem;
   } catch (error) {
     console.error(`Error fetching pantry item ${id}:`, error);
     return null;
@@ -34,7 +35,7 @@ export default async function PantryItemPage({
   const t = await getTranslations("pantry.detail");
   const format = await getFormatter();
   const pantryItem = await getPantryItem(id);
-
+console.log(pantryItem);
   if (!pantryItem) {
     notFound();
   }

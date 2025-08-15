@@ -58,7 +58,7 @@ export default function NewMealPlanPage({ recipes }: { recipes: IRecipe[] }) {
       }
       // If we got here, the response was OK
       toast.success("Plan posiłków został pomyślnie utworzony");
-      router.push(`/mealPlans/${result.mealPlan._id}`);
+      router.push(`/mealPlans/${result.mealPlan.id}`);
     } catch (error) {
       console.error("Błąd podczas tworzenia planu posiłków:", error);
       toast.error(

@@ -30,7 +30,7 @@ services:
       - ./mongodb/rs-initiate.js:/rs-initiate.js
     depends_on:
       - db
-    entrypoint: mongosh --host db:27017 /rs-initiate.js
+    entrypoint: bash -c "sleep 10 && mongosh --host db:27017 /rs-initiate.js"
     
 
 volumes:

@@ -17,7 +17,7 @@ async function getMealPlan(id: string): Promise<IMealPlan | null> {
       throw new Error("Nie udało się pobrać planu posiłków");
     }
 
-    const data = await res.json();
+    const {data} = await res.json();
     return data.mealPlan as IMealPlan;
   } catch (error) {
     console.error("Błąd podczas pobierania planu posiłków:", error);

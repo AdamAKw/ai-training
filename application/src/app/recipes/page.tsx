@@ -31,7 +31,7 @@ export default function RecipesPage() {
           throw new Error(t("fetchFailed"));
         }
 
-        const data = await response.json();
+        const {data} = await response.json();
         setRecipes(data.recipes || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : t("fetchFailed"));
@@ -83,8 +83,8 @@ export default function RecipesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recipes.map((recipe) => (
             <RecipeCard
-              key={recipe._id}
-              id={recipe._id}
+              key={recipe.id}
+              id={recipe.id}
               name={recipe.name}
               description={recipe.description}
               prepTime={recipe.prepTime}

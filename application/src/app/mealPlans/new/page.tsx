@@ -11,7 +11,7 @@ async function getRecipes() {
       throw new Error("Nie udało się pobrać przepisów");
     }
 
-    const data = await res.json();
+    const {data} = await res.json();
     return data.recipes;
   } catch (error) {
     console.error("Błąd podczas pobierania przepisów:", error);

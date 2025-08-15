@@ -9,10 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * PantryItem entity representing items in the pantry
- * Equivalent to the Next.js PantryItem model
- */
+
 @MongoEntity(collection = "pantryitems")
 public class PantryItem extends PanacheMongoEntity {
 

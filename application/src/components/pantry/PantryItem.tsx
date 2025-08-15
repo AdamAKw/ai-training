@@ -59,7 +59,7 @@ export function PantryItem({ item, onEdit, onDelete }: PantryItemProps) {
             <Button variant="ghost" size="sm" onClick={() => onEdit(item)}>
                Edytuj
             </Button>
-            <Button variant="destructive" size="sm" onClick={() => onDelete(item._id as string)}>
+            <Button variant="destructive" size="sm" onClick={() => onDelete(item.id as string)}>
                Usuń
             </Button>
          </CardFooter>

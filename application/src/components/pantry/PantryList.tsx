@@ -48,7 +48,7 @@ export function PantryList({ items, onEdit, onDelete }: PantryListProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {itemsByCategory[category].map((item) => (
               <PantryItem
-                key={item._id as string}
+                key={item.id as string}
                 item={item}
                 onEdit={onEdit}
                 onDelete={onDelete}

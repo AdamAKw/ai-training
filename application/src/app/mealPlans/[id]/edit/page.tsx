@@ -12,7 +12,7 @@ async function getMealPlan(id: string) {
       throw new Error("Nie udało się pobrać planu posiłków");
     }
 
-    const data = await res.json();
+    const {data} = await res.json();
     return data.mealPlan;
   } catch (error) {
     console.error("Błąd podczas pobierania planu posiłków:", error);
@@ -30,7 +30,7 @@ async function getRecipes() {
       throw new Error("Nie udało się pobrać przepisów");
     }
 
-    const data = await res.json();
+    const {data} = await res.json();
     return data.recipes;
   } catch (error) {
     console.error("Błąd podczas pobierania przepisów:", error);

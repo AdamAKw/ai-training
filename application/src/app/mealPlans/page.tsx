@@ -17,8 +17,9 @@ async function getMealPlans() {
       return [];
     }
 
-    const data = await res.json();
+    const {data} = await res.json();
     return data.mealPlans as IMealPlan[];
+    
   } catch (error) {
     console.error("Error fetching meal plans:", error);
     return [];
@@ -40,7 +41,6 @@ export default async function MealPlansPage() {
         }}
       />
 
-      {/* Komponent kliencki z listą planów */}
       <MealPlansClient initialMealPlans={mealPlans} />
     </div>
   );

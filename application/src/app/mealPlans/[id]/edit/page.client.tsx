@@ -36,7 +36,7 @@ export default function EditMealPlanClient({
     setIsSubmitting(true);
     try {
       const res = await fetch(
-        `${getApiBaseUrl()}/api/mealPlans/${mealPlan._id}`,
+        `${getApiBaseUrl()}/api/mealPlans/${mealPlan.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ export default function EditMealPlanClient({
       }
 
       toast.success("Plan posiłków został pomyślnie zaktualizowany");
-      router.push(`/mealPlans/${mealPlan._id}`);
+      router.push(`/mealPlans/${mealPlan.id}`);
       router.refresh();
     } catch (error) {
       console.error("Błąd podczas aktualizacji planu posiłków:", error);
@@ -66,7 +66,7 @@ export default function EditMealPlanClient({
     <div>
       <div className="mb-6">
         <Button variant="outline" asChild>
-          <Link href={`/mealPlans/${mealPlan._id}`}>&larr; Wróć do planu</Link>
+          <Link href={`/mealPlans/${mealPlan.id}`}>&larr; Wróć do planu</Link>
         </Button>
       </div>
 

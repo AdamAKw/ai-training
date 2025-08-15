@@ -9,7 +9,6 @@ import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 // Fetch pantry items from database
 async function getPantryItems(): Promise<IPantryItem[]> {
   try {
-    await connectToDatabase();
     const response = await fetch(`${getApiBaseUrl()}/api/pantry`, {
       cache: "no-store",
     });
@@ -18,8 +17,8 @@ async function getPantryItems(): Promise<IPantryItem[]> {
       throw new Error("Failed to fetch pantry items");
     }
 
-    const { pantryItems } = await response.json();
-    return pantryItems;
+    const { data } = await response.json();
+    return data.pantryItems;
   } catch (error) {
     console.error("Error fetching pantry items:", error);
     return [];
@@ -29,7 +28,6 @@ async function getPantryItems(): Promise<IPantryItem[]> {
 export default async function PantryPage() {
   const t = await getTranslations("pantry");
   const pantryItems = await getPantryItems();
-
   return (
     <div>
       <PageHeader

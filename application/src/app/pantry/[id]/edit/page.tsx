@@ -7,7 +7,6 @@ export const dynamic = "force-dynamic";
 // Fetch pantry item from database
 async function getPantryItem(id: string): Promise<IPantryItem | null> {
   try {
-    await connectToDatabase();
     const response = await fetch(`${getApiBaseUrl()}/api/pantry/${id}`, {
       cache: "no-store",
     });
@@ -17,8 +16,8 @@ async function getPantryItem(id: string): Promise<IPantryItem | null> {
       throw new Error("Failed to fetch pantry item");
     }
 
-    const { pantryItem } = await response.json();
-    return pantryItem;
+    const { data } = await response.json();
+    return data.pantryItem;
   } catch (error) {
     console.error(`Error fetching pantry item ${id}:`, error);
     return null;

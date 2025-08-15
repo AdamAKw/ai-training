@@ -42,7 +42,7 @@ export default function EditRecipePage() {
           throw new Error(t("fetchFailed"));
         }
 
-        const data = await response.json();
+        const {data} = await response.json();
         setRecipe(data.recipe);
       } catch (error) {
         console.error("Error fetching recipe:", error);
