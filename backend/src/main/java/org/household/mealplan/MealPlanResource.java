@@ -24,23 +24,17 @@ public class MealPlanResource {
     MealPlanService mealPlanService;
 
     @GET
-    public Response getAllMealPlans(@QueryParam("date") LocalDate date) {
-        try {
-            if (date != null) {
-                List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
+    public Response getAllMealPlans(@QueryParam("date") LocalDate date) throws Exception {
+        throw new Exception("test");
+        // if (date != null) {
+        // List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
 
-                return Response.ok(ApiResponse.success("mealPlans", plans)).build();
-            }
+        // return Response.ok(ApiResponse.success("mealPlans", plans)).build();
+        // }
 
-            List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
-            return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
+        // List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
 
-        } catch (Exception e) {
-            log.error("Failed to fetch meal plans", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch meal plans", 500))
-                    .build();
-        }
+        // return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
     }
 
     /**
@@ -59,11 +53,6 @@ public class MealPlanResource {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
                     .build();
-        } catch (Exception e) {
-            log.error("Failed to create meal plan", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to create meal plan", 500))
-                    .build();
         }
     }
 
@@ -74,27 +63,22 @@ public class MealPlanResource {
     @GET
     @Path("/{id}")
     public Response getMealPlanById(@PathParam("id") String id) {
-        try {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
-            }
 
-            MealPlan mealPlan = mealPlanService.getMealPlanById(new ObjectId(id));
-            if (mealPlan == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Meal plan not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("mealPlan", mealPlan)).build();
-        } catch (Exception e) {
-            log.error("Failed to fetch meal plan", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch meal plan", 500))
+        if (!ObjectId.isValid(id)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(ApiResponse.error("Invalid meal plan ID format", 400))
                     .build();
         }
+
+        MealPlan mealPlan = mealPlanService.getMealPlanById(new ObjectId(id));
+        if (mealPlan == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(ApiResponse.error("Meal plan not found", 404))
+                    .build();
+        }
+
+        return Response.ok(ApiResponse.success("mealPlan", mealPlan)).build();
+
     }
 
     /**
@@ -124,11 +108,6 @@ public class MealPlanResource {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
                     .build();
-        } catch (Exception e) {
-            log.error("Failed to update meal plan", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to update meal plan", 500))
-                    .build();
         }
     }
 
@@ -139,27 +118,22 @@ public class MealPlanResource {
     @DELETE
     @Path("/{id}")
     public Response deleteMealPlan(@PathParam("id") String id) {
-        try {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
-            }
 
-            boolean deleted = mealPlanService.deleteMealPlan(new ObjectId(id));
-            if (!deleted) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Meal plan not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("message", "Meal plan deleted successfully")).build();
-        } catch (Exception e) {
-            log.error("Failed to delete meal plan", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to delete meal plan", 500))
+        if (!ObjectId.isValid(id)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(ApiResponse.error("Invalid meal plan ID format", 400))
                     .build();
         }
+
+        boolean deleted = mealPlanService.deleteMealPlan(new ObjectId(id));
+        if (!deleted) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(ApiResponse.error("Meal plan not found", 404))
+                    .build();
+        }
+
+        return Response.ok(ApiResponse.success("message", "Meal plan deleted successfully")).build();
+
     }
 
     /**
@@ -169,15 +143,10 @@ public class MealPlanResource {
     @GET
     @Path("/active")
     public Response getActiveMealPlans() {
-        try {
-            List<MealPlan> activeMealPlans = mealPlanService.findActiveMealPlans();
-            return Response.ok(ApiResponse.success("mealPlans", activeMealPlans)).build();
-        } catch (Exception e) {
-            log.error("Failed to fetch active meal plans", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to fetch active meal plans", 500))
-                    .build();
-        }
+
+        List<MealPlan> activeMealPlans = mealPlanService.findActiveMealPlans();
+        return Response.ok(ApiResponse.success("mealPlans", activeMealPlans)).build();
+
     }
 
     /**
@@ -189,24 +158,19 @@ public class MealPlanResource {
     public Response searchMealPlansByDateRange(
             @QueryParam("startDate") String startDateStr,
             @QueryParam("endDate") String endDateStr) {
-        try {
-            if (startDateStr == null || endDateStr == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Start date and end date parameters are required", 400))
-                        .build();
-            }
 
-            LocalDate startDate = LocalDate.parse(startDateStr);
-            LocalDate endDate = LocalDate.parse(endDateStr);
-
-            List<MealPlan> mealPlans = mealPlanService.findMealPlansByDateRange(startDate, endDate);
-            return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
-        } catch (Exception e) {
-            log.error("Failed to search meal plans by date range", e);
+        if (startDateStr == null || endDateStr == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid date format or search failed", 400))
+                    .entity(ApiResponse.error("Start date and end date parameters are required", 400))
                     .build();
         }
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        List<MealPlan> mealPlans = mealPlanService.findMealPlansByDateRange(startDate, endDate);
+        return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
+
     }
 
     /**
@@ -236,11 +200,6 @@ public class MealPlanResource {
             log.warn("Validation error completing meal: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
-                    .build();
-        } catch (Exception e) {
-            log.error("Failed to complete meal", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to complete meal", 500))
                     .build();
         }
     }
@@ -274,11 +233,6 @@ public class MealPlanResource {
             log.warn("Validation error uncompleting meal: %s", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
-                    .build();
-        } catch (Exception e) {
-            log.error("Failed to uncomplete meal", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(ApiResponse.error("Failed to uncomplete meal", 500))
                     .build();
         }
     }
