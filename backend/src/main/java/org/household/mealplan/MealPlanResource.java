@@ -24,17 +24,16 @@ public class MealPlanResource {
     MealPlanService mealPlanService;
 
     @GET
-    public Response getAllMealPlans(@QueryParam("date") LocalDate date) throws Exception {
-        throw new Exception("test");
-        // if (date != null) {
-        // List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
+    public Response getAllMealPlans(@QueryParam("date") LocalDate date) {
+        if (date != null) {
+            List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
 
-        // return Response.ok(ApiResponse.success("mealPlans", plans)).build();
-        // }
+            return Response.ok(ApiResponse.success("mealPlans", plans)).build();
+        }
 
-        // List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
+        List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
 
-        // return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
+        return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
     }
 
     /**
