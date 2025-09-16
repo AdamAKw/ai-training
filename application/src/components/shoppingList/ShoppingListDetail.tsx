@@ -70,7 +70,7 @@ export function ShoppingListDetail({
     typeof list.mealPlan === "object" && list.mealPlan
       ? list.mealPlan.name
       : undefined;
-
+  console.log(list)
   return (
     <div className="bg-white rounded-md border p-4 shadow-sm">
       {/* Header Section */}

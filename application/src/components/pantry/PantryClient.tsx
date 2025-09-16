@@ -27,7 +27,6 @@ export function PantryClient({ initialItems }: PantryClientProps) {
   const tCommon = useTranslations();
   const [items, setItems] = useState<IPantryItem[]>(initialItems);
   const [isLoading, setIsLoading] = useState(false);
-
   // Dialog state
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -38,7 +37,8 @@ export function PantryClient({ initialItems }: PantryClientProps) {
     try {
       const response = await fetch(`${getApiBaseUrl()}/api/pantry`);
       const data = await response.json();
-      setItems(data.pantryItems);
+      console.log(data);
+      setItems(data.data.pantryItems);
     } catch (error) {
       console.error("Error fetching pantry items:", error);
     } finally {

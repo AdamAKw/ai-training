@@ -1,6 +1,7 @@
 #Maven
 target/
 logs/
+backend/logs/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
