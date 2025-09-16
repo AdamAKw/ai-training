@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { IPantryItem } from "@/models/pantryItem";
-import { connectToDatabase } from "@/lib/db/mongoose";
 import PantryClient from "@/components/pantry/PantryClient";
 import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
@@ -27,7 +26,7 @@ async function getPantryItems(): Promise<IPantryItem[]> {
 
 export default async function PantryPage() {
   const t = await getTranslations("pantry");
-  const pantryItems = await getPantryItems();
+  const pantryItems = getPantryItems();
   return (
     <div>
       <PageHeader
