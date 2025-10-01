@@ -1,10 +1,13 @@
 package org.household.recipe;
 
 import io.quarkus.panache.common.Sort;
+import io.quarkus.mongodb.panache.common.reactive.Panache;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import org.household.common.ValidationException;
+import org.household.recipe.Recipe;
 
 import java.util.List;
 
@@ -18,89 +21,90 @@ public class RecipeService {
     /**
      * Get all recipes ordered by creation date (newest first)
      */
-    public List<Recipe> getAllRecipes() {
-        return Recipe.findAll(Sort.by("createdAt").descending()).list();
+    public Uni<List<Recipe>> getAllRecipes() {
+        return Recipe.findAllOrderedByCreatedAt();
     }
 
     /**
      * Create a new recipe
      */
-    @Transactional
-    public Recipe createRecipe(Recipe recipe) throws ValidationException {
-        validateRecipe(recipe);
-
-        recipe.prePersist();
-        recipe.persist();
-
-        if (recipe.id == null) {
-            throw new RuntimeException("Failed to persist recipe");
+    public Uni<Recipe> createRecipe(Recipe recipe) {
+        try {
+            validateRecipe(recipe);
+        } catch (ValidationException e) {
+            return Uni.createFrom().failure(e);
         }
 
-        return recipe;
+        recipe.prePersist();
+        return Panache.withTransaction(() -> recipe.persist()
+                .onItem().transform(ignored -> {
+                    if (recipe.id == null) {
+                        throw new RuntimeException("Failed to persist recipe");
+                    }
+                    return recipe;
+                }));
     }
 
     /**
      * Get a recipe by ID
      */
-    public Recipe getRecipeById(ObjectId id) {
+    public Uni<Recipe> getRecipeById(ObjectId id) {
         return Recipe.findById(id);
     }
 
     /**
      * Update an existing recipe
      */
-    @Transactional
-    public Recipe updateRecipe(ObjectId id, Recipe updatedRecipe) throws ValidationException {
-        Recipe existingRecipe = Recipe.findById(id);
-        if (existingRecipe == null) {
-            return null;
+    public Uni<Recipe> updateRecipe(ObjectId id, Recipe updatedRecipe) {
+        try {
+            validateRecipe(updatedRecipe);
+        } catch (ValidationException e) {
+            return Uni.createFrom().failure(e);
         }
+        return Panache.withTransaction(() -> Recipe.<Recipe>findById(id)
+                .onItem().ifNull().failWith(() -> new NotFoundException("Recipe not found"))
+                .onItem().transformToUni(existingRecipe -> {
+                    // Update fields
+                    existingRecipe.name = updatedRecipe.name;
+                    existingRecipe.description = updatedRecipe.description != null ? updatedRecipe.description : "";
+                    existingRecipe.ingredients = updatedRecipe.ingredients;
+                    existingRecipe.instructions = updatedRecipe.instructions;
+                    existingRecipe.prepTime = updatedRecipe.prepTime;
+                    existingRecipe.cookTime = updatedRecipe.cookTime;
+                    existingRecipe.servings = updatedRecipe.servings;
+                    existingRecipe.imageUrl = updatedRecipe.imageUrl;
+                    existingRecipe.tags = updatedRecipe.tags != null ? updatedRecipe.tags : List.of();
 
-        validateRecipe(updatedRecipe);
-
-        // Update fields
-        existingRecipe.name = updatedRecipe.name;
-        existingRecipe.description = updatedRecipe.description != null ? updatedRecipe.description : "";
-        existingRecipe.ingredients = updatedRecipe.ingredients;
-        existingRecipe.instructions = updatedRecipe.instructions;
-        existingRecipe.prepTime = updatedRecipe.prepTime;
-        existingRecipe.cookTime = updatedRecipe.cookTime;
-        existingRecipe.servings = updatedRecipe.servings;
-        existingRecipe.imageUrl = updatedRecipe.imageUrl;
-        existingRecipe.tags = updatedRecipe.tags != null ? updatedRecipe.tags : List.of();
-
-        existingRecipe.preUpdate();
-        existingRecipe.update();
-
-        return existingRecipe;
+                    existingRecipe.preUpdate();
+                    return existingRecipe.update();
+                }));
     }
 
     /**
      * Delete a recipe by ID
      */
-    @Transactional
-    public boolean deleteRecipe(ObjectId id) {
-        Recipe recipe = Recipe.findById(id);
-        if (recipe == null) {
-            return false;
-        }
-
-        recipe.delete();
-        return true;
+    public Uni<Boolean> deleteRecipe(ObjectId id) {
+        return Panache.withTransaction(() -> Recipe.<Recipe>findById(id)
+                .onItem().transformToUni(recipe -> {
+                    if (recipe == null) {
+                        return Uni.createFrom().item(false);
+                    }
+                    return recipe.delete().replaceWith(true);
+                }));
     }
 
     /**
      * Search recipes by name (case insensitive)
      */
-    public List<Recipe> searchRecipesByName(String name) {
-        return Recipe.find("name like ?1", "(?i).*" + name + ".*").list();
+    public Uni<List<Recipe>> searchRecipesByName(String name) {
+        return Recipe.findByNameContaining(name);
     }
 
     /**
      * Find recipes by tag
      */
-    public List<Recipe> findRecipesByTag(String tag) {
-        return Recipe.find("tags", tag).list();
+    public Uni<List<Recipe>> findRecipesByTag(String tag) {
+        return Recipe.findByTag(tag);
     }
 
     /**

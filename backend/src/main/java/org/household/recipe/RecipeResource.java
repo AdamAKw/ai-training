@@ -4,14 +4,13 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.RestResponse;
 
-import java.util.List;
-
+import io.smallrye.mutiny.Uni;
 
 @Path("/api/recipes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,105 +27,101 @@ public class RecipeResource {
      * Fetch all recipes
      */
     @GET
-    public Response getAllRecipes() {
-            List<Recipe> recipes = recipeService.getAllRecipes();
-            return Response.ok(ApiResponse.success("recipes", recipes)).build();
+    public Uni<RestResponse<ApiResponse>> getAllRecipes() {
+        return recipeService.getAllRecipes()
+                .onItem()
+                .transform(recipes -> RestResponse.ok(ApiResponse.success("recipes", recipes)));
     }
 
-
     @POST
-    public Response createRecipe(@Valid Recipe recipe) {
-        try {
-            Recipe createdRecipe = recipeService.createRecipe(recipe);
-            return Response.status(Response.Status.CREATED)
-                    .entity(ApiResponse.success("recipe", createdRecipe))
-                    .build();
-        } catch (ValidationException e) {
-            LOG.warnf("Validation error creating recipe: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid recipe data", 400, e.getValidationIssues()))
-                    .build();
-        }
+    public Uni<RestResponse<ApiResponse>> createRecipe(@Valid Recipe recipe) {
+        return recipeService.createRecipe(recipe)
+                .onItem()
+                .transform(createdRecipe -> RestResponse.status(RestResponse.Status.CREATED,
+                        ApiResponse.success("recipe", createdRecipe)))
+                .onFailure(ValidationException.class)
+                .recoverWithItem(ex -> {
+                    LOG.warnf("Validation error creating recipe: %s", ex.getMessage());
+                    return RestResponse.status(RestResponse.Status.BAD_REQUEST, ApiResponse.error("Invalid recipe data",
+                            400, ((ValidationException) ex).getValidationIssues()));
+                });
     }
 
     @GET
     @Path("/{id}")
-    public Response getRecipeById(@PathParam("id") String id) {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid recipe ID format", 400))
-                        .build();
-            }
+    public Uni<RestResponse<ApiResponse>> getRecipeById(@PathParam("id") String id) {
+        if (!ObjectId.isValid(id)) {
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid recipe ID format", 400)));
+        }
 
-            Recipe recipe = recipeService.getRecipeById(new ObjectId(id));
-            if (recipe == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Recipe not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("recipe", recipe)).build();
+        return recipeService.getRecipeById(new ObjectId(id))
+                .onItem()
+                .transform(recipe -> {
+                    if (recipe == null) {
+                        return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                ApiResponse.error("Recipe not found", 404));
+                    }
+                    return RestResponse.ok(ApiResponse.success("recipe", recipe));
+                });
     }
 
     @PUT
     @Path("/{id}")
-    public Response updateRecipe(@PathParam("id") String id, @Valid Recipe recipe) {
-        try {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid recipe ID format", 400))
-                        .build();
-            }
+    public Uni<RestResponse<ApiResponse>> updateRecipe(@PathParam("id") String id, @Valid Recipe recipe) {
+        if (!ObjectId.isValid(id)) {
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid recipe ID format", 400)));
+        }
 
-            Recipe updatedRecipe = recipeService.updateRecipe(new ObjectId(id), recipe);
-            if (updatedRecipe == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Recipe not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("recipe", updatedRecipe)).build();
-        } catch (ValidationException e) {
-            LOG.warnf("Validation error updating recipe: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid recipe data", 400, e.getValidationIssues()))
-                    .build();
-        } 
+        return recipeService.updateRecipe(new ObjectId(id), recipe)
+                .onItem()
+                .transform(updatedRecipe -> {
+                    if (updatedRecipe == null) {
+                        return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                ApiResponse.error("Recipe not found", 404));
+                    }
+                    return RestResponse.ok(ApiResponse.success("recipe", updatedRecipe));
+                })
+                .onFailure(ValidationException.class)
+                .recoverWithItem(ex -> {
+                    LOG.warnf("Validation error updating recipe: %s", ex.getMessage());
+                    return RestResponse.status(RestResponse.Status.BAD_REQUEST, ApiResponse.error("Invalid recipe data",
+                            400, ((ValidationException) ex).getValidationIssues()));
+                });
     }
-
 
     @DELETE
     @Path("/{id}")
-    public Response deleteRecipe(@PathParam("id") String id) {
-  
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid recipe ID format", 400))
-                        .build();
-            }
+    public Uni<RestResponse<ApiResponse>> deleteRecipe(@PathParam("id") String id) {
 
-            boolean deleted = recipeService.deleteRecipe(new ObjectId(id));
-            if (!deleted) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Recipe not found", 404))
-                        .build();
-            }
+        if (!ObjectId.isValid(id)) {
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid recipe ID format", 400)));
+        }
 
-            return Response.ok(ApiResponse.success("message", "Recipe deleted successfully")).build();
-       
+        return recipeService.deleteRecipe(new ObjectId(id))
+                .onItem()
+                .transform(deleted -> {
+                    if (!deleted) {
+                        return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                ApiResponse.error("Recipe not found", 404));
+                    }
+                    return RestResponse.ok(ApiResponse.success("message", "Recipe deleted successfully"));
+                });
+
     }
-
 
     @GET
     @Path("/search")
-    public Response searchRecipes(@QueryParam("name") String name) {
-            if (name == null || name.trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Search name parameter is required", 400))
-                        .build();
-            }
+    public Uni<RestResponse<ApiResponse>> searchRecipes(@QueryParam("name") String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Search name parameter is required", 400)));
+        }
 
-            List<Recipe> recipes = recipeService.searchRecipesByName(name);
-            return Response.ok(ApiResponse.success("recipes", recipes)).build();
+        return recipeService.searchRecipesByName(name)
+                .onItem()
+                .transform(recipes -> RestResponse.ok(ApiResponse.success("recipes", recipes)));
     }
 }

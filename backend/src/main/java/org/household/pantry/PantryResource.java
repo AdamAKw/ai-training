@@ -4,14 +4,15 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
+import org.jboss.resteasy.reactive.RestResponse;
 
-import java.util.List;
+import io.smallrye.mutiny.Uni;
+
 
 @Path("/api/pantry")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,136 +20,122 @@ import java.util.List;
 @Slf4j
 public class PantryResource {
 
+        @Inject
+        PantryService pantryService;
 
-    @Inject
-    PantryService pantryService;
+        @GET
+        public Uni<RestResponse<ApiResponse>> getAllPantryItems() {
+                return pantryService.getAllPantryItems()
+                                .onItem()
+                                .transform(items -> RestResponse.ok(ApiResponse.success("pantryItems", items)));
 
-
-    @GET
-    public Response getAllPantryItems() {
-
-            List<PantryItem> pantryItems = pantryService.getAllPantryItems();
-
-            return Response.ok(ApiResponse.success("pantryItems", pantryItems)).build();
-        
-    }
-
-
-    @POST
-    public Response createPantryItem(@Valid PantryItem pantryItem) {
-        try {
-            PantryItem createdItem = pantryService.createPantryItem(pantryItem);
-            return Response.status(Response.Status.CREATED)
-                    .entity(ApiResponse.success("pantryItem", createdItem))
-                    .build();
-        } catch (ValidationException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues()))
-                    .build();
         }
-    }
 
-
-    @GET
-    @Path("/{id}")
-    public Response getPantryItemById(@PathParam("id") String id) {
-
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid pantry item ID format", 400))
-                        .build();
-            }
-
-            PantryItem pantryItem = pantryService.getPantryItemById(new ObjectId(id));
-            if (pantryItem == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Pantry item not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("pantryItem", pantryItem)).build();
-        
-    }
-
-
-    @PUT
-    @Path("/{id}")
-    public Response updatePantryItem(@PathParam("id") String id, @Valid PantryItem pantryItem) {
-        try {
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid pantry item ID format", 400))
-                        .build();
-            }
-
-            PantryItem updatedItem = pantryService.updatePantryItem(new ObjectId(id), pantryItem);
-            if (updatedItem == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Pantry item not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("pantryItem", updatedItem)).build();
-        } catch (ValidationException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues()))
-                    .build();
+        @POST
+        public Uni<RestResponse<ApiResponse>> createPantryItem(@Valid PantryItem pantryItem) {
+                try {
+                        return pantryService.createPantryItem(pantryItem)
+                                        .onItem()
+                                        .transform(createdItem -> RestResponse.status(RestResponse.Status.CREATED,
+                                                        ApiResponse.success("pantryItem", createdItem)))
+                                        .onFailure()
+                                        .recoverWithItem(throwable -> RestResponse.status(
+                                                        RestResponse.Status.BAD_REQUEST,
+                                                        ApiResponse.error("Failed to create pantry item", 400)));
+                } catch (ValidationException e) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues())));
+                }
         }
-    }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deletePantryItem(@PathParam("id") String id) {
+        @GET
+        @Path("/{id}")
+        public Uni<RestResponse<ApiResponse>> getPantryItemById(@PathParam("id") String id) {
+                if (!ObjectId.isValid(id)) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Invalid pantry item ID format", 400)));
+                }
 
-            if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid pantry item ID format", 400))
-                        .build();
-            }
+                return pantryService.getPantryItemById(new ObjectId(id))
+                                .onItem().transform(pantryItem -> {
+                                        if (pantryItem == null) {
+                                                return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                                                ApiResponse.error("Pantry item not found", 404));
+                                        }
+                                        return RestResponse.ok(ApiResponse.success("pantryItem", pantryItem));
+                                });
+        }
 
-            boolean deleted = pantryService.deletePantryItem(new ObjectId(id));
-            if (!deleted) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Pantry item not found", 404))
-                        .build();
-            }
+        @PUT
+        @Path("/{id}")
+        public Uni<RestResponse<ApiResponse>> updatePantryItem(@PathParam("id") String id,
+                        @Valid PantryItem pantryItem) {
+                try {
+                        if (!ObjectId.isValid(id)) {
+                                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                                ApiResponse.error("Invalid pantry item ID format", 400)));
+                        }
 
-            return Response.ok(ApiResponse.success("message", "Pantry item deleted successfully")).build();
-        
-    }
+                        return pantryService.updatePantryItem(new ObjectId(id), pantryItem)
+                                        .onItem()
+                                        .transform(updatedItem -> RestResponse
+                                                        .ok(ApiResponse.success("pantryItem", updatedItem)))
+                                        .onFailure(NotFoundException.class).recoverWithItem(
+                                                        RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                                                        ApiResponse.error("Pantry item not found",
+                                                                                        404)));
+                } catch (ValidationException e) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Invalid pantry item data", 400, e.getValidationIssues())));
+                }
+        }
 
+        @DELETE
+        @Path("/{id}")
+        public Uni<RestResponse<ApiResponse>> deletePantryItem(@PathParam("id") String id) {
+                if (!ObjectId.isValid(id)) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Invalid pantry item ID format", 400)));
+                }
 
-    @GET
-    @Path("/search")
-    public Response searchPantryItems(@QueryParam("name") String name) {
+                return pantryService.deletePantryItem(new ObjectId(id))
+                                .onItem().transform(deleted -> {
+                                        if (!deleted) {
+                                                return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                                                ApiResponse.error("Pantry item not found", 404));
+                                        }
+                                        return RestResponse.ok(ApiResponse.success("message",
+                                                        "Pantry item deleted successfully"));
+                                });
+        }
 
-            if (name == null || name.trim().isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Search name parameter is required", 400))
-                        .build();
-            }
+        @GET
+        @Path("/search")
+        public Uni<RestResponse<ApiResponse>> searchPantryItems(@QueryParam("name") String name) {
+                if (name == null || name.trim().isEmpty()) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Search name parameter is required", 400)));
+                }
 
-            List<PantryItem> items = pantryService.searchPantryItemsByName(name);
-            return Response.ok(ApiResponse.success("pantryItems", items)).build();
-        
-    }
+                return pantryService.searchPantryItemsByName(name)
+                                .onItem()
+                                .transform(items -> RestResponse.ok(ApiResponse.success("pantryItems", items)));
+        }
 
-    /**
-     * GET /api/pantry/expiring
-     * Get pantry items expiring within the specified number of days
-     */
-    @GET
-    @Path("/expiring")
-    public Response getExpiringItems(@QueryParam("days") @DefaultValue("7") int days) {
-      
-            if (days < 0) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Days parameter must be non-negative", 400))
-                        .build();
-            }
+        /**
+         * GET /api/pantry/expiring
+         * Get pantry items expiring within the specified number of days
+         */
+        @GET
+        @Path("/expiring")
+        public Uni<RestResponse<ApiResponse>> getExpiringItems(@QueryParam("days") @DefaultValue("7") int days) {
+                if (days < 0) {
+                        return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                                        ApiResponse.error("Days parameter must be non-negative", 400)));
+                }
 
-            List<PantryItem> items = pantryService.getItemsExpiringSoon(days);
-            return Response.ok(ApiResponse.success("pantryItems", items)).build();
-     
-    }
+                return pantryService.getItemsExpiringSoon(days)
+                                .onItem()
+                                .transform(items -> RestResponse.ok(ApiResponse.success("pantryItems", items)));
+        }
 }

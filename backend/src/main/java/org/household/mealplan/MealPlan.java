@@ -1,8 +1,9 @@
 package org.household.mealplan;
 
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.panache.common.Sort;
+import io.smallrye.mutiny.Uni;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @MongoEntity(collection = "mealplans")
 @Slf4j
-public class MealPlan extends PanacheMongoEntity {
+public class MealPlan extends ReactivePanacheMongoEntity {
 
     @NotBlank(message = "{test}")
     @Size(min = 2, message = "{test}")
@@ -61,26 +62,26 @@ public class MealPlan extends PanacheMongoEntity {
     /**
      * Find meal plans by date range
      */
-    public static List<MealPlan> findByDateRange(LocalDate start, LocalDate end) {
+    public static Uni<List<MealPlan>> findByDateRange(LocalDate start, LocalDate end) {
         return find("startDate <= ?1 and endDate >= ?2", end, start).list();
     }
 
     /**
      * Find all meal plans ordered by start date (newest first)
      */
-    public static List<MealPlan> findAllOrderedByStartDate() {
+    public static Uni<List<MealPlan>> findAllOrderedByStartDate() {
         return findAll(Sort.by("startDate").descending()).list();
     }
 
     /**
      * Find active meal plans (current date falls within start and end date)
      */
-    public static List<MealPlan> findActiveMealPlans() {
+    public static Uni<List<MealPlan>> findActiveMealPlans() {
         LocalDate today = LocalDate.now();
         return find("startDate <= ?1 and endDate >= ?1", today).list();
     }
 
-    public static List<MealPlan> findMealPlansIncludeDate(LocalDate date) {
+    public static Uni<List<MealPlan>> findMealPlansIncludeDate(LocalDate date) {
         return find("startDate <= ?1 and endDate >= ?1", date).list();
     }
 

@@ -4,15 +4,16 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
+import org.jboss.resteasy.reactive.RestResponse;
+
+import io.smallrye.mutiny.Uni;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Path("/api/mealPlans")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,16 +25,16 @@ public class MealPlanResource {
     MealPlanService mealPlanService;
 
     @GET
-    public Response getAllMealPlans(@QueryParam("date") LocalDate date) {
+    public Uni<RestResponse<ApiResponse>> getAllMealPlans(@QueryParam("date") LocalDate date) {
         if (date != null) {
-            List<MealPlan> plans = mealPlanService.findMealPlansIncludeDate(date);
-
-            return Response.ok(ApiResponse.success("mealPlans", plans)).build();
+            return mealPlanService.findMealPlansIncludeDate(date)
+                    .onItem()
+                    .transform(plans -> RestResponse.ok(ApiResponse.success("mealPlans", plans)));
         }
 
-        List<MealPlan> mealPlans = mealPlanService.getAllMealPlans();
-
-        return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
+        return mealPlanService.getAllMealPlans()
+                .onItem()
+                .transform(mealPlans -> RestResponse.ok(ApiResponse.success("mealPlans", mealPlans)));
     }
 
     /**
@@ -41,17 +42,20 @@ public class MealPlanResource {
      * Create a new meal plan
      */
     @POST
-    public Response createMealPlan(@Valid MealPlan mealPlan) {
+    public Uni<RestResponse<ApiResponse>> createMealPlan(@Valid MealPlan mealPlan) {
         try {
-            MealPlan createdMealPlan = mealPlanService.createMealPlan(mealPlan);
-            return Response.status(Response.Status.CREATED)
-                    .entity(ApiResponse.success("mealPlan", createdMealPlan))
-                    .build();
+            return mealPlanService.createMealPlan(mealPlan)
+                    .onItem()
+                    .transform(createdMealPlan -> RestResponse.status(RestResponse.Status.CREATED,
+                            ApiResponse.success("mealPlan", createdMealPlan)))
+                    .onFailure()
+                    .recoverWithItem(throwable -> RestResponse.status(
+                            RestResponse.Status.BAD_REQUEST,
+                            ApiResponse.error("Failed to create meal plan", 400)));
         } catch (ValidationException e) {
             log.warn("Validation error creating meal plan: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues())));
         }
     }
 
@@ -61,23 +65,21 @@ public class MealPlanResource {
      */
     @GET
     @Path("/{id}")
-    public Response getMealPlanById(@PathParam("id") String id) {
+    public Uni<RestResponse<ApiResponse>> getMealPlanById(@PathParam("id") String id) {
 
         if (!ObjectId.isValid(id)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid meal plan ID format", 400)));
         }
 
-        MealPlan mealPlan = mealPlanService.getMealPlanById(new ObjectId(id));
-        if (mealPlan == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(ApiResponse.error("Meal plan not found", 404))
-                    .build();
-        }
-
-        return Response.ok(ApiResponse.success("mealPlan", mealPlan)).build();
-
+        return mealPlanService.getMealPlanById(new ObjectId(id))
+                .onItem().transform(mealPlan -> {
+                    if (mealPlan == null) {
+                        return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                ApiResponse.error("Meal plan not found", 404));
+                    }
+                    return RestResponse.ok(ApiResponse.success("mealPlan", mealPlan));
+                });
     }
 
     /**
@@ -86,27 +88,24 @@ public class MealPlanResource {
      */
     @PUT
     @Path("/{id}")
-    public Response updateMealPlan(@PathParam("id") String id, @Valid MealPlan mealPlan) {
+    public Uni<RestResponse<ApiResponse>> updateMealPlan(@PathParam("id") String id, @Valid MealPlan mealPlan) {
         try {
             if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
+                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                        ApiResponse.error("Invalid meal plan ID format", 400)));
             }
 
-            MealPlan updatedMealPlan = mealPlanService.updateMealPlan(new ObjectId(id), mealPlan);
-            if (updatedMealPlan == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(ApiResponse.error("Meal plan not found", 404))
-                        .build();
-            }
-
-            return Response.ok(ApiResponse.success("mealPlan", updatedMealPlan)).build();
+            return mealPlanService.updateMealPlan(new ObjectId(id), mealPlan)
+                    .onItem()
+                    .transform(updatedMealPlan -> RestResponse
+                            .ok(ApiResponse.success("mealPlan", updatedMealPlan)))
+                    .onFailure(NotFoundException.class).recoverWithItem(
+                            RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                    ApiResponse.error("Meal plan not found", 404)));
         } catch (ValidationException e) {
             log.warn("Validation error updating meal plan: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues()))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid meal plan data", 400, e.getValidationIssues())));
         }
     }
 
@@ -116,23 +115,21 @@ public class MealPlanResource {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteMealPlan(@PathParam("id") String id) {
+    public Uni<RestResponse<ApiResponse>> deleteMealPlan(@PathParam("id") String id) {
 
         if (!ObjectId.isValid(id)) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Invalid meal plan ID format", 400)));
         }
 
-        boolean deleted = mealPlanService.deleteMealPlan(new ObjectId(id));
-        if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(ApiResponse.error("Meal plan not found", 404))
-                    .build();
-        }
-
-        return Response.ok(ApiResponse.success("message", "Meal plan deleted successfully")).build();
-
+        return mealPlanService.deleteMealPlan(new ObjectId(id))
+                .onItem().transform(deleted -> {
+                    if (!deleted) {
+                        return RestResponse.status(RestResponse.Status.NOT_FOUND,
+                                ApiResponse.error("Meal plan not found", 404));
+                    }
+                    return RestResponse.ok(ApiResponse.success("message", "Meal plan deleted successfully"));
+                });
     }
 
     /**
@@ -141,11 +138,11 @@ public class MealPlanResource {
      */
     @GET
     @Path("/active")
-    public Response getActiveMealPlans() {
+    public Uni<RestResponse<ApiResponse>> getActiveMealPlans() {
 
-        List<MealPlan> activeMealPlans = mealPlanService.findActiveMealPlans();
-        return Response.ok(ApiResponse.success("mealPlans", activeMealPlans)).build();
-
+        return mealPlanService.findActiveMealPlans()
+                .onItem()
+                .transform(activeMealPlans -> RestResponse.ok(ApiResponse.success("mealPlans", activeMealPlans)));
     }
 
     /**
@@ -154,22 +151,21 @@ public class MealPlanResource {
      */
     @GET
     @Path("/search")
-    public Response searchMealPlansByDateRange(
+    public Uni<RestResponse<ApiResponse>> searchMealPlansByDateRange(
             @QueryParam("startDate") String startDateStr,
             @QueryParam("endDate") String endDateStr) {
 
         if (startDateStr == null || endDateStr == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error("Start date and end date parameters are required", 400))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error("Start date and end date parameters are required", 400)));
         }
 
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
 
-        List<MealPlan> mealPlans = mealPlanService.findMealPlansByDateRange(startDate, endDate);
-        return Response.ok(ApiResponse.success("mealPlans", mealPlans)).build();
-
+        return mealPlanService.findMealPlansByDateRange(startDate, endDate)
+                .onItem()
+                .transform(mealPlans -> RestResponse.ok(ApiResponse.success("mealPlans", mealPlans)));
     }
 
     /**
@@ -178,28 +174,30 @@ public class MealPlanResource {
      */
     @POST
     @Path("/{id}/meals/{mealIndex}/complete")
-    public Response completeMeal(@PathParam("id") String id, @PathParam("mealIndex") int mealIndex) {
+    public Uni<RestResponse<ApiResponse>> completeMeal(@PathParam("id") String id,
+            @PathParam("mealIndex") int mealIndex) {
         try {
             if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
+                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                        ApiResponse.error("Invalid meal plan ID format", 400)));
             }
 
             if (mealIndex < 0) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal index", 400))
-                        .build();
+                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                        ApiResponse.error("Invalid meal index", 400)));
             }
 
-            mealPlanService.completeMeal(new ObjectId(id), mealIndex);
-
-            return Response.ok(ApiResponse.success("message", "Meal marked as completed")).build();
+            return mealPlanService.completeMeal(new ObjectId(id), mealIndex)
+                    .onItem()
+                    .transform(mealPlan -> RestResponse.ok(ApiResponse.success("message", "Meal marked as completed")))
+                    .onFailure()
+                    .recoverWithItem(throwable -> RestResponse.status(
+                            RestResponse.Status.BAD_REQUEST,
+                            ApiResponse.error(throwable.getMessage(), 400)));
         } catch (ValidationException e) {
             log.warn("Validation error completing meal: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error(e.getMessage(), 400, e.getValidationIssues())));
         }
     }
 
@@ -209,30 +207,32 @@ public class MealPlanResource {
      */
     @DELETE
     @Path("/{id}/meals/{mealIndex}/complete")
-    public Response uncompleteMeal(@PathParam("id") String id, @PathParam("mealIndex") int mealIndex) {
+    public Uni<RestResponse<ApiResponse>> uncompleteMeal(@PathParam("id") String id,
+            @PathParam("mealIndex") int mealIndex) {
         try {
             if (!ObjectId.isValid(id)) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal plan ID format", 400))
-                        .build();
+                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                        ApiResponse.error("Invalid meal plan ID format", 400)));
             }
 
             if (mealIndex < 0) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Invalid meal index", 400))
-                        .build();
+                return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                        ApiResponse.error("Invalid meal index", 400)));
             }
 
-            mealPlanService.uncompleteMeal(new ObjectId(id), mealIndex);
-
-            return Response
-                    .ok(ApiResponse.success("message", "Meal marked as uncompleted and ingredients restored to pantry"))
-                    .build();
+            return mealPlanService.uncompleteMeal(new ObjectId(id), mealIndex)
+                    .onItem()
+                    .transform(mealPlan -> RestResponse
+                            .ok(ApiResponse.success("message",
+                                    "Meal marked as uncompleted and ingredients restored to pantry")))
+                    .onFailure()
+                    .recoverWithItem(throwable -> RestResponse.status(
+                            RestResponse.Status.BAD_REQUEST,
+                            ApiResponse.error(throwable.getMessage(), 400)));
         } catch (ValidationException e) {
             log.warn("Validation error uncompleting meal: %s", e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
-                    .build();
+            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
+                    ApiResponse.error(e.getMessage(), 400, e.getValidationIssues())));
         }
     }
 }

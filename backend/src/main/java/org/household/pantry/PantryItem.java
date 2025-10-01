@@ -1,8 +1,9 @@
 package org.household.pantry;
 
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 import io.quarkus.panache.common.Sort;
+import io.smallrye.mutiny.Uni;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.util.List;
 
 
 @MongoEntity(collection = "pantryitems")
-public class PantryItem extends PanacheMongoEntity {
+public class PantryItem extends ReactivePanacheMongoEntity {
 
     @NotBlank(message = "Item name is required")
     public String name;
@@ -51,21 +52,21 @@ public class PantryItem extends PanacheMongoEntity {
     /**
      * Find pantry items by name containing the given text (case insensitive)
      */
-    public static List<PantryItem> findByNameContaining(String name) {
+    public static Uni<List<PantryItem>> findByNameContaining(String name) {
         return find("name like ?1", "(?i).*" + name + ".*").list();
     }
 
     /**
      * Find pantry items by category
      */
-    public static List<PantryItem> findByCategory(String category) {
+    public static Uni<List<PantryItem>> findByCategory(String category) {
         return find("category", category).list();
     }
 
     /**
      * Find pantry items expiring soon (within given days)
      */
-    public static List<PantryItem> findExpiringSoon(int days) {
+    public static Uni<List<PantryItem>> findExpiringSoon(int days) {
         LocalDate futureDate = LocalDate.now().plusDays(days);
         return find("expiryDate <= ?1", futureDate).list();
     }
@@ -73,14 +74,14 @@ public class PantryItem extends PanacheMongoEntity {
     /**
      * Find all pantry items ordered by creation date (newest first)
      */
-    public static List<PantryItem> findAllOrderedByCreatedAt() {
+    public static Uni<List<PantryItem>> findAllOrderedByCreatedAt() {
         return findAll(Sort.by("createdAt").descending()).list();
     }
 
     /**
      * Find pantry item by exact name and unit (for ingredient matching)
      */
-    public static PantryItem findByNameAndUnit(String name, String unit) {
+    public static Uni<PantryItem> findByNameAndUnit(String name, String unit) {
         return find("name = ?1 and unit = ?2", name, unit).firstResult();
     }
 

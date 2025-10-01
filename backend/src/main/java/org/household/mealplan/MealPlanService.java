@@ -1,8 +1,10 @@
 package org.household.mealplan;
 
+import io.quarkus.mongodb.panache.common.reactive.Panache;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import org.household.common.ValidationException;
 import org.household.pantry.PantryService;
@@ -25,84 +27,76 @@ public class MealPlanService {
     /**
      * Get all meal plans ordered by start date (newest first)
      */
-    public List<MealPlan> getAllMealPlans() {
+    public Uni<List<MealPlan>> getAllMealPlans() {
         return MealPlan.findAllOrderedByStartDate();
     }
 
     /**
      * Create a new meal plan
      */
-    @Transactional
-    public MealPlan createMealPlan(MealPlan mealPlan) throws ValidationException {
+    public Uni<MealPlan> createMealPlan(MealPlan mealPlan) throws ValidationException {
         validateMealPlan(mealPlan);
 
         mealPlan.prePersist();
-        mealPlan.persist();
-
-        if (mealPlan.id == null) {
-            throw new RuntimeException("Failed to persist meal plan");
-        }
-
-        return mealPlan;
+        return Panache.withTransaction(() -> mealPlan.persist()
+                .onItem().transform(ignored -> {
+                    if (mealPlan.id == null) {
+                        throw new RuntimeException("Failed to persist meal plan");
+                    }
+                    return mealPlan;
+                }));
     }
 
     /**
      * Get a meal plan by ID
      */
-    public MealPlan getMealPlanById(ObjectId id) {
+    public Uni<MealPlan> getMealPlanById(ObjectId id) {
         return MealPlan.findById(id);
     }
 
     /**
      * Update an existing meal plan
      */
-
-    @Transactional
-    public MealPlan updateMealPlan(ObjectId id, MealPlan updatedMealPlan) throws ValidationException {
-        MealPlan existingMealPlan = MealPlan.findById(id);
-        if (existingMealPlan == null) {
-            return null;
-        }
-
+    public Uni<MealPlan> updateMealPlan(ObjectId id, MealPlan updatedMealPlan) throws ValidationException {
         validateMealPlan(updatedMealPlan);
+        return Panache.withTransaction(() -> MealPlan.<MealPlan>findById(id)
+                .onItem().ifNull().failWith(() -> new NotFoundException("Meal plan not found"))
+                .onItem().transformToUni(existingMealPlan -> {
+                    // Update fields
+                    existingMealPlan.name = updatedMealPlan.name;
+                    existingMealPlan.startDate = updatedMealPlan.startDate;
+                    existingMealPlan.endDate = updatedMealPlan.endDate;
+                    existingMealPlan.meals = updatedMealPlan.meals;
 
-        // Update fields
-        existingMealPlan.name = updatedMealPlan.name;
-        existingMealPlan.startDate = updatedMealPlan.startDate;
-        existingMealPlan.endDate = updatedMealPlan.endDate;
-        existingMealPlan.meals = updatedMealPlan.meals;
-
-        existingMealPlan.preUpdate();
-        existingMealPlan.update();
-
-        return existingMealPlan;
+                    existingMealPlan.preUpdate();
+                    return existingMealPlan.update();
+                }));
     }
 
     /**
      * Delete a meal plan by ID
      */
-    @Transactional
-    public boolean deleteMealPlan(ObjectId id) {
-        MealPlan mealPlan = MealPlan.findById(id);
-        if (mealPlan == null) {
-            return false;
-        }
-
-        mealPlan.delete();
-        return true;
+    public Uni<Boolean> deleteMealPlan(ObjectId id) {
+        return Panache.withTransaction(() -> MealPlan.<MealPlan>findById(id)
+                .onItem().transformToUni(mealPlan -> {
+                    if (mealPlan == null) {
+                        return Uni.createFrom().item(false);
+                    }
+                    return mealPlan.delete().replaceWith(true);
+                }));
     }
 
     /**
      * Find meal plans by date range
      */
-    public List<MealPlan> findMealPlansByDateRange(LocalDate start, LocalDate end) {
+    public Uni<List<MealPlan>> findMealPlansByDateRange(LocalDate start, LocalDate end) {
         return MealPlan.findByDateRange(start, end);
     }
 
     /**
      * Find active meal plans
      */
-    public List<MealPlan> findActiveMealPlans() {
+    public Uni<List<MealPlan>> findActiveMealPlans() {
         return MealPlan.findActiveMealPlans();
     }
 
@@ -110,96 +104,97 @@ public class MealPlanService {
      * Complete a meal - mark as completed and remove ingredients from pantry
      * Equivalent to POST /api/mealPlans/[id]/meals/[mealIndex]/complete
      */
-    @Transactional
-    public MealPlan completeMeal(ObjectId mealPlanId, int mealIndex) throws ValidationException {
-        MealPlan mealPlan = MealPlan.<MealPlan>findByIdOptional(mealPlanId)
-                .orElseThrow(() -> new ValidationException("Meal plan not found"));
-        if (mealPlan == null) {
-            throw new ValidationException("Meal plan not found");
-        }
+    public Uni<MealPlan> completeMeal(ObjectId mealPlanId, int mealIndex) throws ValidationException {
+        return Panache.withTransaction(() -> MealPlan.<MealPlan>findById(mealPlanId)
+                .onItem().ifNull().failWith(() -> new ValidationException("Meal plan not found"))
+                .onItem().transformToUni(mealPlan -> {
+                    if (mealIndex < 0 || mealIndex >= mealPlan.meals.size()) {
+                        return Uni.createFrom().failure(new ValidationException("Meal not found"));
+                    }
 
-        if (mealIndex < 0 || mealIndex >= mealPlan.meals.size()) {
-            throw new ValidationException("Meal not found");
-        }
+                    MealPlan.MealPlanItem meal = mealPlan.meals.get(mealIndex);
 
-        MealPlan.MealPlanItem meal = mealPlan.meals.get(mealIndex);
+                    if (meal.isCompleted) {
+                        return Uni.createFrom().failure(new ValidationException("Meal is already marked as completed"));
+                    }
 
-        if (meal.isCompleted) {
-            throw new ValidationException("Meal is already marked as completed");
-        }
+                    // Get recipe details
+                    return Recipe.<Recipe>findById(meal.recipe)
+                            .onItem().ifNull().failWith(() -> new ValidationException("Recipe not found"))
+                            .onItem().transformToUni(recipe -> {
+                                // Process ingredients sequentially
+                                List<MealPlan.RemovedIngredient> removedIngredients = new ArrayList<>();
 
-        // Get recipe details
-        Recipe recipe = Recipe.findById(meal.recipe);
-        if (recipe == null) {
-            throw new ValidationException("Recipe not found");
-        }
+                                // Create a chain of Uni operations for each ingredient
+                                Uni<Void> ingredientChain = Uni.createFrom().voidItem();
 
-        // Remove ingredients from pantry
-        List<MealPlan.RemovedIngredient> removedIngredients = new ArrayList<>();
+                                for (Recipe.Ingredient ingredient : recipe.ingredients) {
+                                    double requiredQuantity = ingredient.quantity * meal.servings / recipe.servings;
 
-        for (Recipe.Ingredient ingredient : recipe.ingredients) {
-            // Calculate required quantity based on servings
-            double requiredQuantity = ingredient.quantity * meal.servings / recipe.servings;
+                                    ingredientChain = ingredientChain.onItem()
+                                            .transformToUni(ignored -> pantryService.reduceIngredientQuantity(
+                                                    ingredient.name,
+                                                    ingredient.unit,
+                                                    requiredQuantity)
+                                                    .onItem().invoke(success -> {
+                                                        if (success) {
+                                                            removedIngredients.add(new MealPlan.RemovedIngredient(
+                                                                    ingredient.name,
+                                                                    requiredQuantity,
+                                                                    ingredient.unit,
+                                                                    ingredient._id.toString()));
+                                                        }
+                                                    })
+                                                    .replaceWithVoid());
+                                }
 
-            boolean success = pantryService.reduceIngredientQuantity(
-                    ingredient.name,
-                    ingredient.unit,
-                    requiredQuantity);
-
-            if (success) {
-                removedIngredients.add(new MealPlan.RemovedIngredient(
-                        ingredient.name,
-                        requiredQuantity,
-                        ingredient.unit,
-                        ingredient._id.toString()));
-            }
-        }
-
-        // Mark meal as completed
-        meal.markAsCompleted(removedIngredients);
-
-        mealPlan.preUpdate();
-        mealPlan.update();
-
-        return mealPlan;
+                                return ingredientChain.onItem().transformToUni(ignored -> {
+                                    // Mark meal as completed
+                                    meal.markAsCompleted(removedIngredients);
+                                    mealPlan.preUpdate();
+                                    return mealPlan.update();
+                                });
+                            });
+                }));
     }
 
     /**
      * Uncomplete a meal - mark as uncompleted and restore ingredients to pantry
      * Equivalent to DELETE /api/mealPlans/[id]/meals/[mealIndex]/complete
      */
-    @Transactional
-    public MealPlan uncompleteMeal(ObjectId mealPlanId, int mealIndex) throws ValidationException {
-        MealPlan mealPlan = MealPlan.findById(mealPlanId);
-        if (mealPlan == null) {
-            throw new ValidationException("Meal plan not found");
-        }
+    public Uni<MealPlan> uncompleteMeal(ObjectId mealPlanId, int mealIndex) throws ValidationException {
+        return Panache.withTransaction(() -> MealPlan.<MealPlan>findById(mealPlanId)
+                .onItem().ifNull().failWith(() -> new ValidationException("Meal plan not found"))
+                .onItem().transformToUni(mealPlan -> {
+                    if (mealIndex < 0 || mealIndex >= mealPlan.meals.size()) {
+                        return Uni.createFrom().failure(new ValidationException("Meal not found"));
+                    }
 
-        if (mealIndex < 0 || mealIndex >= mealPlan.meals.size()) {
-            throw new ValidationException("Meal not found");
-        }
+                    MealPlan.MealPlanItem meal = mealPlan.meals.get(mealIndex);
 
-        MealPlan.MealPlanItem meal = mealPlan.meals.get(mealIndex);
+                    if (!meal.isCompleted) {
+                        return Uni.createFrom().failure(new ValidationException("Meal is not marked as completed"));
+                    }
 
-        if (!meal.isCompleted) {
-            throw new ValidationException("Meal is not marked as completed");
-        }
+                    // Create a chain of Uni operations for each removed ingredient
+                    Uni<Void> restoreChain = Uni.createFrom().voidItem();
 
-        // Restore ingredients to pantry
-        for (MealPlan.RemovedIngredient removedIngredient : meal.removedIngredients) {
-            pantryService.increaseIngredientQuantity(
-                    removedIngredient.ingredientName,
-                    removedIngredient.unit,
-                    removedIngredient.quantity);
-        }
+                    for (MealPlan.RemovedIngredient removedIngredient : meal.removedIngredients) {
+                        restoreChain = restoreChain.onItem()
+                                .transformToUni(ignored -> pantryService.increaseIngredientQuantity(
+                                        removedIngredient.ingredientName,
+                                        removedIngredient.unit,
+                                        removedIngredient.quantity)
+                                        .replaceWithVoid());
+                    }
 
-        // Mark meal as uncompleted
-        meal.markAsUncompleted();
-
-        mealPlan.preUpdate();
-        mealPlan.update();
-
-        return mealPlan;
+                    return restoreChain.onItem().transformToUni(ignored -> {
+                        // Mark meal as uncompleted
+                        meal.markAsUncompleted();
+                        mealPlan.preUpdate();
+                        return mealPlan.update();
+                    });
+                }));
     }
 
     /**
@@ -246,8 +241,7 @@ public class MealPlanService {
         }
     }
 
-    public List<MealPlan> findMealPlansIncludeDate(LocalDate date) {
+    public Uni<List<MealPlan>> findMealPlansIncludeDate(LocalDate date) {
         return MealPlan.findMealPlansIncludeDate(date);
-
     }
 }

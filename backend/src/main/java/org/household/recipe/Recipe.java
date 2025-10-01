@@ -1,7 +1,9 @@
 package org.household.recipe;
 
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import io.quarkus.panache.common.Sort;
+import io.smallrye.mutiny.Uni;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
@@ -15,7 +17,7 @@ import java.util.List;
  * Equivalent to the Next.js Recipe model
  */
 @MongoEntity(collection = "recipes")
-public class Recipe extends PanacheMongoEntity {
+public class Recipe extends ReactivePanacheMongoEntity {
 
     @NotBlank(message = "Recipe name must be at least 2 characters")
     @Size(min = 2, message = "Recipe name must be at least 2 characters")
@@ -68,22 +70,22 @@ public class Recipe extends PanacheMongoEntity {
     /**
      * Find recipes by name containing the given text (case insensitive)
      */
-    public static List<Recipe> findByNameContaining(String name) {
-        return find("name", name.toLowerCase()).list();
+    public static Uni<List<Recipe>> findByNameContaining(String name) {
+        return find("name like ?1", "(?i).*" + name + ".*").list();
     }
 
     /**
      * Find recipes by tag
      */
-    public static List<Recipe> findByTag(String tag) {
+    public static Uni<List<Recipe>> findByTag(String tag) {
         return find("tags", tag).list();
     }
 
     /**
      * Find all recipes ordered by creation date (newest first)
      */
-    public static List<Recipe> findAllOrderedByCreatedAt() {
-        return findAll().list();
+    public static Uni<List<Recipe>> findAllOrderedByCreatedAt() {
+        return findAll(Sort.by("createdAt").descending()).list();
     }
 
     /**
