@@ -1,13 +1,11 @@
 package org.household.recipe;
 
-import io.quarkus.panache.common.Sort;
 import io.quarkus.mongodb.panache.common.reactive.Panache;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import org.household.common.ValidationException;
-import org.household.recipe.Recipe;
 
 import java.util.List;
 

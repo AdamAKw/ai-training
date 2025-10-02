@@ -53,7 +53,7 @@ public class ShoppingListService {
      */
     @Transactional
     public ShoppingList createShoppingListFromMealPlan(ObjectId mealPlanId, String name) throws ValidationException {
-        MealPlan mealPlan = MealPlan.findById(mealPlanId);
+        MealPlan mealPlan = MealPlan.<MealPlan>findById(mealPlanId).await().indefinitely();
         if (mealPlan == null) {
             throw new ValidationException("Meal plan not found");
         }
@@ -67,7 +67,7 @@ public class ShoppingListService {
         Map<String, ShoppingList.ShoppingListItem> ingredientMap = new HashMap<>();
 
         for (MealPlan.MealPlanItem meal : mealPlan.meals) {
-            Recipe recipe = Recipe.findById(meal.recipe);
+            Recipe recipe = Recipe.<Recipe>findById(meal.recipe).await().indefinitely();
             if (recipe != null) {
                 for (Recipe.Ingredient ingredient : recipe.ingredients) {
                     // Calculate required quantity based on servings
@@ -167,7 +167,7 @@ public class ShoppingListService {
                     boolean increased = pantryService.increaseIngredientQuantity(
                             item.name,
                             item.unit,
-                            item.quantity);
+                            item.quantity).await().indefinitely();
 
                     if (!increased) {
                         // Create new pantry item if doesn't exist
@@ -305,7 +305,7 @@ public class ShoppingListService {
             boolean increased = pantryService.increaseIngredientQuantity(
                     targetItem.name,
                     targetItem.unit,
-                    targetItem.quantity);
+                    targetItem.quantity).await().indefinitely();
 
             if (!increased) {
                 // Create new pantry item if doesn't exist
@@ -391,7 +391,7 @@ public class ShoppingListService {
             boolean increased = pantryService.increaseIngredientQuantity(
                     item.name,
                     item.unit,
-                    item.quantity);
+                    item.quantity).await().indefinitely();
 
             if (!increased) {
                 // Create new pantry item if doesn't exist
@@ -439,7 +439,7 @@ public class ShoppingListService {
 
         // Check if item is in pantry (could be used for inPantry field if added to
         // ShoppingListItem)
-        List<org.household.pantry.PantryItem> pantryItems = pantryService.getAllPantryItems();
+        List<org.household.pantry.PantryItem> pantryItems = pantryService.getAllPantryItems().await().indefinitely();
         for (org.household.pantry.PantryItem pantryItem : pantryItems) {
             if (pantryItem.name.toLowerCase().equals(itemData.ingredient.toLowerCase()) &&
                     pantryItem.unit.toLowerCase().equals(itemData.unit.toLowerCase()) &&
