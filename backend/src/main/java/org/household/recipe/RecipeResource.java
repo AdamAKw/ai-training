@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.household.common.ApiResponse;
 import org.household.common.ValidationException;
@@ -15,6 +16,7 @@ import io.smallrye.mutiny.Uni;
 @Path("/api/recipes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Slf4j
 public class RecipeResource {
 
     private static final Logger LOG = Logger.getLogger(RecipeResource.class);
@@ -22,10 +24,7 @@ public class RecipeResource {
     @Inject
     RecipeService recipeService;
 
-    /**
-     * GET /api/recipes
-     * Fetch all recipes
-     */
+
     @GET
     public Uni<RestResponse<ApiResponse>> getAllRecipes() {
         return recipeService.getAllRecipes()
@@ -41,7 +40,7 @@ public class RecipeResource {
                         ApiResponse.success("recipe", createdRecipe)))
                 .onFailure(ValidationException.class)
                 .recoverWithItem(ex -> {
-                    LOG.warnf("Validation error creating recipe: %s", ex.getMessage());
+                    log.warn("Validation error creating recipe: {}", ex.getMessage());
                     return RestResponse.status(RestResponse.Status.BAD_REQUEST, ApiResponse.error("Invalid recipe data",
                             400, ((ValidationException) ex).getValidationIssues()));
                 });

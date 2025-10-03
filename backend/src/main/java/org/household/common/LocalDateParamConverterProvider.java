@@ -20,7 +20,7 @@ public class LocalDateParamConverterProvider implements ParamConverterProvider {
         return null;
     }
 
-    public class LocalDateParamConverter implements ParamConverter<LocalDate> {
+    public static class LocalDateParamConverter implements ParamConverter<LocalDate> {
 
         @Override
         public LocalDate fromString(String value) {

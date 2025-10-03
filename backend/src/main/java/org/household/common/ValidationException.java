@@ -1,11 +1,15 @@
 package org.household.common;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Custom exception for validation errors
  * Used to handle validation failures in services
  */
+@Setter
+@Getter
 public class ValidationException extends Exception {
 
     private List<ValidationIssue> validationIssues;
@@ -25,11 +29,4 @@ public class ValidationException extends Exception {
         this.validationIssues = List.of(new ValidationIssue(field, message, code));
     }
 
-    public List<ValidationIssue> getValidationIssues() {
-        return validationIssues;
-    }
-
-    public void setValidationIssues(List<ValidationIssue> validationIssues) {
-        this.validationIssues = validationIssues;
-    }
 }

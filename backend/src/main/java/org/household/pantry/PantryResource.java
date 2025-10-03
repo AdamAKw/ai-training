@@ -2,6 +2,7 @@ package org.household.pantry;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ import io.smallrye.mutiny.Uni;
 public class PantryResource {
 
         @Inject
+        PantryItemMapper mapper;
+        @Inject
         PantryService pantryService;
 
         @GET
@@ -28,13 +31,12 @@ public class PantryResource {
                 return pantryService.getAllPantryItems()
                                 .onItem()
                                 .transform(items -> RestResponse.ok(ApiResponse.success("pantryItems", items)));
-
         }
 
         @POST
-        public Uni<RestResponse<ApiResponse>> createPantryItem(@Valid PantryItem pantryItem) {
+        public Uni<RestResponse<ApiResponse>> createPantryItem(@Valid @NotNull CreateItemRequest pantryItem) {
                 try {
-                        return pantryService.createPantryItem(pantryItem)
+                        return pantryService.createPantryItem(mapper.createToPantryItem(pantryItem))
                                         .onItem()
                                         .transform(createdItem -> RestResponse.status(RestResponse.Status.CREATED,
                                                         ApiResponse.success("pantryItem", createdItem)))
