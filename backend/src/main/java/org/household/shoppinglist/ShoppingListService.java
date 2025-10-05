@@ -177,12 +177,12 @@ public class ShoppingListService {
                         pantryItem.unit = item.unit;
                         pantryItem.category = item.category;
 
-                        try {
+//                        try {
                             pantryService.createPantryItem(pantryItem);
-                        } catch (ValidationException e) {
-                            // Log error but don't fail the shopping list completion
-                            System.err.println("Failed to add item to pantry: " + e.getMessage());
-                        }
+//                        } catch (ValidationException e) {
+//                             Log error but don't fail the shopping list completion
+//                            System.err.println("Failed to add item to pantry: " + e.getMessage());
+//                        }
                     }
                 }
             }
@@ -315,11 +315,11 @@ public class ShoppingListService {
                 pantryItem.unit = targetItem.unit;
                 pantryItem.category = targetItem.category;
 
-                try {
+//                try {
                     pantryService.createPantryItem(pantryItem);
-                } catch (ValidationException e) {
-                    System.err.println("Failed to add item to pantry: " + e.getMessage());
-                }
+//                } catch (ValidationException e) {
+//                    System.err.println("Failed to add item to pantry: " + e.getMessage());
+//                }
             }
         }
 
@@ -401,11 +401,11 @@ public class ShoppingListService {
                 pantryItem.unit = item.unit;
                 pantryItem.category = item.category;
 
-                try {
+//                try {
                     pantryService.createPantryItem(pantryItem);
-                } catch (ValidationException e) {
-                    System.err.println("Failed to add item to pantry: " + e.getMessage());
-                }
+//                } catch (ValidationException e) {
+//                    System.err.println("Failed to add item to pantry: " + e.getMessage());
+//                }
             }
         }
 

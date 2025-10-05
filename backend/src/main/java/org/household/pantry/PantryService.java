@@ -28,7 +28,8 @@ public class PantryService {
     /**
      * Create a new pantry item
      */
-    public Uni<PantryItem> createPantryItem(PantryItem pantryItem) throws ValidationException {
+    //TODO Dodać walidację ale jako nie przez exception tylko prze uni, tj walidaca ma zwróicć true lub false i zwrócić uni z błędem
+    public Uni<PantryItem> createPantryItem(PantryItem pantryItem) {
         pantryItem.prePersist();
         return Panache.withTransaction(pantryItem::persist);
     }
