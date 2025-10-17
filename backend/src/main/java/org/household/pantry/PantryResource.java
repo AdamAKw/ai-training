@@ -29,7 +29,6 @@ public class PantryResource {
     PantryService pantryService;
 
 
-
     @GET
     public Uni<RestResponse<ApiResponse>> getAllPantryItems() {
         return pantryService.getAllPantryItems()
@@ -53,13 +52,7 @@ public class PantryResource {
     @GET
     @Path("/{id}")
     public Uni<RestResponse<ApiResponse>> getPantryItemById(@PathParam("id") ObjectId id) {
-        // TODO usunać stąd walidację i zrobić to przy pomocy ExceptionMapper, błąd zwrócić z  ObjectIdConverterProvider
-
-//        if (!ObjectId.isValid(id)) {
-//            return Uni.createFrom().item(RestResponse.status(RestResponse.Status.BAD_REQUEST,
-//                ApiResponse.error("Invalid pantry item ID format", 400)));
-//        }
-
+        // TODO walidacja została przeniesiona do ParamaterConverer, który wyrzuca błąd, quarkus rczytując id i wywalając błąd łapiego i wyrzyca jako 404 not found, należy to obsłyżyć odpoweidnim mapperem
         return pantryService.getPantryItemById(id)
             .onItem().transform(pantryItem -> {
                 if (pantryItem == null) {

@@ -5,7 +5,7 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
-@Provider
+//@Provider
 @Slf4j
 public class GenericErrorMapper implements ExceptionMapper<Exception> {
 

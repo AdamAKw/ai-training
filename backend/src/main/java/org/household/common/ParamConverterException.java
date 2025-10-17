@@ -1,9 +1,11 @@
 package org.household.common;
 
 import lombok.NoArgsConstructor;
+import org.jboss.resteasy.reactive.server.UnwrapException;
 
 @NoArgsConstructor
-public class ParamConverterException extends IllegalArgumentException {
+@UnwrapException
+public class ParamConverterException extends RuntimeException {
     public ParamConverterException(String message) {
         super(message);
     }
