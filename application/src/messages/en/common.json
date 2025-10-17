@@ -356,6 +356,7 @@
     },
     "new": {
       "title": "Create New Recipe",
+      "description": "Add a new recipe to your collection",
       "validationFailed": "Validation failed",
       "createFailed": "Failed to create recipe",
       "unexpectedError": "An error occurred"
@@ -392,21 +393,87 @@
       "updateFailed": "Failed to update recipe",
       "validationFailed": "Validation failed",
       "unexpectedError": "An error occurred"
+    },
+    "form": {
+      "name": {
+        "label": "Recipe Name",
+        "placeholder": "Enter recipe name",
+        "description": "Choose a descriptive name for your recipe"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe your recipe (optional)",
+        "description": "Brief description of the recipe"
+      },
+      "ingredients": {
+        "title": "Ingredients",
+        "description": "Add all ingredients needed for this recipe",
+        "name": {
+          "label": "Ingredient Name",
+          "placeholder": "e.g., Flour, Salt, Sugar"
+        },
+        "quantity": {
+          "label": "Quantity"
+        },
+        "unit": {
+          "label": "Unit",
+          "placeholder": "cups, tbsp, oz"
+        },
+        "addButton": "Add Ingredient"
+      },
+      "instructions": {
+        "title": "Instructions",
+        "description": "Step-by-step cooking instructions",
+        "placeholder": "Describe this cooking step in detail",
+        "addButton": "Add Step",
+        "step": "Step"
+      },
+      "prepTime": {
+        "label": "Prep Time (minutes)",
+        "description": "Time needed for preparation"
+      },
+      "cookTime": {
+        "label": "Cook Time (minutes)",
+        "description": "Time needed for cooking"
+      },
+      "servings": {
+        "label": "Servings",
+        "description": "Number of people this serves"
+      },
+      "imageUrl": {
+        "label": "Image URL",
+        "placeholder": "https://example.com/recipe-image.jpg",
+        "description": "Optional image URL for your recipe"
+      },
+      "basicInfo": "Basic Information",
+      "basicInfoDescription": "Essential details about your recipe",
+      "additionalInfo": {
+        "title": "Additional Information",
+        "description": "Optional details to enhance your recipe"
+      },
+      "saveButton": "Save Recipe",
+      "saving": "Saving..."
     }
   },
   "recipe": {
     "name": {
       "label": "Recipe Name",
+      "placeholder": "Enter recipe name",
+      "description": "Choose a descriptive name for your recipe",
       "required": "Recipe name is required",
       "minLength": "Recipe name must be at least 2 characters"
     },
     "description": {
-      "label": "Description"
+      "label": "Description",
+      "placeholder": "Describe your recipe (optional)",
+      "description": "Brief description of the recipe"
     },
     "ingredients": {
       "title": "Ingredients",
+      "description": "Add all ingredients needed for this recipe",
       "name": {
         "label": "Ingredient Name",
+        "placeholder": "e.g., Flour, Salt, Sugar",
         "required": "Ingredient name is required"
       },
       "quantity": {
@@ -416,6 +483,7 @@
       },
       "unit": {
         "label": "Unit",
+        "placeholder": "cups, tbsp, oz",
         "required": "Unit is required"
       },
       "addButton": "Add Ingredient",
@@ -423,29 +491,41 @@
     },
     "instructions": {
       "title": "Instructions",
+      "description": "Step-by-step cooking instructions",
       "label": "Add instruction steps one by one",
-      "placeholder": "Enter an instruction step",
-      "addButton": "Add",
+      "placeholder": "Describe this cooking step in detail",
+      "addButton": "Add Step",
+      "step": "Step",
       "steps": "Steps",
       "atLeastOne": "At least one instruction is required"
     },
     "prepTime": {
       "label": "Prep Time (minutes)",
+      "description": "Time needed for preparation",
       "negative": "Prep time cannot be negative"
     },
     "cookTime": {
       "label": "Cook Time (minutes)",
+      "description": "Time needed for cooking",
       "negative": "Cook time cannot be negative"
     },
     "servings": {
       "label": "Servings",
+      "description": "Number of people this serves",
       "positive": "Servings must be positive"
     },
     "imageUrl": {
       "label": "Image URL",
+      "placeholder": "https://example.com/recipe-image.jpg",
+      "description": "Optional image URL for your recipe",
       "invalid": "Image URL must be valid"
     },
     "basicInfo": "Basic Information",
+    "basicInfoDescription": "Essential details about your recipe",
+    "additionalInfo": {
+      "title": "Additional Information",
+      "description": "Optional details to enhance your recipe"
+    },
     "saveButton": "Save Recipe",
     "saving": "Saving..."
   }

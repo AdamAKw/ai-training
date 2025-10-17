@@ -355,6 +355,7 @@
     },
     "new": {
       "title": "Utwórz nowy przepis",
+      "description": "Dodaj nowy przepis do swojej kolekcji",
       "validationFailed": "Walidacja nie powiodła się",
       "createFailed": "Nie udało się utworzyć przepisu",
       "unexpectedError": "Wystąpił błąd"
@@ -391,21 +392,87 @@
       "updateFailed": "Nie udało się zaktualizować przepisu",
       "validationFailed": "Walidacja nie powiodła się",
       "unexpectedError": "Wystąpił błąd"
+    },
+    "form": {
+      "name": {
+        "label": "Nazwa przepisu",
+        "placeholder": "Wprowadź nazwę przepisu",
+        "description": "Wybierz opisową nazwę dla swojego przepisu"
+      },
+      "description": {
+        "label": "Opis",
+        "placeholder": "Opisz swój przepis (opcjonalnie)",
+        "description": "Krótki opis przepisu"
+      },
+      "ingredients": {
+        "title": "Składniki",
+        "description": "Dodaj wszystkie składniki potrzebne do tego przepisu",
+        "name": {
+          "label": "Nazwa składnika",
+          "placeholder": "np. Mąka, Sól, Cukier"
+        },
+        "quantity": {
+          "label": "Ilość"
+        },
+        "unit": {
+          "label": "Jednostka",
+          "placeholder": "szklanki, łyżki, kg"
+        },
+        "addButton": "Dodaj składnik"
+      },
+      "instructions": {
+        "title": "Instrukcje",
+        "description": "Instrukcje gotowania krok po kroku",
+        "placeholder": "Opisz szczegółowo ten krok gotowania",
+        "addButton": "Dodaj krok",
+        "step": "Krok"
+      },
+      "prepTime": {
+        "label": "Czas przygotowania (minuty)",
+        "description": "Czas potrzebny na przygotowanie"
+      },
+      "cookTime": {
+        "label": "Czas gotowania (minuty)",
+        "description": "Czas potrzebny na gotowanie"
+      },
+      "servings": {
+        "label": "Porcje",
+        "description": "Ile osób to pokarmi"
+      },
+      "imageUrl": {
+        "label": "URL obrazu",
+        "placeholder": "https://example.com/recipe-image.jpg",
+        "description": "Opcjonalny URL obrazu dla twojego przepisu"
+      },
+      "basicInfo": "Podstawowe informacje",
+      "basicInfoDescription": "Istotne szczegóły o twoim przepisie",
+      "additionalInfo": {
+        "title": "Dodatkowe informacje",
+        "description": "Opcjonalne szczegóły wzbogacające twój przepis"
+      },
+      "saveButton": "Zapisz przepis",
+      "saving": "Zapisywanie..."
     }
   },
   "recipe": {
     "name": {
       "label": "Nazwa przepisu",
+      "placeholder": "Wprowadź nazwę przepisu",
+      "description": "Wybierz opisową nazwę dla swojego przepisu",
       "required": "Nazwa przepisu jest wymagana",
       "minLength": "Nazwa przepisu musi mieć co najmniej 2 znaki"
     },
     "description": {
-      "label": "Opis"
+      "label": "Opis",
+      "placeholder": "Opisz swój przepis (opcjonalnie)",
+      "description": "Krótki opis przepisu"
     },
     "ingredients": {
       "title": "Składniki",
+      "description": "Dodaj wszystkie składniki potrzebne do tego przepisu",
       "name": {
         "label": "Nazwa składnika",
+        "placeholder": "np. Mąka, Sól, Cukier",
         "required": "Nazwa składnika jest wymagana"
       },
       "quantity": {
@@ -415,6 +482,7 @@
       },
       "unit": {
         "label": "Jednostka",
+        "placeholder": "szklanki, łyżki, kg",
         "required": "Jednostka jest wymagana"
       },
       "addButton": "Dodaj składnik",
@@ -422,29 +490,41 @@
     },
     "instructions": {
       "title": "Instrukcje",
+      "description": "Instrukcje gotowania krok po kroku",
       "label": "Dodaj kroki instrukcji jeden po drugim",
-      "placeholder": "Wprowadź krok instrukcji",
-      "addButton": "Dodaj",
+      "placeholder": "Opisz szczegółowo ten krok gotowania",
+      "addButton": "Dodaj krok",
+      "step": "Krok",
       "steps": "Kroki",
       "atLeastOne": "Wymagana jest co najmniej jedna instrukcja"
     },
     "prepTime": {
       "label": "Czas przygotowania (minuty)",
+      "description": "Czas potrzebny na przygotowanie",
       "negative": "Czas przygotowania nie może być ujemny"
     },
     "cookTime": {
       "label": "Czas gotowania (minuty)",
+      "description": "Czas potrzebny na gotowanie",
       "negative": "Czas gotowania nie może być ujemny"
     },
     "servings": {
       "label": "Porcje",
+      "description": "Ile osób to pokarmi",
       "positive": "Liczba porcji musi być dodatnia"
     },
     "imageUrl": {
       "label": "URL obrazu",
+      "placeholder": "https://example.com/recipe-image.jpg",
+      "description": "Opcjonalny URL obrazu dla twojego przepisu",
       "invalid": "URL obrazu musi być prawidłowy"
     },
     "basicInfo": "Podstawowe informacje",
+    "basicInfoDescription": "Istotne szczegóły o twoim przepisie",
+    "additionalInfo": {
+      "title": "Dodatkowe informacje",
+      "description": "Opcjonalne szczegóły wzbogacające twój przepis"
+    },
     "saveButton": "Zapisz przepis",
     "saving": "Zapisywanie..."
   }
