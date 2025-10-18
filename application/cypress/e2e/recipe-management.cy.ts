@@ -35,7 +35,9 @@ describe('Cooking App - Recipe Management', () => {
         // Wypełniamy pierwszy składnik jeśli jest pusty
         cy.get('input[name="ingredients.0.name"]').clear().type('Test składnik')
         cy.get('input[name="ingredients.0.quantity"]').clear().type('500')
-        cy.get('input[name="ingredients.0.unit"]').clear().type('g')
+        // Wybieramy jednostkę z dropdown (now it's a Select component)
+        cy.get('[role="combobox"]').first().click()
+        cy.get('[role="option"]').contains('Gram').click()
 
         // Sprawdzamy czy jest przynajmniej jedna instrukcja
         cy.get('textarea[name*="instructions"], input[name*="instructions"]').should('have.length.greaterThan', 0)
