@@ -227,11 +227,11 @@
       "g": "Gram",
       "l": "Liter",
       "ml": "Milliliter",
-      "szt": "Piece",
-      "łyżka": "Tablespoon",
-      "łyżeczka": "Teaspoon",
-      "szklanka": "Cup",
-      "opakowanie": "Package"
+      "piece": "Piece",
+      "tablespoon": "Tablespoon",
+      "teaspoon": "Teaspoon",
+      "cup": "Cup",
+      "package": "Package"
     },
     "item": {
       "removeConfirm": "Remove {item} from the shopping list?",
@@ -275,11 +275,11 @@
       "g": "Gram",
       "l": "Liter",
       "ml": "Milliliter",
-      "szt": "Piece",
-      "łyżka": "Tablespoon",
-      "łyżeczka": "Teaspoon",
-      "szklanka": "Cup",
-      "opakowanie": "Package"
+      "piece": "Piece",
+      "tablespoon": "Tablespoon",
+      "teaspoon": "Teaspoon",
+      "cup": "Cup",
+      "package": "Package"
     },
     "categories": {
       "warzywa": "Vegetables",

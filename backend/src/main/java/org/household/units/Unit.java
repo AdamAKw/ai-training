@@ -6,24 +6,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Unit {
-    PIECE("piece", "pantry.units.piece"),
+    PIECE("piece"),
 
-    G("g", "label.units.g"),
+    G("g"),
 
-    KG("kg", "pantry.units.kg"),
+    KG("kg"),
 
-    ML("ml", "pantry.units.ml"),
+    ML("ml"),
 
-    L("l", "pantry.units.l"),
+    L("l"),
 
-    SPOON("spoon", "pantry.units.spoon"),
+    TABLESPOON("tablespoon"),
 
-    TEASPOON("teaspoon", "pantry.units.teaspoon"),
+    TEASPOON("teaspoon"),
 
-    GLASS("glass", "pantry.units.glass"),
+    CUP("cup"),
 
-    PACKAGE("package", "pantry.units.package"),
+    PACKAGE("package"),
     ;
     private final String value;
-    private final String label;
 }

@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React, {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useTranslations} from "next-intl";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,16 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { IPantryItem } from "@/models/pantryItem";
-import { format } from "date-fns";
-import { pl } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
+import {Calendar} from "@/components/ui/calendar";
+import {IPantryItem} from "@/models/pantryItem";
+import {format} from "date-fns";
+import {pl} from "date-fns/locale";
+import {cn} from "@/lib/utils";
+import {Unit, useUnitsWithTranslations} from "@/utils/units/Units";
 
 interface PantryFormProps {
   initialData?: Partial<IPantryItem>;
@@ -63,19 +54,7 @@ export function PantryForm({
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Common units for pantry items
-  const unitOptions = [
-    { value: "szt.", label: t("pantry.units.szt") },
-    { value: "g", label: t("pantry.units.g") },
-    { value: "kg", label: t("pantry.units.kg") },
-    { value: "ml", label: t("pantry.units.ml") },
-    { value: "l", label: t("pantry.units.l") },
-    { value: "łyżka", label: t("pantry.units.łyżka") },
-    { value: "łyżeczka", label: t("pantry.units.łyżeczka") },
-    { value: "szklanka", label: t("pantry.units.szklanka") },
-    { value: "opakowanie", label: t("pantry.units.opakowanie") },
-  ];
-
+  const unitOptions = useUnitsWithTranslations();
   // Common categories for pantry items
   const categoryOptions = [
     { value: "warzywa", label: t("pantry.categories.warzywa") },

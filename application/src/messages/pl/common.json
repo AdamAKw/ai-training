@@ -226,11 +226,11 @@
       "g": "Gram",
       "l": "Litr",
       "ml": "Mililitr",
-      "szt": "Sztuka",
-      "łyżka": "Łyżka",
-      "łyżeczka": "Łyżeczka",
-      "szklanka": "Szklanka",
-      "opakowanie": "Opakowanie"
+      "piece": "Sztuka",
+      "tablespoon": "Łyżka",
+      "teaspoon": "Łyżeczka",
+      "cup": "Szklanka",
+      "package": "Opakowanie"
     },
     "item": {
       "removeConfirm": "Usunąć {item} z listy zakupów?",
@@ -274,11 +274,11 @@
       "g": "Gram",
       "l": "Litr",
       "ml": "Mililitr",
-      "szt": "Sztuka",
-      "łyżka": "Łyżka",
-      "łyżeczka": "Łyżeczka",
-      "szklanka": "Szklanka",
-      "opakowanie": "Opakowanie"
+      "piece": "Sztuka",
+      "tablespoon": "Łyżka",
+      "teaspoon": "Łyżeczka",
+      "cup": "Szklanka",
+      "package": "Opakowanie"
     },
     "categories": {
       "warzywa": "Warzywa",
