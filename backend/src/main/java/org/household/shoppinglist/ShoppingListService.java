@@ -28,7 +28,13 @@ public class ShoppingListService {
      * Get all shopping lists ordered by creation date (newest first)
      */
     public List<ShoppingList> getAllShoppingLists() {
-        return ShoppingList.findAllOrderedByCreatedAt();
+        List<ShoppingList> lists = ShoppingList.findAllOrderedByCreatedAt();
+        // Generate IDs and update pantry status for items before returning
+        for (ShoppingList list : lists) {
+            list.generateAndSetItemIds();
+            updatePantryStatus(list);
+        }
+        return lists;
     }
 
     /**
@@ -103,7 +109,12 @@ public class ShoppingListService {
      * Get a shopping list by ID
      */
     public ShoppingList getShoppingListById(ObjectId id) {
-        return ShoppingList.findById(id);
+        ShoppingList list = ShoppingList.findById(id);
+        if (list != null) {
+            list.generateAndSetItemIds();
+            updatePantryStatus(list);
+        }
+        return list;
     }
 
     /**
@@ -125,6 +136,7 @@ public class ShoppingListService {
 
         existingList.preUpdate();
         existingList.update();
+        existingList.generateAndSetItemIds();
 
         return existingList;
     }
@@ -141,6 +153,40 @@ public class ShoppingListService {
 
         shoppingList.delete();
         return true;
+    }
+
+    /**
+     * Copy an existing shopping list
+     */
+    @Transactional
+    public ShoppingList copyShoppingList(ObjectId id, String newName) throws ValidationException {
+        ShoppingList originalList = ShoppingList.findById(id);
+        if (originalList == null) {
+            return null;
+        }
+
+        ShoppingList copiedList = new ShoppingList();
+        copiedList.name = newName != null ? newName : originalList.name + " (Copy)";
+        copiedList.description = originalList.description;
+        copiedList.mealPlan = originalList.mealPlan;
+
+        // Copy items with reset purchased status
+        copiedList.items = new ArrayList<>();
+        for (ShoppingList.ShoppingListItem item : originalList.items) {
+            ShoppingList.ShoppingListItem copiedItem = new ShoppingList.ShoppingListItem();
+            copiedItem.name = item.name;
+            copiedItem.quantity = item.quantity;
+            copiedItem.unit = item.unit;
+            copiedItem.category = item.category;
+            copiedItem.notes = item.notes;
+            copiedItem.recipe = item.recipe;
+            copiedItem.originalIngredientName = item.originalIngredientName;
+            copiedItem.isPurchased = false; // Reset purchased status
+            
+            copiedList.items.add(copiedItem);
+        }
+
+        return createShoppingList(copiedList);
     }
 
     /**
@@ -177,12 +223,7 @@ public class ShoppingListService {
                         pantryItem.unit = item.unit;
                         pantryItem.category = item.category;
 
-//                        try {
-                            pantryService.createPantryItem(pantryItem);
-//                        } catch (ValidationException e) {
-//                             Log error but don't fail the shopping list completion
-//                            System.err.println("Failed to add item to pantry: " + e.getMessage());
-//                        }
+                        pantryService.createPantryItem(pantryItem).await().indefinitely();
                     }
                 }
             }
@@ -190,6 +231,8 @@ public class ShoppingListService {
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
@@ -220,6 +263,8 @@ public class ShoppingListService {
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
@@ -281,13 +326,13 @@ public class ShoppingListService {
             throw new ValidationException("Shopping list not found");
         }
 
-        // Find item by comparing toString() of the ObjectId
+        // Generate IDs first if not already set
+        shoppingList.generateAndSetItemIds();
+        
+        // Find item by ID
         ShoppingList.ShoppingListItem targetItem = null;
         for (ShoppingList.ShoppingListItem item : shoppingList.items) {
-            // Generate item ID based on item properties (similar to MongoDB ObjectId
-            // generation)
-            String generatedId = generateItemId(item);
-            if (generatedId.equals(itemId)) {
+            if (item.id != null && item.id.equals(itemId)) {
                 targetItem = item;
                 break;
             }
@@ -315,16 +360,14 @@ public class ShoppingListService {
                 pantryItem.unit = targetItem.unit;
                 pantryItem.category = targetItem.category;
 
-//                try {
-                    pantryService.createPantryItem(pantryItem);
-//                } catch (ValidationException e) {
-//                    System.err.println("Failed to add item to pantry: " + e.getMessage());
-//                }
+                pantryService.createPantryItem(pantryItem).await().indefinitely();
             }
         }
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
@@ -339,11 +382,13 @@ public class ShoppingListService {
             throw new ValidationException("Shopping list not found");
         }
 
-        // Remove item by comparing generated IDs
-        boolean removed = shoppingList.items.removeIf(item -> {
-            String generatedId = generateItemId(item);
-            return generatedId.equals(itemId);
-        });
+        // Generate IDs first if not already set
+        shoppingList.generateAndSetItemIds();
+        
+        // Remove item by comparing IDs
+        boolean removed = shoppingList.items.removeIf(item -> 
+            item.id != null && item.id.equals(itemId)
+        );
 
         if (!removed) {
             throw new ValidationException("Item not found in shopping list");
@@ -351,6 +396,8 @@ public class ShoppingListService {
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
@@ -366,14 +413,16 @@ public class ShoppingListService {
             throw new ValidationException("Shopping list not found");
         }
 
+        // Generate IDs first if not already set
+        shoppingList.generateAndSetItemIds();
+        
         // Determine which items to transfer
         List<ShoppingList.ShoppingListItem> itemsToTransfer = new ArrayList<>();
 
         if (itemIds != null && !itemIds.isEmpty()) {
             // Transfer specific items
             for (ShoppingList.ShoppingListItem item : shoppingList.items) {
-                String generatedId = generateItemId(item);
-                if (itemIds.contains(generatedId)) {
+                if (item.id != null && itemIds.contains(item.id)) {
                     itemsToTransfer.add(item);
                 }
             }
@@ -401,11 +450,7 @@ public class ShoppingListService {
                 pantryItem.unit = item.unit;
                 pantryItem.category = item.category;
 
-//                try {
-                    pantryService.createPantryItem(pantryItem);
-//                } catch (ValidationException e) {
-//                    System.err.println("Failed to add item to pantry: " + e.getMessage());
-//                }
+                pantryService.createPantryItem(pantryItem).await().indefinitely();
             }
         }
 
@@ -413,8 +458,7 @@ public class ShoppingListService {
         // selection
         if (itemIds != null && !itemIds.isEmpty()) {
             for (ShoppingList.ShoppingListItem item : shoppingList.items) {
-                String generatedId = generateItemId(item);
-                if (itemIds.contains(generatedId)) {
+                if (item.id != null && itemIds.contains(item.id)) {
                     item.isPurchased = true;
                 }
             }
@@ -422,6 +466,8 @@ public class ShoppingListService {
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
@@ -465,20 +511,34 @@ public class ShoppingListService {
 
         shoppingList.preUpdate();
         shoppingList.update();
+        shoppingList.generateAndSetItemIds();
+        updatePantryStatus(shoppingList);
 
         return shoppingList;
     }
 
     /**
-     * Generate a unique ID for a shopping list item based on its properties
-     * This simulates the item ID generation since we don't have actual ObjectIds
-     * for items
+     * Update inPantry status for all items in the shopping list
+     * Checks if items are available in pantry with sufficient quantity
      */
-    private String generateItemId(ShoppingList.ShoppingListItem item) {
-        // Use a combination of properties to create a unique identifier
-        String combined = item.name + "|" + item.quantity + "|" + item.unit + "|" +
-                (item.category != null ? item.category : "") + "|" +
-                (item.notes != null ? item.notes : "");
-        return String.valueOf(Math.abs(combined.hashCode()));
+    private void updatePantryStatus(ShoppingList shoppingList) {
+        // Get all pantry items
+        List<org.household.pantry.PantryItem> pantryItems = 
+            pantryService.getAllPantryItems().await().indefinitely();
+        
+        // Check each shopping list item against pantry
+        for (ShoppingList.ShoppingListItem item : shoppingList.items) {
+            item.inPantry = false; // Reset first
+            
+            for (org.household.pantry.PantryItem pantryItem : pantryItems) {
+                if (pantryItem.name.equalsIgnoreCase(item.name) &&
+                    pantryItem.unit.equalsIgnoreCase(item.unit) &&
+                    pantryItem.quantity >= item.quantity) {
+                    item.inPantry = true;
+                    break;
+                }
+            }
+        }
     }
+
 }

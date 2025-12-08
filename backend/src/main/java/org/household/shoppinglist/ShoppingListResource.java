@@ -133,6 +133,54 @@ public class ShoppingListResource {
         }
     }
 
+    @DELETE
+    @Path("/{id}")
+    public Response deleteShoppingList(@PathParam("id") String id) {
+        if (!ObjectId.isValid(id)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(ApiResponse.error("Invalid shopping list ID format", 400))
+                    .build();
+        }
+
+        boolean deleted = shoppingListService.deleteShoppingList(new ObjectId(id));
+        if (!deleted) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(ApiResponse.error("Shopping list not found", 404))
+                    .build();
+        }
+
+        return Response.ok(ApiResponse.success("message", "Shopping list deleted successfully")).build();
+    }
+
+    @POST
+    @Path("/{id}/copy")
+    public Response copyShoppingList(@PathParam("id") String id, CopyShoppingListRequest request) {
+        try {
+            if (!ObjectId.isValid(id)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity(ApiResponse.error("Invalid shopping list ID format", 400))
+                        .build();
+            }
+
+            ShoppingList copiedList = shoppingListService.copyShoppingList(new ObjectId(id), 
+                    request != null ? request.name : null);
+            
+            if (copiedList == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(ApiResponse.error("Shopping list not found", 404))
+                        .build();
+            }
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(ApiResponse.success("shoppingList", copiedList))
+                    .build();
+        } catch (ValidationException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(ApiResponse.error(e.getMessage(), 400, e.getValidationIssues()))
+                    .build();
+        }
+    }
+
     /**
      * PATCH /api/shoppingList/{id}
      * Update shopping list with various operations (for compatibility with Next.js)

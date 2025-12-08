@@ -128,11 +128,37 @@ public class ShoppingList extends PanacheMongoEntity {
     }
 
     /**
+     * Generate unique IDs for all items in this shopping list
+     */
+    public void generateAndSetItemIds() {
+        for (int i = 0; i < items.size(); i++) {
+            ShoppingListItem item = items.get(i);
+            if (item.id == null) {
+                item.id = generateItemId(item, i);
+            }
+        }
+    }
+
+    /**
+     * Generate a unique ID for a shopping list item based on its properties and index
+     */
+    private String generateItemId(ShoppingListItem item, int index) {
+        String combined = item.name + "|" + item.quantity + "|" + item.unit + "|" +
+                (item.category != null ? item.category : "") + "|" +
+                (item.notes != null ? item.notes : "") + "|" + index;
+        return String.valueOf(Math.abs(combined.hashCode()));
+    }
+
+    /**
      * Inner class representing a shopping list item
      */
     public static class ShoppingListItem {
 
+        public String id; // Generated ID for frontend identification
+
         @NotBlank(message = "Item name is required")
+        @com.fasterxml.jackson.annotation.JsonProperty("ingredient")
+        @com.fasterxml.jackson.annotation.JsonAlias({"name", "ingredient"})
         public String name;
 
         @Positive(message = "Quantity must be positive")
@@ -143,7 +169,11 @@ public class ShoppingList extends PanacheMongoEntity {
 
         public String category;
 
+        @com.fasterxml.jackson.annotation.JsonProperty("purchased")
+        @com.fasterxml.jackson.annotation.JsonAlias({"isPurchased", "purchased"})
         public Boolean isPurchased = false;
+
+        public Boolean inPantry = false;
 
         public String notes;
 

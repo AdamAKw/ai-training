@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
-import { RecipeDetail } from "@/components/recipes/RecipeDetail";
-import { getApiBaseUrl } from "@/lib/utils/url-helpers";
-export const dynamic = "force-dynamic";
+import {notFound} from "next/navigation";
+import {RecipeDetail} from "@/components/recipes/RecipeDetail";
+import {getApiBaseUrl} from "@/lib/utils/url-helpers";
+
 async function getRecipe(id: string) {
   try {
     const response = await fetch(`${getApiBaseUrl()}/api/recipes/${id}`, {
@@ -14,8 +14,8 @@ async function getRecipe(id: string) {
       }
       throw new Error("Failed to fetch recipe");
     }
-    const {data} =await response.json();
-    console.log(data)
+    const {data} = await response.json();
+    console.log(data.recipe)
     return data.recipe;
   } catch (error) {
     console.error("Error fetching recipe:", error);
@@ -24,11 +24,11 @@ async function getRecipe(id: string) {
 }
 
 export default async function RecipeDetailPage({
-  params,
-}: {
+                                                 params,
+                                               }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const {id} = await params;
 
   // Fetch recipe data with error handling
   const recipeData = await getRecipe(id).catch(() => null);
@@ -39,5 +39,5 @@ export default async function RecipeDetailPage({
   }
 
   // Render the client component with the recipe data
-  return <RecipeDetail id={id} recipe={recipeData} />;
+  return <RecipeDetail id={id} recipe={recipeData}/>;
 }

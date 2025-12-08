@@ -12,9 +12,7 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/uimport { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
@@ -119,17 +117,11 @@ export interface RecipeDetailProps {
 
 export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
   // No need for state anymore since delete functionality is handled by the client component
-  const [error] = useState<string | null>(null);
   const t = useTranslations("recipes.detail");
   const format = useFormatter();
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {error && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
 
       {/* Navigation and Actions */}
       <div className="flex justify-between items-center mb-6">
@@ -147,11 +139,6 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
         </div>
       </div>
 
-      {error && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
 
       {/* Recipe Header */}
       <Card className="mb-8 border-none shadow-none">

@@ -44,13 +44,20 @@ export function useShoppingListApi() {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const result = await response.json();
 
             if (successMessage) {
                 toast.success(successMessage);
             }
 
-            return data;
+            // Backend returns ApiResponse format: { success: true, data: { key: value } }
+            // Extract the actual data from the response
+            if (result.success && result.data) {
+                const dataKey = Object.keys(result.data)[0];
+                return result.data[dataKey] as T;
+            }
+
+            return result as T;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';
             setError(errorMessage);

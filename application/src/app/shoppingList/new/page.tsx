@@ -57,6 +57,7 @@ export default async function NewShoppingListPage({
           label: t("backButton"),
           href: "/shoppingList",
           variant: "outline",
+          showBackIcon: true,
         }}
       />
       <Suspense fallback={<LoadingSkeleton />}>

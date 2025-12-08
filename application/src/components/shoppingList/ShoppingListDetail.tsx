@@ -70,7 +70,7 @@ export function ShoppingListDetail({
     typeof list.mealPlan === "object" && list.mealPlan
       ? list.mealPlan.name
       : undefined;
-  console.log(list)
+  console.log(list);
   return (
     <div className="bg-white rounded-md border p-4 shadow-sm">
       {/* Header Section */}
@@ -97,9 +97,12 @@ export function ShoppingListDetail({
       {/* Items List */}
       <div className="mt-6 space-y-2">
         {filteredItems.length > 0 ? (
-          filteredItems.map((item) => (
+          filteredItems.map((item, index) => (
             <ShoppingListItem
-              key={item.id}
+              key={
+                item.id ||
+                `${item.ingredient}-${item.quantity}-${item.unit}-${index}`
+              }
               item={item}
               onTogglePurchased={onTogglePurchased}
               onRemoveItem={onRemoveItem}

@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface PageHeaderProps {
   title: string;
@@ -15,6 +16,7 @@ interface PageHeaderProps {
       | "secondary"
       | "ghost"
       | "link";
+    showBackIcon?: boolean;
   };
   className?: string;
 }
@@ -46,7 +48,10 @@ export function PageHeader({
           variant={action.variant || "default"}
           className="w-full sm:w-auto"
         >
-          <Link href={action.href}>{action.label}</Link>
+          <Link href={action.href} className="flex items-center gap-2">
+            {action.showBackIcon && <ArrowLeft className="h-4 w-4" />}
+            {action.label}
+          </Link>
         </Button>
       )}
     </div>
