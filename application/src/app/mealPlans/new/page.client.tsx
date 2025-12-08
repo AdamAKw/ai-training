@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { MealPlanForm } from "@/components/mealPlan/MealPlanForm";
 import { IRecipe } from "@/models/recipe";
 import { ValidationIssue } from "@/lib/utils/api-helpers";
+import { getApiBaseUrl } from "@/lib/utils/url-helpers";
 
 export default function NewMealPlanPage({ recipes }: { recipes: IRecipe[] }) {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function NewMealPlanPage({ recipes }: { recipes: IRecipe[] }) {
     setFormErrors({});
 
     try {
-      const res = await fetch("/api/mealPlans", {
+      const res = await fetch(`${getApiBaseUrl()}/api/mealPlans`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -57,8 +58,10 @@ export default function NewMealPlanPage({ recipes }: { recipes: IRecipe[] }) {
         return; // Early return to avoid navigation
       }
       // If we got here, the response was OK
+      // Backend returns: { success: true, data: { mealPlan: {...} } }
+      const mealPlan = result.data?.mealPlan || result.mealPlan;
       toast.success("Plan posiłków został pomyślnie utworzony");
-      router.push(`/mealPlans/${result.mealPlan.id}`);
+      router.push(`/mealPlans/${mealPlan.id}`);
     } catch (error) {
       console.error("Błąd podczas tworzenia planu posiłków:", error);
       toast.error(

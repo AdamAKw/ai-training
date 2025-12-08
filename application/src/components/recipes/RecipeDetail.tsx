@@ -12,7 +12,8 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from "@/components/uimport { Badge } from "@/components/ui/badge";
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
@@ -122,7 +123,6 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-
       {/* Navigation and Actions */}
       <div className="flex justify-between items-center mb-6">
         <Button variant="outline" asChild>
@@ -138,7 +138,6 @@ export function RecipeDetail({ id, recipe }: RecipeDetailProps) {
           <DeleteRecipeDialog recipeId={id} recipeName={recipe.name} />
         </div>
       </div>
-
 
       {/* Recipe Header */}
       <Card className="mb-8 border-none shadow-none">
