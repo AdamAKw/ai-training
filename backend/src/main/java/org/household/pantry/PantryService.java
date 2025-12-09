@@ -95,13 +95,21 @@ public class PantryService {
 
     /**
      * Reduce quantity of a pantry item by ingredient requirements Used when completing meals
+     * Returns true if the item was found and quantity was reduced, false otherwise
+     * Does NOT throw an exception if the item is not found - this allows meals to be completed
+     * even when some ingredients are missing from the pantry
      */
     public Uni<Boolean> reduceIngredientQuantity(String ingredientName, String unit,
         double quantity) {
         return Panache.withTransaction(() -> {
             return PantryItem.findByNameAndUnit(ingredientName, unit)
-                .onItem().ifNull().failWith(() -> new NotFoundException("Pantry item not found"))
                 .onItem().transformToUni(item -> {
+                    // If item not found, just return false without throwing exception
+                    if (item == null) {
+                        return Uni.createFrom().item(false);
+                    }
+                    
+                    // Try to reduce quantity (will reduce as much as available, even if not enough)
                     if (item.reduceQuantity(quantity)) {
                         item.preUpdate();
                         return item.update().replaceWith(true);

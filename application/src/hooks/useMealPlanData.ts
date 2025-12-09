@@ -17,6 +17,8 @@ export function useMealPlanData(data: CurrentMealResponse) {
       try {
          const method = isCurrentlyCompleted ? "DELETE" : "POST";
          const url = `${getApiBaseUrl()}/api/mealPlans/${mealPlanId}/meals/${mealIndex}/complete`;
+         console.log(`[toggleMealCompletion] ${method} ${url}`);
+
          const response = await fetch(url, {
             method,
             headers: {
@@ -24,22 +26,34 @@ export function useMealPlanData(data: CurrentMealResponse) {
             },
          });
 
+         console.log(`[toggleMealCompletion] Response status:`, response.status);
+
          if (!response.ok) {
-            throw new Error(`Failed to ${isCurrentlyCompleted ? "uncomplete" : "complete"} meal`);
+            const errorData = await response.json();
+            console.error(`[toggleMealCompletion] Error response:`, errorData);
+            throw new Error(errorData.message || `Failed to ${isCurrentlyCompleted ? "uncomplete" : "complete"} meal`);
          }
+
+         const result = await response.json();
+         console.log(`[toggleMealCompletion] Success:`, result);
 
          // Refresh the meal plan data
          const [detailResponse, pantryResponse] = await Promise.all([getMealPlanById(mealPlanId), getPantry()]);
          const [detailData, pantryData] = await Promise.all([detailResponse.json(), pantryResponse.json()]);
+
+         console.log(`[toggleMealCompletion] Detail response:`, detailData);
+         console.log(`[toggleMealCompletion] Pantry response:`, pantryData);
+
          if (detailResponse.ok) {
             setCurrentMealPlan(detailData.data.mealPlan);
          }
 
          if (pantryResponse.ok) {
-            setPantryItems(pantryData.data.pantryItems || []);
+            setPantryItems(pantryData.data?.pantryItems || pantryData.pantryItems || []);
          }
       } catch (error) {
          console.error("Error toggling meal completion:", error);
+         throw error;
       }
    }, []);
 

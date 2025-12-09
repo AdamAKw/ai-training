@@ -26,8 +26,18 @@ public class MealPlanService {
 
     /**
      * Get all meal plans ordered by start date (newest first)
+     * Returns meal plans with populated recipe details
      */
-    public Uni<List<MealPlan>> getAllMealPlans() {
+    public Uni<List<MealPlanWithRecipes>> getAllMealPlans() {
+        return MealPlan.findAllOrderedByStartDate()
+                .onItem().transformToUni(this::populateMealPlansWithRecipes);
+    }
+
+    /**
+     * Get all meal plans ordered by start date (newest first)
+     * Returns basic meal plans without populated recipes
+     */
+    public Uni<List<MealPlan>> getAllMealPlansBasic() {
         return MealPlan.findAllOrderedByStartDate();
     }
 
@@ -48,9 +58,18 @@ public class MealPlanService {
     }
 
     /**
-     * Get a meal plan by ID
+     * Get a meal plan by ID with populated recipe details
      */
-    public Uni<MealPlan> getMealPlanById(ObjectId id) {
+    public Uni<MealPlanWithRecipes> getMealPlanById(ObjectId id) {
+        return MealPlan.<MealPlan>findById(id)
+                .onItem().ifNotNull().transformToUni(this::populateSingleMealPlanWithRecipes)
+                .onItem().ifNull().continueWith(() -> null);
+    }
+
+    /**
+     * Get a meal plan by ID without populated recipes
+     */
+    public Uni<MealPlan> getMealPlanByIdBasic(ObjectId id) {
         return MealPlan.findById(id);
     }
 
@@ -145,6 +164,8 @@ public class MealPlanService {
                                                                     ingredient._id.toString()));
                                                         }
                                                     })
+                                                    // Ignore failures - continue even if ingredient not found
+                                                    .onFailure().recoverWithNull()
                                                     .replaceWithVoid());
                                 }
 
@@ -241,7 +262,71 @@ public class MealPlanService {
         }
     }
 
-    public Uni<List<MealPlan>> findMealPlansIncludeDate(LocalDate date) {
-        return MealPlan.findMealPlansIncludeDate(date);
+    public Uni<List<MealPlanWithRecipes>> findMealPlansIncludeDate(LocalDate date) {
+        return MealPlan.findMealPlansIncludeDate(date)
+                .onItem().transformToUni(this::populateMealPlansWithRecipes);
+    }
+
+    /**
+     * Populate meal plans with recipe details
+     * Fetches full recipe data for each meal in the meal plans
+     */
+    private Uni<List<MealPlanWithRecipes>> populateMealPlansWithRecipes(List<MealPlan> mealPlans) {
+        if (mealPlans == null || mealPlans.isEmpty()) {
+            return Uni.createFrom().item(new ArrayList<>());
+        }
+
+        List<Uni<MealPlanWithRecipes>> populatedPlans = new ArrayList<>();
+
+        for (MealPlan mealPlan : mealPlans) {
+            populatedPlans.add(populateSingleMealPlanWithRecipes(mealPlan));
+        }
+
+        return Uni.combine().all().unis(populatedPlans).combinedWith(list -> {
+            List<MealPlanWithRecipes> result = new ArrayList<>();
+            for (Object item : list) {
+                result.add((MealPlanWithRecipes) item);
+            }
+            return result;
+        });
+    }
+
+    /**
+     * Populate a single meal plan with recipe details
+     */
+    private Uni<MealPlanWithRecipes> populateSingleMealPlanWithRecipes(MealPlan mealPlan) {
+        MealPlanWithRecipes dto = new MealPlanWithRecipes(mealPlan);
+
+        if (mealPlan.meals == null || mealPlan.meals.isEmpty()) {
+            return Uni.createFrom().item(dto);
+        }
+
+        // Create a list of Uni operations to fetch each recipe
+        List<Uni<MealPlanWithRecipes.MealPlanItemWithRecipe>> mealItemUnis = new ArrayList<>();
+
+        for (MealPlan.MealPlanItem mealItem : mealPlan.meals) {
+            Uni<MealPlanWithRecipes.MealPlanItemWithRecipe> mealItemUni = Recipe.<Recipe>findById(mealItem.recipe)
+                    .onItem().transform(recipe -> {
+                        if (recipe == null) {
+                            // If recipe not found, create a placeholder
+                            Recipe placeholderRecipe = new Recipe();
+                            placeholderRecipe.name = "Recipe not found";
+                            placeholderRecipe.ingredients = new ArrayList<>();
+                            placeholderRecipe.instructions = new ArrayList<>();
+                            return new MealPlanWithRecipes.MealPlanItemWithRecipe(placeholderRecipe, mealItem);
+                        }
+                        return new MealPlanWithRecipes.MealPlanItemWithRecipe(recipe, mealItem);
+                    });
+
+            mealItemUnis.add(mealItemUni);
+        }
+
+        // Combine all recipe fetches and build the final DTO
+        return Uni.combine().all().unis(mealItemUnis).combinedWith(list -> {
+            for (Object item : list) {
+                dto.meals.add((MealPlanWithRecipes.MealPlanItemWithRecipe) item);
+            }
+            return dto;
+        });
     }
 }

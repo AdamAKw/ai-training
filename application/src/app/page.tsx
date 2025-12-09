@@ -31,33 +31,51 @@ async function getPresentMealPlan() {
   const date = LocalDate.now();
   const url = new URL(`${getApiBaseUrl()}/api/mealPlans`);
   url.searchParams.set("date", date.toString());
+  console.log("[SSR] Fetching meal plans from:", url.toString());
   return fetch(url, {
     cache: "no-store",
+    headers: {
+      Accept: "application/json",
+    },
   });
 }
 
 async function getPantry() {
-  return fetch(`${getApiBaseUrl()}/api/pantry`, {
+  const url = `${getApiBaseUrl()}/api/pantry`;
+  console.log("[SSR] Fetching pantry from:", url);
+  return fetch(url, {
     cache: "no-store",
+    headers: {
+      Accept: "application/json",
+    },
   });
 }
 
 async function getData(): Promise<CurrentMealResponse> {
   try {
+    const apiBaseUrl = getApiBaseUrl();
+    console.log("[SSR] API Base URL:", apiBaseUrl);
+
     const [mealPlansResponse, pantryResponse] = await Promise.all([
       getPresentMealPlan(),
       getPantry(),
     ]);
+
+    console.log("[SSR] Meal Plans Response Status:", mealPlansResponse.status);
+    console.log("[SSR] Pantry Response Status:", pantryResponse.status);
+
     const [mealPlansData, pantryData] = await Promise.all([
       mealPlansResponse.json(),
       pantryResponse.json(),
     ]);
 
     if (!mealPlansResponse.ok) {
+      console.error("[SSR] Meal Plans Error:", mealPlansData);
       throw new Error(mealPlansData.error || "Failed to fetch meal plans");
     }
-    
+
     if (!pantryResponse.ok) {
+      console.error("[SSR] Pantry Error:", pantryData);
       throw new Error(pantryData.error || "Failed to fetch pantry items");
     }
 
@@ -66,12 +84,23 @@ async function getData(): Promise<CurrentMealResponse> {
       currentPlan = mealPlansData.data.mealPlans[0];
     }
 
+    console.log("[SSR] Current Plan:", currentPlan ? "Found" : "Not found");
+    console.log("[SSR] Pantry Data Structure:", Object.keys(pantryData));
+    console.log(
+      "[SSR] Pantry Items Count:",
+      pantryData.data?.pantryItems?.length || 0
+    );
+    console.log("[SSR] First pantry item:", pantryData.data?.pantryItems?.[0]);
+
     return {
       currentMealPlan: currentPlan || null,
-      pantryItems: pantryData.pantryItems || [],
+      pantryItems: pantryData.data?.pantryItems || [],
     };
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("[SSR] Error fetching data:", error);
+    if (error instanceof Error) {
+      console.error("[SSR] Error details:", error.message, error.stack);
+    }
   }
   return {
     currentMealPlan: null,

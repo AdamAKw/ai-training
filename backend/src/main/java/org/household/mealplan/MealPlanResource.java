@@ -73,12 +73,12 @@ public class MealPlanResource {
         }
 
         return mealPlanService.getMealPlanById(new ObjectId(id))
-                .onItem().transform(mealPlan -> {
-                    if (mealPlan == null) {
+                .onItem().transform(mealPlanWithRecipes -> {
+                    if (mealPlanWithRecipes == null) {
                         return RestResponse.status(RestResponse.Status.NOT_FOUND,
                                 ApiResponse.error("Meal plan not found", 404));
                     }
-                    return RestResponse.ok(ApiResponse.success("mealPlan", mealPlan));
+                    return RestResponse.ok(ApiResponse.success("mealPlan", mealPlanWithRecipes));
                 });
     }
 
